@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Please enter password to proceed.</title>
+    <!-- The style.css file allows you to change the look of your web pages.
+         If you include the next line in all your web pages, they will all share the same look.
+         This makes it easier to make new pages for your site. -->
+    <link href="/style.css" rel="stylesheet" type="text/css" media="all">
+  </head>
+  <body>
+  <center>
+
+    <form class="passform" action="testpage">
+        <p>Username:<input type="username" required id="jpedrothewebsiteowner"></p>
+        <p>Password:<input type="password" required id="a1b2c3d4"></p>
+        <input type="submit" placeholder="Enter">
+    </form>
+  </center>
+  </body>
+</html>
