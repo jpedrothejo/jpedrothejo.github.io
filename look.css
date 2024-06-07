@@ -11,3 +11,27 @@ body {
 img {
   border-radius: 6.25%;
 }
+
+a:link {
+  color: #ECEFF4;
+  background-color: transparent;
+  text-decoration: none;
+}
+
+a:visited {
+  color: #ECEFF4;
+  background-color: transparent;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #ECEFF4;
+  background-color: transparent;
+  text-decoration: underline;
+}
+
+a:active {
+  color: #ECEFF4;
+  background-color: transparent;
+  text-decoration: underline;
+}
