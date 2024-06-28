@@ -11,18 +11,35 @@
     <link rel="icon" href="work.ico" /> 
   </head>
   <body>
-
-    <header class="header">
-      <a href="#" class="logo">JTW</a>
-
-      <nav class="navbar">
-        <a href="/">Codes</a>
-        <a href="/">Settings</a>
+    <nav>
+      <ul class="sidebar">
+        <li onclick=hideSidebar()><a href="#"><svg xmlns="http://www.w3.org/2000/svg" height="26" viewBox="0 96 960 960" width="26"><path d="m249 849-42-42 231-231-231-231 42-42 231 231 231-231 42 42-231 231 231 231-42 42-231-231-231 231Z"/></svg></a></li>
+        <li><a href="/settings.html">Settings</a></li>
+        <li><a href="/codes.html">Codes</a></li>
+      </ul>
+      <ul>
+        <li><a href="#">JTW</a></li>
+        <li class="hideOnMobile"><a href="/settings.html">Settings</a></li>
+        <li class="hideOnMobile"><a href="/codes.html">Codes</a></li>
+        <li class="menu-button" onclick=showSidebar()><a href="#"><svg xmlns="http://www.w3.org/2000/svg" height="26" viewBox="0 96 960 960" width="26"><path d="M120 816v-60h720v60H120Zm0-210v-60h720v60H120Zm0-210v-60h720v60H120Z"/></svg></a></li>
+      </ul>
+    </nav>
+  
+    <script>
+      function showSidebar(){
+        const sidebar = document.querySelector('.sidebar')
+        sidebar.style.display = 'flex'
+      }
+      function hideSidebar(){
+        const sidebar = document.querySelector('.sidebar')
+        sidebar.style.display = 'none'
+      }
+    </script>
       </header>
   <center>
    <h1>Sometimes, there are errors on the website, so I made error codes for them! Here are the error codes you can find:</h1>
    <p>1. Error Code 1 meaning the page either does not exist or has went down.</p>
-   <p>2. Error Code 2 meaning the page has no content or is planned to being recycled, like <a href="test.asp">this</a> page.</p>
+   <p>2. Error Code 2 meaning the page has no content or is planned to being recycled.</p>
    </center>
   </body>
 </html>
