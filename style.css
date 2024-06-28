@@ -4,7 +4,7 @@
   padding: 0;
 }
 body {
-  background-color: #14171d;
+  background-image: url(background.jpg);
   color: #ECEFF4;
   font-family: "Noto Sans", sans-serif;
   font-optical-sizing: auto;
@@ -13,7 +13,7 @@ body {
 }
 
 nav{
-  background-color: #0c0e11;
+  background-color: #0e1014;
   box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.1);
 }
 nav ul{
@@ -35,7 +35,7 @@ nav a{
   color: #ECEFF4;
 }
 nav a:hover{
-  background-color: #262d36;
+  background-color: #111418;
 }
 nav li:first-child{
   margin-right: auto;
@@ -63,7 +63,6 @@ nav li:first-child{
 }
 .menu-button{
   display: none;
-  
 }
 @media(max-width: 800px){
   .hideOnMobile{
