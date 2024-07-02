@@ -37,28 +37,35 @@
     </script>
 <center><p></p>
 
-  <h1>Welcome there!</h1>
+  <h1>John's Website</h1>
+  <script src="https://unpkg.com/typeit@8.7.1/dist/index.umd.js"></script>
+  <p id="simpleUsage"></p>
+  <script>new TypeIt("#simpleUsage", {
+    strings: "Welcome to my website!",
+    speed: 50,
+    waitUntilVisible: true,
+}).go();</script>
     
     <p>Here's some socials:</p>
 
-   <p><a href="https://www.youtube.com/channel/UCSl0SymkgWFaATCLK3JV0lw"><image src="youtube.png" style="width: 180px;"><a href="https://www.roblox.com/users/2725283118/profile"><image src="roblox.jpg" style="width: 125px;"></image></a></p>
+   <p><a href="https://www.youtube.com/channel/UCSl0SymkgWFaATCLK3JV0lw">YouTube Account</a> | <a href="https://www.roblox.com/users/2725283118/profile">Roblox Account</a></p>
+   <p></p>
+</center>
+   <h3>About Me:</h3>
+<p><center></center></p>
 
-
-  <p>WIP:</p>
+  <p><center>WIP:</p>
 <ul>
   <li><label for="top">Topbar:</label>
   <progress id="top" value="90" max="100">90%</progress>
-
-  <label for="bg">Background:</label>
-  <progress id="top" value="85" max="100">85%</progress>
 
   <label for="ico">Icon:</label>
   <progress id="top" value="25" max="100">25%</progress>
 
   <label for="set">Settings:</label>
   <progress id="top" value="0" max="100">No Progress Yet</progress></li>
-</ul>
-</center>
+</ul></center>
+
 
   </body>
 </html>

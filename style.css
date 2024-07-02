@@ -4,7 +4,12 @@
   padding: 0;
 }
 body {
-  background-image: url(background.jpg);
+  background-size: cover;
+  background-position: 0px 0px;
+  background-image: linear-gradient(314deg, #2A5272FF 3%, #000000FF 70%);
+  height: 100%;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   color: #ECEFF4;
   font-family: "Noto Sans", sans-serif;
   font-optical-sizing: auto;
