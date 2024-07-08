@@ -13,7 +13,7 @@ body {
   color: #ECEFF4;
   font-family: "Noto Sans", sans-serif;
   font-optical-sizing: auto;
-  font-weight: 600;
+  font-weight: 400;
   font-style: normal;
 }
 
@@ -44,6 +44,10 @@ nav a:hover{
 }
 nav li:first-child{
   margin-right: auto;
+}
+.pfp-name {
+  font-weight: 800;
+  font-size: 1.2rem;
 }
 .sidebar{
   position: fixed;
