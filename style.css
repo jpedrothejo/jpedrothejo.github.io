@@ -2,7 +2,7 @@
 *{
   margin: 0.1;
   padding: 0;
-}
+} /* why are you looking at my code? */
 body {
   background-size: cover;
   background-position: 0px 0px;
@@ -40,7 +40,7 @@ nav a{
   color: #ECEFF4;
 }
 nav a:hover{
-  background-color: #111418;
+  background-color: #111418; /* hello there! */
 }
 nav li:first-child{
   margin-right: auto;
@@ -103,4 +103,4 @@ button {
   font-optical-sizing: auto;
   font-weight: 500;
   font-style: normal;
-}
+/* fuck you */}
