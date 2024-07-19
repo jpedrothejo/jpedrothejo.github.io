@@ -1,12 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
-*{
-  margin: 0.1;
-  padding: 0;
-} /* why are you looking at my code? */
 body {
   background-size: cover;
   background-position: 0px 0px;
-  background-image: linear-gradient(314deg, #2A5272FF 3%, #000000FF 70%);
+  background-image: linear-gradient(314deg, rgb(9, 27, 43) 3%, #000000FF 70%);
   height: 100%;
   background-repeat: no-repeat;
   background-attachment: fixed;
@@ -17,79 +13,14 @@ body {
   font-style: normal;
 }
 
-nav{
-  background-color: #0e1014;
-  box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.1);
-}
-nav ul{
-  width: 100%;
+ul {
   list-style: none;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-}
-nav li{
-  height: 50px;
-}
-nav a{
-  height: 100%;
-  padding: 0 30px;
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  color: #ECEFF4;
-}
-nav a:hover{
-  background-color: #111418; /* hello there! */
-}
-nav li:first-child{
-  margin-right: auto;
-}
-.pfp-name {
-  font-weight: 800;
-  font-size: 1.2rem;
-}
-.sidebar{
-  position: fixed;
-  top: 0; 
-  right: 0;
-  height: 100vh;
-  width: 250px;
-  background-color: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(12px);
-  box-shadow: -10px 0 10px rgba(255, 255, 255, 0.1);
-  list-style: none;
-  display: none;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-start;
-}
-.sidebar li{
-  width: 100%;
-}
-.sidebar a{
-  width: 100%;
-}
-.menu-button{
-  display: none;
-}
-@media(max-width: 800px){
-  .hideOnMobile{
-    display: none;
-  }
-  .menu-button{
-    display: block;
-  }
-}
-@media(max-width: 400px){
-  .sidebar{
-    width: 100%;
-  }
+  margin: 0;
+  padding: 0;
 }
 
-.light-mode {
-  background-color: #ECEFF4;
-  color: #14171d;
+li {
+  padding: 10px;
 }
 
 img {
