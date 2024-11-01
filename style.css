@@ -2,7 +2,7 @@
 body {
   background-size: cover;
   background-position: 0px 0px;
-  background-image: linear-gradient(314deg, rgb(9, 27, 43) 3%, #000000FF 70%);
+  background-image: linear-gradient(314deg, rgb(1, 34, 32) 3%, #000000FF 70%);
   height: 100%;
   background-repeat: no-repeat;
   background-attachment: fixed;
@@ -34,7 +34,7 @@ button {
   font-optical-sizing: auto;
   font-weight: 500;
   font-style: normal;
-/* fuck you */}
+}
 
 .pfp-name {
   font-family: "Noto Sans", sans-serif;
@@ -42,3 +42,24 @@ button {
   font-weight: 800;
   font-style: normal;
 }
+
+.topnav {
+  background-color: #111;
+  overflow: hidden;
+}
+
+.topnav a {
+  float: center;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+.topnav a:hover {
+  background-color: #20202020 /* vision */
+}
+
+
+
