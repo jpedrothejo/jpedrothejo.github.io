@@ -22,6 +22,14 @@ body {
   font-style: normal;
 }
 
+a {
+  color: #8282ff;
+}
+
+a:visited {
+  color: #5151ff;
+}
+
 ul {
   list-style: none;
   margin: 0;
@@ -55,6 +63,7 @@ button {
 .topnav {
   background-color: #080808;
   overflow: hidden;
+  border-radius: 6.25px;
 }
 
 .topnav a {
@@ -69,7 +78,7 @@ button {
 }
 
 .topnav a:hover {
-  background-color: #20202020 /* vision */
+  background-color: #0f0f0f
 }
 
 
