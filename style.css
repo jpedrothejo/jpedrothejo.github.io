@@ -1,15 +1,18 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
-
 @font-face {
   font-family: AdwaitaSans;
   src: url(/fonts/AdwaitaSans-Regular.ttf);
 }
 
+@font-face {
+  font-family: AdwaitaMono;
+  src: url(/fonts/AdwaitaMono-Regular.ttf);
+}
+
 body {
   background-size: cover;
   background-position: 0px 0px;
-  background-image: linear-gradient(-30deg, rgb(3, 5, 31) 3%, #000000FF 70%);
-  height: 100%;
+  background-image: url(/images/background.webp);
+  height: 150%;
   background-repeat: no-repeat;
   background-attachment: fixed;
   color: #ECEFF4;
@@ -43,14 +46,14 @@ button {
 }
 
 .pfp-name {
-  font-family: "Noto Sans", sans-serif;
+  font-family: AdwaitaMono;
   font-optical-sizing: auto;
   font-weight: 800;
   font-style: normal;
 }
 
 .topnav {
-  background-color: #111;
+  background-color: #080808;
   overflow: hidden;
 }
 
@@ -60,7 +63,9 @@ button {
   text-align: center;
   padding: 14px 16px;
   text-decoration: none;
-  font-size: 17px;
+  font-size: 15px;
+  font-family: AdwaitaMono;
+  font-weight: 100;
 }
 
 .topnav a:hover {
