@@ -23,11 +23,13 @@ body {
 }
 
 a {
-  color: #3d5aff;
+  color: #c1c1ff;
+  text-decoration: none;
 }
 
 a:visited {
-  color: #5656ff;
+  color: #acacff;
+  text-decoration: none;
 }
 
 ul {
@@ -61,7 +63,7 @@ button {
 }
 
 .topnav {
-  background-color: #080808;
+  background-color: #0808085e;
   overflow: hidden;
   border-radius: 6.25px;
 }
@@ -78,7 +80,7 @@ button {
 }
 
 .topnav a:hover {
-  background-color: #0f0f0f
+  background-color: #0f0f0f5e;
 }
 
 .main {
