@@ -81,5 +81,11 @@ button {
   background-color: #0f0f0f
 }
 
+.main {
+  background-color: #0808085e;
+  overflow: hidden;
+  border-radius: 6.25px;
+}
+
 
 
