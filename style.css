@@ -18,16 +18,21 @@
   src: url(/fonts/GoogleSansRounded-Bold.ttf)
 }
 
+
 html, body {
   margin: 0;
   padding: 0;
+  background-size: cover;
+  background-position: 0px 0px;
+  background-image: url(/images/background.jpg);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }
 
 body {
   background-size: cover;
   background-position: 0px 0px;
   background-image: url(/images/background.jpg);
-  height: 150%;
   background-repeat: no-repeat;
   background-attachment: fixed;
   color: #ECEFF4;
@@ -41,6 +46,12 @@ a {
   color: #c1c1ff;
   text-decoration: none;
   padding: 2px;
+}
+
+a:hover {
+  color: #8a8aff;
+  transition: 0.3s ease, opacity 0.3s ease;
+  opacity: 0.7;
 }
 
 a:visited {
@@ -80,26 +91,31 @@ button {
 
 .topnav {
   background-color: #0808085e;
-  overflow: hidden;
+  overflow: visible;
   border-radius: 6.25px;
   padding: 4px;
+  margin: 0 10px;
   backdrop-filter: blur(16px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .topnav a {
-  float: center;
   color: #f2f2f2;
   text-align: center;
-  padding: 14px 6px;
+  padding: 5px 5px;
+  border-radius: 6.25px;
   text-decoration: none;
   font-size: 15px;
   font-family: GoogleSans-Bold;
   font-weight: 100;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, opacity 0.3s ease;
 }
 
 .topnav a:hover {
   background-color: #0700635e;
+  opacity: 0.7;
 }
 
 .main {
@@ -107,4 +123,5 @@ button {
   overflow: hidden;
   border-radius: 6.25px;
   backdrop-filter: blur(16px);
+  margin: 10px 10px;
 }
