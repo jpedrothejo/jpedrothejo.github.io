@@ -21,7 +21,7 @@
 body {
   background-size: cover;
   background-position: 0px 0px;
-  background-image: url(/images/background.webp);
+  background-image: url(/images/background.jpg);
   height: 150%;
   background-repeat: no-repeat;
   background-attachment: fixed;
@@ -78,6 +78,7 @@ button {
   overflow: hidden;
   border-radius: 6.25px;
   padding: 4px;
+  backdrop-filter: blur(16px);
 }
 
 .topnav a {
@@ -89,14 +90,16 @@ button {
   font-size: 15px;
   font-family: GoogleSans-Bold;
   font-weight: 100;
+  transition: background-color 0.3s ease;
 }
 
 .topnav a:hover {
-  background-color: #0f0f0f5e;
+  background-color: #0700635e;
 }
 
 .main {
   background-color: #0808085e;
   overflow: hidden;
   border-radius: 6.25px;
+  backdrop-filter: blur(16px);
 }
