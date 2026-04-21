@@ -25,11 +25,24 @@
 
   <script src="https://unpkg.com/typeit@8.7.1/dist/index.umd.js"></script>
   <p id="welcome"></p>
-  <script>new TypeIt("#welcome", {
-    strings: ["'I AM THE REPAIRSHOP'", "- TGTTEL"],
-    speed: 35,
-    waitUntilVisible: true,
-}).go();</script>
+  <script>
+    const messages = [
+      "'I AM THE REPAIRSHOP' - TGTTEL",
+      "HTML might be the easiest language",
+      "welcome to my website!",
+      "i need a new computer..",
+      "i need to learn how to port custom OSes to phones",
+      "coding sounds fun, i should try it",
+      "follow my social medias below!",
+      "but he made graduation"
+    ];
+    const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+    new TypeIt("#welcome", {
+      strings: [randomMessage],
+      speed: 35,
+      waitUntilVisible: true,
+    }).go();
+  </script>
 
 <h2>My Socials</h2>
 
@@ -38,14 +51,25 @@
 <img src="https://api.statusbadges.me/badge/status/944684533108854854?simple=true" alt="status"> <img src="https://api.statusbadges.me/badge/playing/944684533108854854" alt="playing"> <img src="https://api.statusbadges.me/badge/vscode/944684533108854854" alt="vscode">
   <h2>About Me</h2>
 <ul>
-  <li><label for="ico">Brazillian</label></li>
-  <li><label for="ico">I like technology</label></li>
-  <li><label for="ico">13yo</label></li>
-  <li><label for="ico">Kanye West fan</label></li>
-  <li><label for="ico">I use arch, btw</label></li>
-  <li><label for="ico">BFDI fan</label></li>
-  <li><label for="ico">Techtoker</label></li>
+  <li>Brazillian</li>
+  <li>I like technology</li>
+  <li>I like Geometry Dash and stuff like that</li>
+  <li>13yo</li>
+  <li>Kanye West fan</li>
+  <li>BFDI fan</li>
+  <li>Techtoker</li>
 </ul>
+  <h2>My device collection (as of Apr. 2026)</h2>
+  <ul>
+    <li>Samsung Galaxy S25 12/256 (main device)</li>
+    <li>Apple iPhone Xr 3/64 (secondary device)</li>
+    <li>Samsung Galaxy J7 Prime 3/32 (tertiary device, broken)</li>
+    <li>Samsung Galaxy S20 8/128 (broken and will never be fixed)</li>
+    <li>Apple iPod Touch 4 256M/64 (broken)</li>
+    <li>Lenovo Ideapad S145 81XM 15IKB (main computer)</li>
+    <li>Dell Inspiron 5423 (broken)</li>
+    <li>Dell Latitude d620 (broken)</li>
+  </ul>
 </div>
   </center>
   </body>
