@@ -38,8 +38,27 @@ body {
   color: #ECEFF4;
   font-family: GoogleSans;
   font-optical-sizing: auto;
-  font-weight: 400;
-  font-style: normal;
+}
+
+/* Social icon background style */
+.social-bg {
+  display: flex;
+  gap: 12px;
+  backdrop-filter: blur(16px);
+  border-radius: 16px;
+  padding: 14px 18px;
+  justify-content: center;
+  align-items: center;
+  width: fit-content;
+  margin: 0 auto 24px auto;
+}
+.icon-img {
+  width: 38px;
+  height: 38px;
+  object-fit: contain;
+  display: block;
+  transition: background 0.2s;
+  fade-out: 0.2s;
 }
 
 a {
@@ -104,7 +123,7 @@ button {
 .topnav a {
   color: #f2f2f2;
   text-align: center;
-  padding: 5px 5px;
+  padding: 2px 7px;
   border-radius: 6.25px;
   text-decoration: none;
   font-size: 15px;
