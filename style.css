@@ -112,12 +112,18 @@ button {
   background-color: #0808085e;
   overflow: visible;
   border-radius: 6.25px;
-  padding: 4px;
-  margin: 0 10px;
+  padding: 4px 10px;
+  margin: 0;
   backdrop-filter: blur(16px);
-  display: flex;
+  display: inline-flex;
   justify-content: center;
   align-items: center;
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: fit-content;
+  z-index: 1000;
 }
 
 .topnav a {
