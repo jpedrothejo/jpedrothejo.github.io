@@ -56,7 +56,6 @@ body {
 a {
   color: #c1c1ff;
   text-decoration: none;
-  padding: 2px;
 }
 
 a:hover {
@@ -74,14 +73,18 @@ ul {
   list-style: none;
   margin: 0;
   padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
 
 li {
-  padding: 5px;
+  padding: 0;
 }
 
 img {
   border-radius: 6.25%;
+  display: block;
 }
 
 button {
@@ -139,10 +142,17 @@ button {
   overflow: hidden;
   border-radius: 6.25px;
   backdrop-filter: blur(16px);
-  margin: 10px 10px;
+  margin: 5px 5px;
   width: fit-content;
   box-sizing: border-box;
-  padding: 5px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.main > * {
+  margin: 0;
 }
 
 /* Settings Overrides */
