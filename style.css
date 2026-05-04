@@ -96,7 +96,7 @@ button {
 .pfp-name {
   font-family: GoogleSans-Bold;
   font-optical-sizing: auto;
-  font-weight: 1600;
+  font-weight: 700;
   font-style: bold;
 }
 
@@ -140,6 +140,9 @@ button {
   border-radius: 6.25px;
   backdrop-filter: blur(16px);
   margin: 10px 10px;
+  width: fit-content;
+  box-sizing: border-box;
+  padding: 5px;
 }
 
 /* Settings Overrides */

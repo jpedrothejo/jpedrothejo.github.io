@@ -1,13 +1,15 @@
+const isEnabled = (key, defaultOn = true) => 
+  localStorage.getItem(key) !== (defaultOn ? '0' : '1');
+
 function applyBlur() {
-  const enabled = localStorage.getItem('blurEnabled') !== '0';
+  const enabled = isEnabled('blurEnabled');
   const blurValue = enabled ? 'blur(16px)' : 'none';
-  document.querySelectorAll('.main, .topnav, .social-bg').forEach(el => {
-    if (el) el.style.backdropFilter = blurValue;
-  });
+  document.querySelectorAll('.main, .topnav, .social-bg')
+    .forEach(el => el.style.backdropFilter = blurValue);
 }
 
 function toggleClass(id, className, invert = false) {
-  const enabled = localStorage.getItem(id) !== '0';
+  const enabled = isEnabled(id);
   const shouldApply = invert ? !enabled : enabled;
   document.documentElement.classList.toggle(className, shouldApply);
 }
@@ -21,7 +23,7 @@ function applyDark() {
 }
 
 function applyFont() {
-  const enabled = localStorage.getItem('adwaitaEnabled') === '1';
+  const enabled = localStorage.getItem('adwaitaEnabled') === '1'; // Keeping strict for off-by-default
   document.documentElement.classList.toggle('adwaita-font', enabled);
 }
 
