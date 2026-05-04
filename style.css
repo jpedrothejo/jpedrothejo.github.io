@@ -19,25 +19,18 @@
 }
 
 
-html, body {
+html, 
+body {
+  transition: background 0.3s, color 0.3s;
   margin: 0;
   padding: 0;
   background-size: cover;
-  background-position: 0px 0px;
-  background-image: url(/images/background.jpg);
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-}
-
-body {
-  background-size: cover;
-  background-position: 0px 0px;
+  background-position: center;
   background-image: url(/images/background.jpg);
   background-repeat: no-repeat;
   background-attachment: fixed;
   color: #ECEFF4;
-  font-family: GoogleSans;
-  font-optical-sizing: auto;
+  font-family: GoogleSans, sans-serif;
 }
 
 /* Social icon background style */
@@ -57,8 +50,7 @@ body {
   height: 38px;
   object-fit: contain;
   display: block;
-  transition: background 0.2s;
-  fade-out: 0.2s;
+  transition: opacity 0.2s;
 }
 
 a {
@@ -109,11 +101,10 @@ button {
 }
 
 .topnav {
-  background-color: #0808085e;
+  background-color: #00000039;
   overflow: visible;
   border-radius: 6.25px;
   padding: 4px 10px;
-  margin: 0;
   backdrop-filter: blur(16px);
   display: inline-flex;
   justify-content: center;
@@ -144,9 +135,55 @@ button {
 }
 
 .main {
-  background-color: #0808085e;
+  background-color: #00000039;
   overflow: hidden;
   border-radius: 6.25px;
   backdrop-filter: blur(16px);
   margin: 10px 10px;
+}
+
+/* Settings Overrides */
+html.no-bg, html.no-bg body {
+  background-image: none !important;
+  background-color: #2e3440;
+}
+
+.light-mode, .light-mode body {
+  background-color: #ffffff !important;
+  color: #2E3440;
+}
+
+.light-mode .main, 
+.light-mode .topnav {
+  background-color: #00000039;
+}
+
+.light-mode .topnav a, 
+.light-mode .pfp-name, 
+.light-mode h1, 
+.light-mode h2, 
+.light-mode h3, 
+.light-mode h4, 
+.light-mode h6,
+.light-mode li {
+  color: #2E3440;
+}
+
+.light-mode a {
+  color: #5E81AC;
+}
+
+.light-mode button {
+  background-color: #E5E9F0;
+  color: #2E3440;
+}
+
+/* Font Overrides */
+.adwaita-font, .adwaita-font body {
+  font-family: AdwaitaSans, sans-serif !important;
+}
+
+.adwaita-font .pfp-name, 
+.adwaita-font .topnav a {
+  font-family: AdwaitaMono, monospace !important;
 }

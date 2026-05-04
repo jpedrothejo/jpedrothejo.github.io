@@ -6,23 +6,75 @@
     <title>jpedro's Website - 404</title>
     <link href="/style.css" rel="stylesheet" type="text/css" media="all">
     <link rel="icon" href="site icon.ico" /> 
+    <script src="/settings.js"></script>
   </head>
   
   <body style="padding-top: 45px;">
-    <link href="/style.css" rel="stylesheet" type="text/css" media="all">
     <div class="topnav">
       <a class="active" href="/">🏠</a>
       <a href="/projects.html">Projects</a>
       <a href="/roms.html">ROMs</a>
+      <a href="/settings.html">Settings</a>
     </div>
   <center>
     <p></p>
   <div class="main">
-    <h1>Weird, there's nothing here.</h1>
-    <p>This page is yet to be finished. Go back. Now.</p>
-    <a href="/index.html">Go home</a>
-    <p></p>
+    <h1>Settings</h1>
+    <div class="settings-toggles" style="margin: 24px auto 24px auto; width: fit-content; text-align: left;">
+      <label style="display:block;margin-bottom:8px;">
+        <input type="checkbox" id="toggle-blur" checked>
+        Enable blur effect
+      </label>
+      <label style="display:block;margin-bottom:8px;">
+        <input type="checkbox" id="toggle-bg" checked>
+        Enable background image
+      </label>
+      <label style="display:block;margin-bottom:8px;">
+        <input type="checkbox" id="toggle-dark" checked>
+        Dark mode
+      </label>
+      <label style="display:block;margin-bottom:8px;">
+        <input type="checkbox" id="toggle-font">
+        Use Adwaita fonts
+      </label>
+    </div>
+    <h6>(EXPERIMENTAL STILL, PLEASE EXPECT BUGS.)</h6>
   </div>
   </center>
+    <script>
+      // Use localStorage for site-wide settings
+      const blurToggle = document.getElementById('toggle-blur');
+      const bgToggle = document.getElementById('toggle-bg');
+      const darkToggle = document.getElementById('toggle-dark');
+      const fontToggle = document.getElementById('toggle-font');
+
+      function updateBlur() {
+        localStorage.setItem('blurEnabled', blurToggle.checked ? '1' : '0');
+        applyBlur();
+      }
+      function updateBg() {
+        localStorage.setItem('bgEnabled', bgToggle.checked ? '1' : '0');
+        applyBg();
+      }
+      function updateDark() {
+        localStorage.setItem('darkEnabled', darkToggle.checked ? '1' : '0');
+        applyDark();
+      }
+      function updateFont() {
+        localStorage.setItem('adwaitaEnabled', fontToggle.checked ? '1' : '0');
+        applyFont();
+      }
+
+      blurToggle.addEventListener('change', updateBlur);
+      bgToggle.addEventListener('change', updateBg);
+      darkToggle.addEventListener('change', updateDark);
+      fontToggle.addEventListener('change', updateFont);
+
+      // Set checkbox states from localStorage on page load
+      blurToggle.checked = localStorage.getItem('blurEnabled') !== '0';
+      bgToggle.checked = localStorage.getItem('bgEnabled') !== '0';
+      darkToggle.checked = localStorage.getItem('darkEnabled') !== '0';
+      fontToggle.checked = localStorage.getItem('adwaitaEnabled') === '1';
+    </script>
   </body>
 </html>
