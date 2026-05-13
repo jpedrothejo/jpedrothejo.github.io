@@ -35,6 +35,16 @@ function applyFont() {
   document.documentElement.classList.toggle('adwaita-font', enabled);
 }
 
+function applyAccentColor() {
+  const accent = localStorage.getItem('accentColor') || 'default'; // Default accent
+  // Remove all existing accent classes to ensure only one is active
+  document.documentElement.classList.remove('accent-blue', 'accent-green', 'accent-purple');
+
+  if (accent !== 'default') {
+    document.documentElement.classList.add(`accent-${accent}`);
+  }
+}
+
 function applyWallpaper() {
   const wallpaper = localStorage.getItem('wallpaper') || 'background.jpg';
   document.documentElement.style.backgroundImage = `url(/images/${wallpaper})`;
@@ -81,6 +91,7 @@ function applyAllSettings() {
   applyBg();
   applyDark();
   applyFont();
+  applyAccentColor();
   applyWallpaper();
 }
 
