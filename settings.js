@@ -37,8 +37,11 @@ function applyFont() {
 
 function applyAccentColor() {
   const accent = localStorage.getItem('accentColor') || 'default'; // Default accent
-  // Remove all existing accent classes to ensure only one is active
-  document.documentElement.classList.remove('accent-blue', 'accent-green', 'accent-purple');
+
+  // Remove any existing accent classes to ensure only one is active
+  Array.from(document.documentElement.classList).forEach(className => {
+    if (className.startsWith('accent-')) document.documentElement.classList.remove(className);
+  });
 
   if (accent !== 'default') {
     document.documentElement.classList.add(`accent-${accent}`);
