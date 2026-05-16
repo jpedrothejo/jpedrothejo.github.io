@@ -9,7 +9,7 @@
     <script src="/settings.js"></script>
   </head>
   
-  <body style="padding-top: 45px;">
+  <body>
     <div class="topnav">
       <a class="active" href="/">🏠</a>
       <a href="/projects.html">Projects</a>
@@ -38,9 +38,17 @@
       </div>
 
       <div class="setting-item">
-        <span>Dark mode</span>
+        <span>Enable Dark mode</span>
         <label class="switch">
           <input type="checkbox" class="custom-checkbox" data-setting-key="darkEnabled">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="setting-item">
+        <span>Enable better-looking theme</span>
+        <label class="switch">
+          <input type="checkbox" class="custom-checkbox" data-setting-key="glassEnabled" data-default-on="true">
           <span class="slider"></span>
         </label>
       </div>

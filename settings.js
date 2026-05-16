@@ -35,6 +35,10 @@ function applyFont() {
   document.documentElement.classList.toggle('adwaita-font', enabled);
 }
 
+function applyLiquidGlass() {
+  toggleClass('glassEnabled', 'liquid-glass', false);
+}
+
 function applyAccentColor() {
   const accent = localStorage.getItem('accentColor') || 'default'; // Default accent
 
@@ -95,6 +99,7 @@ function applyAllSettings() {
   applyDark();
   applyFont();
   applyAccentColor();
+  applyLiquidGlass();
   applyWallpaper();
 }
 

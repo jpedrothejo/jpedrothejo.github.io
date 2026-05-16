@@ -49,7 +49,7 @@ body {
   /* backdrop-filter: blur(16px); is already here */
   display: flex;
   gap: 12px;
-  backdrop-filter: blur(16px);
+  background: rgba(0, 0, 0, 0.22);
   border-radius: 16px;
   padding: 14px 18px;
   justify-content: center;
@@ -120,7 +120,6 @@ button {
   overflow: visible;
   border-radius: 6.25px;
   padding: 4px 10px;
-  backdrop-filter: blur(16px);
   display: inline-flex;
   justify-content: center;
   align-items: center;
@@ -153,8 +152,7 @@ button {
   background-color: #00000039;
   overflow: hidden;
   border-radius: 6.25px;
-  backdrop-filter: blur(16px);
-  margin: 5px 5px;
+  margin: 80px 5px 5px 5px;
   width: fit-content;
   box-sizing: border-box;
   padding: 10px;
@@ -180,7 +178,8 @@ html.no-bg, html.no-bg body {
 
 .light-mode .main, 
 .light-mode .topnav {
-  background-color: #00000039;
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.1);
 }
 
 .light-mode .topnav a, 
@@ -304,4 +303,28 @@ html.accent-pink {
   --accent-color-primary: #e91e63;
   --accent-color-hover: #d81b60;
   --accent-color-button-bg: #c2185b;
+}
+
+/* Liquid Glass Theme Overrides */
+html.liquid-glass .main,
+html.liquid-glass .topnav,
+html.liquid-glass .social-bg {
+  background: rgba(255, 255, 255, 0.08) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+html.liquid-glass .main {
+  border-radius: 32px;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+}
+
+html.liquid-glass .topnav {
+  border-radius: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+html.liquid-glass .social-bg {
+  border-radius: 24px;
 }
