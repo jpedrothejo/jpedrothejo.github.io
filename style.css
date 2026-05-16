@@ -202,7 +202,6 @@ html.no-bg, html.no-bg body {
   color: #2E3440;
 }
 
-/* Font Overrides */
 .adwaita-font, .adwaita-font body {
   font-family: AdwaitaSans, sans-serif !important;
 }
@@ -212,7 +211,6 @@ html.no-bg, html.no-bg body {
   font-family: AdwaitaMono, monospace !important;
 }
 
-/* Toggle Switch Styling */
 .setting-item {
   display: flex;
   justify-content: space-between;
@@ -274,23 +272,10 @@ input:checked + .slider:before {
   cursor: pointer;
 }
 
-/* Accent Color Themes */
 html.accent-blue {
-  --accent-color-primary: #61afef; /* A nice blue */
+  --accent-color-primary: #5d94c2;
   --accent-color-hover: #569cd6;
   --accent-color-button-bg: #4a8ac7;
-}
-
-html.accent-green {
-  --accent-color-primary: #98c379; /* A nice green */
-  --accent-color-hover: #86ae6d;
-  --accent-color-button-bg: #73a85a;
-}
-
-html.accent-purple {
-  --accent-color-primary: #c678dd; /* A nice purple */
-  --accent-color-hover: #a970c2;
-  --accent-color-button-bg: #9b59b6;
 }
 
 html.accent-orange {
@@ -299,13 +284,6 @@ html.accent-orange {
   --accent-color-button-bg: #c63700;
 }
 
-html.accent-pink {
-  --accent-color-primary: #e91e63;
-  --accent-color-hover: #d81b60;
-  --accent-color-button-bg: #c2185b;
-}
-
-/* Liquid Glass Theme Overrides */
 html.liquid-glass .main,
 html.liquid-glass .topnav,
 html.liquid-glass .social-bg {
