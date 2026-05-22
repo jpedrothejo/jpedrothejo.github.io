@@ -1,19 +1,26 @@
-// Helper to get the current boolean state of a setting from localStorage
 function getSettingBooleanState(key, defaultOn) {
   const storedValue = localStorage.getItem(key);
-  if (storedValue === '1') return true; // Explicitly ON
-  if (storedValue === '0') return false; // Explicitly OFF
-  return defaultOn; // If not set, use default
+  if (storedValue === '1') return true;
+  if (storedValue === '0') return false;
+  return defaultOn;
 }
 
-// Determines if a setting is enabled based on localStorage or default
 const isEnabled = (key, defaultOn = true) => getSettingBooleanState(key, defaultOn);
 
 function applyBlur() {
-  const enabled = isEnabled('blurEnabled');
-  const blurValue = enabled ? 'blur(16px)' : 'none';
+  const blurEnabled = isEnabled('blurEnabled');
+  const glassEnabled = isEnabled('glassEnabled');
+
+  let blurValue = 'none';
+  if (blurEnabled) {
+    blurValue = glassEnabled ? 'blur(20px) saturate(180%)' : 'blur(16px)';
+  }
+
   document.querySelectorAll('.main, .topnav, .social-bg')
-    .forEach(el => el.style.backdropFilter = blurValue);
+    .forEach(el => {
+      el.style.backdropFilter = blurValue;
+      el.style.webkitBackdropFilter = blurValue;
+    });
 }
 
 function toggleClass(id, className, invert = false) {
@@ -31,7 +38,7 @@ function applyDark() {
 }
 
 function applyFont() {
-  const enabled = isEnabled('adwaitaEnabled', false); // Adwaita font is off by default
+  const enabled = isEnabled('adwaitaEnabled', false);
   document.documentElement.classList.toggle('adwaita-font', enabled);
 }
 
@@ -40,9 +47,8 @@ function applyLiquidGlass() {
 }
 
 function applyAccentColor() {
-  const accent = localStorage.getItem('accentColor') || 'default'; // Default accent
+  const accent = localStorage.getItem('accentColor') || 'default';
 
-  // Remove any existing accent classes to ensure only one is active
   Array.from(document.documentElement.classList).forEach(className => {
     if (className.startsWith('accent-')) document.documentElement.classList.remove(className);
   });
@@ -57,26 +63,21 @@ function applyWallpaper() {
   document.documentElement.style.backgroundImage = `url(/images/${wallpaper})`;
 }
 
-// Initializes the state of all custom checkboxes and attaches event listeners
 function initializeCheckboxes() {
   document.querySelectorAll('.custom-checkbox[data-setting-key]').forEach(checkbox => {
     const key = checkbox.dataset.settingKey;
-    // Determine defaultOn for the checkbox based on its data attribute, or assume true
     const defaultOnForCheckbox = checkbox.dataset.defaultOn === 'false' ? false : true;
 
-    // Set the initial checked state of the checkbox
     checkbox.checked = getSettingBooleanState(key, defaultOnForCheckbox);
 
-    // Add event listener to update localStorage and re-apply settings on change
     checkbox.addEventListener('change', (event) => {
       const isChecked = event.target.checked;
       localStorage.setItem(key, isChecked ? '1' : '0');
-      applyAllSettings(); // Re-apply all settings after a change
+      applyAllSettings();
     });
   });
 }
 
-// Initializes dropdown menus
 function initializeSelects() {
   document.querySelectorAll('.custom-select[data-setting-key]').forEach(select => {
     const key = select.dataset.settingKey;
@@ -103,13 +104,11 @@ function applyAllSettings() {
   applyWallpaper();
 }
 
-// Apply settings and initialize checkboxes once DOM is ready
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', applyAllSettings);
   document.addEventListener('DOMContentLoaded', initializeCheckboxes);
   document.addEventListener('DOMContentLoaded', initializeSelects);
 } else {
-  // If DOM is already loaded, apply immediately
   applyAllSettings();
   initializeCheckboxes();
   initializeSelects();

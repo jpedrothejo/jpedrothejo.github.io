@@ -27,26 +27,33 @@ html {
   background-image: url(/images/background.jpg);
   background-repeat: no-repeat;
   background-attachment: fixed;
+}
 
-  /* Default Accent Colors */
-  --accent-color-primary: #c1c1ff;
-  --accent-color-hover: #8a8aff;
-  --accent-color-button-bg: #313d8f;
+@media (max-width: 600px) {
+  html {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+  }
+}
+
+html {
+  --accent-color-primary: #fff;
+  --accent-color-hover: #0a00945e;
+  --accent-color-button-bg: #0a00945e;
 }
 
 body {
   margin: 0;
   padding: 0;
   min-height: 100vh;
-  color: #ECEFF4; /* Default text color */
+  color: #ECEFF4;
   font-family: GoogleSans, sans-serif;
   background-color: transparent;
 }
 
-/* Social icon background style */
 .social-bg {
-  /* Existing styles */
-  /* backdrop-filter: blur(16px); is already here */
   display: flex;
   gap: 12px;
   background: rgba(0, 0, 0, 0.22);
@@ -61,17 +68,18 @@ body {
   width: 38px;
   height: 38px;
   object-fit: contain;
-  display: block; /* Already here */
+  display: block;
   transition: opacity 0.2s;
 }
 
 a {
-  color: var(--accent-color-primary); /* Use accent variable */
+  color: var(--accent-color-primary);
   text-decoration: none;
+  color: lightskyblue;
 }
 
 a:hover {
-  color: var(--accent-color-hover); /* Use accent variable */
+  color: var(--accent-color-hover);
   transition: 0.3s ease, opacity 0.3s ease;
   opacity: 0.7;
 }
@@ -116,13 +124,14 @@ button {
 }
 
 .topnav {
-  background-color: #00000039;
+  background-color: var(--accent-color-button-bg, #00000039);
   overflow: visible;
   border-radius: 6.25px;
-  padding: 4px 10px;
+  padding: 5px 6px;
   display: inline-flex;
   justify-content: center;
   align-items: center;
+  gap: 4px;
   position: fixed;
   top: 16px;
   left: 50%;
@@ -132,27 +141,48 @@ button {
 }
 
 .topnav a {
-  color: #f2f2f2;
+  color: #fff;
   text-align: center;
-  padding: 2px 7px;
+  padding: 4px 8px;
   border-radius: 6.25px;
   text-decoration: none;
-  font-size: 15px;
+  font-size: 16px;
   font-family: GoogleSans-Bold;
   font-weight: 100;
-  transition: background-color 0.3s ease, opacity 0.3s ease;
+  margin: 0;
+  transition: background-color 0.3s, color 0.3s, opacity 0.3s;
+}
+
+@media (max-width: 600px) {
+  .topnav {
+    gap: 4px;
+    top: auto;
+    bottom: 16px;
+  }
+  .main {
+    margin: 20px 5px 80px 5px !important;
+  }
+  .topnav a {
+    flex: unset;
+    text-align: center;
+    font-size: 16px;
+    padding: 4px 8px;
+    color: #fff;
+    margin: 0;
+  }
 }
 
 .topnav a:hover {
-  background-color: #0700635e;
-  opacity: 0.7;
+  background-color: var(--navy-hover-bg, var(--accent-color-hover, #0700635e));
+  color: #fff;
+  opacity: 1;
 }
 
 .main {
   background-color: #00000039;
   overflow: hidden;
   border-radius: 6.25px;
-  margin: 80px 5px 5px 5px;
+  margin: 80px 5px 20px 5px;
   width: fit-content;
   box-sizing: border-box;
   padding: 10px;
@@ -165,7 +195,6 @@ button {
   margin: 0;
 }
 
-/* Settings Overrides */
 html.no-bg, html.no-bg body {
   background-image: none !important;
   background-color: #2e3440;
@@ -175,13 +204,6 @@ html.no-bg, html.no-bg body {
   background-color: #ffffff !important;
   color: #2E3440;
 }
-
-.light-mode .main, 
-.light-mode .topnav {
-  background: rgba(0, 0, 0, 0.05);
-  border-color: rgba(0, 0, 0, 0.1);
-}
-
 .light-mode .topnav a, 
 .light-mode .pfp-name, 
 .light-mode h1, 
@@ -254,7 +276,7 @@ html.no-bg, html.no-bg body {
   border-radius: 50%;
 }
 
-input:checked + .slider { /* Use accent variable */
+input:checked + .slider {
   background-color: var(--accent-color-button-bg);
 }
 
@@ -263,7 +285,7 @@ input:checked + .slider:before {
 }
 
 .custom-select {
-  background-color: var(--accent-color-button-bg); /* Use accent variable */
+  background-color: var(--accent-color-button-bg);
   color: #eceff4;
   border: none;
   border-radius: 4px;
@@ -278,6 +300,13 @@ html.accent-blue {
   --accent-color-button-bg: #4a8ac7;
 }
 
+html.accent-navy {
+  --accent-color-primary: #5c70d6;
+  --accent-color-hover: #7b8fed;
+  --accent-color-button-bg: #4052b5;
+  --navy-hover-bg: #5c70d6;
+}
+
 html.accent-orange {
   --accent-color-primary: #ff4500;
   --accent-color-hover: #e03e00;
@@ -288,8 +317,6 @@ html.liquid-glass .main,
 html.liquid-glass .topnav,
 html.liquid-glass .social-bg {
   background: rgba(255, 255, 255, 0.08) !important;
-  backdrop-filter: blur(20px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
   border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
@@ -305,4 +332,8 @@ html.liquid-glass .topnav {
 
 html.liquid-glass .social-bg {
   border-radius: 24px;
+}
+
+html.liquid-glass .topnav a {
+  border-radius: 20px;
 }
