@@ -27,6 +27,7 @@ html {
   background-image: url(/images/background.jpg);
   background-repeat: no-repeat;
   background-attachment: fixed;
+  overflow-x: hidden;
 }
 
 @media (max-width: 600px) {
@@ -48,6 +49,7 @@ body {
   margin: 0;
   padding: 0;
   min-height: 100vh;
+  overflow-x: hidden;
   color: #ECEFF4;
   font-family: GoogleSans, sans-serif;
   background-color: transparent;
@@ -59,6 +61,7 @@ body {
   background: rgba(0, 0, 0, 0.22);
   border-radius: 16px;
   padding: 14px 18px;
+  flex-wrap: wrap;
   justify-content: center;
   align-items: center;
   width: fit-content;
@@ -161,6 +164,7 @@ button {
   }
   .main {
     margin: 20px 5px 80px 5px !important;
+    max-width: calc(100% - 10px);
   }
   .topnav a {
     flex: unset;
