@@ -27,22 +27,17 @@ html {
   background-image: url(/images/background.jpg);
   background-repeat: no-repeat;
   background-attachment: fixed;
+  background-color: #1a1b26;
   overflow-x: hidden;
+  --accent-color-primary: #fff;
+  --accent-color-hover: #0a00945e;
+  --accent-color-button-bg: #0a00945e;
 }
 
 @media (max-width: 600px) {
   html {
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
     background-attachment: scroll;
   }
-}
-
-html {
-  --accent-color-primary: #fff;
-  --accent-color-hover: #0a00945e;
-  --accent-color-button-bg: #0a00945e;
 }
 
 body {
@@ -107,7 +102,8 @@ li {
 
 img {
   border-radius: 6.25%;
-  display: block;
+  max-width: 100%;
+  height: auto;
 }
 
 button {
@@ -186,13 +182,16 @@ button {
   background-color: #00000039;
   overflow: hidden;
   border-radius: 6.25px;
-  margin: 80px 5px 20px 5px;
+  margin: 80px auto 20px auto;
   width: fit-content;
+  max-width: 95vw;
   box-sizing: border-box;
   padding: 10px;
   display: flex;
   flex-direction: column;
   gap: 10px;
+  align-items: center;
+  text-align: center;
 }
 
 .main > * {
