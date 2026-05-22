@@ -29,7 +29,7 @@ html {
   background-attachment: fixed;
   background-color: #1a1b26;
   overflow-x: hidden;
-  --accent-color-primary: #fff;
+  --accent-color-primary: #0a00945e;
   --accent-color-hover: #0a00945e;
   --accent-color-button-bg: #0a00945e;
 }
@@ -53,7 +53,7 @@ body {
 .social-bg {
   display: flex;
   gap: 12px;
-  background: rgba(0, 0, 0, 0.22);
+  background: #00000039;
   border-radius: 16px;
   padding: 14px 18px;
   flex-wrap: wrap;
@@ -62,6 +62,27 @@ body {
   width: fit-content;
   margin: 0 auto 24px auto;
 }
+
+.social-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none !important;
+}
+
+.social-label {
+  font-size: 0.65rem;
+  margin-top: 6px;
+  color: #ffffff !important;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  display: none;
+}
+
+html.show-social-labels .social-label {
+  display: block;
+}
+
 .icon-img {
   width: 38px;
   height: 38px;
@@ -123,10 +144,10 @@ button {
 }
 
 .topnav {
-  background-color: var(--accent-color-button-bg, #00000039);
+  background-color: #00000039;
   overflow: visible;
   border-radius: 6.25px;
-  padding: 5px 6px;
+  padding: 4px 5px;
   display: inline-flex;
   justify-content: center;
   align-items: center;
@@ -142,7 +163,7 @@ button {
 .topnav a {
   color: #fff;
   text-align: center;
-  padding: 4px 8px;
+  padding: 4px 5px;
   border-radius: 6.25px;
   text-decoration: none;
   font-size: 16px;
@@ -159,14 +180,14 @@ button {
     bottom: 16px;
   }
   .main {
-    margin: 20px 5px 80px 5px !important;
+    margin: 20px auto 80px auto !important;
     max-width: calc(100% - 10px);
   }
   .topnav a {
     flex: unset;
     text-align: center;
     font-size: 16px;
-    padding: 4px 8px;
+    padding: 4px 5px;
     color: #fff;
     margin: 0;
   }
@@ -319,9 +340,13 @@ html.accent-orange {
 }
 
 html.liquid-glass .main,
-html.liquid-glass .topnav,
+html.liquid-glass .topnav {
+  background: rgba(219, 208, 208, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
 html.liquid-glass .social-bg {
-  background: rgba(255, 255, 255, 0.08) !important;
+  background: var(--accent-color-primary) !important;
   border: 1px solid rgba(255, 255, 255, 0.15);
 }
 

@@ -42,6 +42,10 @@ function applyFont() {
   document.documentElement.classList.toggle('adwaita-font', enabled);
 }
 
+function applySocialLabels() {
+  toggleClass('socialLabelsEnabled', 'show-social-labels', false);
+}
+
 function applyLiquidGlass() {
   toggleClass('glassEnabled', 'liquid-glass', false);
 }
@@ -100,6 +104,7 @@ function applyAllSettings() {
   applyDark();
   applyFont();
   applyAccentColor();
+  applySocialLabels();
   applyLiquidGlass();
   applyWallpaper();
 }
