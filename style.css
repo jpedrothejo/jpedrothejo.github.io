@@ -29,9 +29,9 @@ html {
   background-attachment: fixed;
   background-color: #1a1b26;
   overflow-x: hidden;
-  --accent-color-primary: #0a00945e;
-  --accent-color-hover: #0a00945e;
-  --accent-color-button-bg: #0a00945e;
+  --accent-color-primary: #0a009440;
+  --accent-color-hover: #0a009440;
+  --accent-color-button-bg: #0a0094;
 }
 
 @media (max-width: 600px) {
@@ -321,27 +321,27 @@ input:checked + .slider:before {
 }
 
 html.accent-blue {
-  --accent-color-primary: #5d94c2;
-  --accent-color-hover: #569cd6;
-  --accent-color-button-bg: #4a8ac7;
+  --accent-color-primary: #5d95c240;
+  --accent-color-hover: #569cd640;
+  --accent-color-button-bg: #4a8bc7;
 }
 
 html.accent-navy {
-  --accent-color-primary: #5c70d6;
-  --accent-color-hover: #7b8fed;
+  --accent-color-primary: #5c70d640;
+  --accent-color-hover: #7b8fed40;
   --accent-color-button-bg: #4052b5;
-  --navy-hover-bg: #5c70d6;
+  --navy-hover-bg: #5c70d640;
 }
 
 html.accent-orange {
-  --accent-color-primary: #ff4500;
-  --accent-color-hover: #e03e00;
-  --accent-color-button-bg: #c63700;
+  --accent-color-primary: #ff440040;
+  --accent-color-hover: #e03e0040;
+  --accent-color-button-bg: #c63800;
 }
 
 html.liquid-glass .main,
 html.liquid-glass .topnav {
-  background: rgba(219, 208, 208, 0.08) !important;
+  background: var(--accent-color-primary) !important;
   border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
