@@ -9,12 +9,7 @@ const isEnabled = (key, defaultOn = true) => getSettingBooleanState(key, default
 
 function applyBlur() {
   const blurEnabled = isEnabled('blurEnabled');
-  const glassEnabled = isEnabled('glassEnabled');
-
-  let blurValue = 'none';
-  if (blurEnabled) {
-    blurValue = glassEnabled ? 'blur(20px) saturate(180%)' : 'blur(16px)';
-  }
+  const blurValue = blurEnabled ? 'blur(20px) saturate(180%)' : 'none';
 
   document.querySelectorAll('.main, .topnav, .social-bg')
     .forEach(el => {
@@ -46,10 +41,6 @@ function applySocialLabels() {
   toggleClass('socialLabelsEnabled', 'show-social-labels', false);
 }
 
-function applyLiquidGlass() {
-  toggleClass('glassEnabled', 'liquid-glass', false);
-}
-
 function applyAccentColor() {
   const accent = localStorage.getItem('accentColor') || 'default';
 
@@ -65,6 +56,40 @@ function applyAccentColor() {
 function applyWallpaper() {
   const wallpaper = localStorage.getItem('wallpaper') || 'background.jpg';
   document.documentElement.style.backgroundImage = `url(/images/${wallpaper})`;
+}
+
+function applyTopbarPosition() {
+  const position = localStorage.getItem('topbarPosition') || 'top';
+  const validPositions = ['top', 'left', 'right'];
+  const topbarPosition = validPositions.includes(position) ? position : 'top';
+
+  document.documentElement.classList.remove('topbar-top', 'topbar-left', 'topbar-right');
+  document.documentElement.classList.add(`topbar-${topbarPosition}`);
+}
+
+function applyTopbarMinimized() {
+  const minimized = isEnabled('topbarMinimized', false);
+  document.documentElement.classList.toggle('topbar-minimized', minimized);
+  document.querySelectorAll('.topnav a[data-full-label][data-minimized-label]')
+    .forEach(link => {
+      link.textContent = minimized ? link.dataset.minimizedLabel : link.dataset.fullLabel;
+    });
+}
+
+function setupMinimizeButton() {
+  const btn = document.getElementById('minimizeBtn');
+  if (btn) {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const current = isEnabled('topbarMinimized', false);
+      localStorage.setItem('topbarMinimized', current ? '0' : '1');
+      applyTopbarMinimized();
+      const checkbox = document.querySelector('.custom-checkbox[data-setting-key="topbarMinimized"]');
+      if (checkbox) {
+        checkbox.checked = !current;
+      }
+    });
+  }
 }
 
 function initializeCheckboxes() {
@@ -105,16 +130,27 @@ function applyAllSettings() {
   applyFont();
   applyAccentColor();
   applySocialLabels();
-  applyLiquidGlass();
   applyWallpaper();
+  applyTopbarPosition();
+  applyTopbarMinimized();
 }
+
+applyBg();
+applyDark();
+applyFont();
+applyAccentColor();
+applySocialLabels();
+applyWallpaper();
+applyTopbarPosition();
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', applyAllSettings);
   document.addEventListener('DOMContentLoaded', initializeCheckboxes);
   document.addEventListener('DOMContentLoaded', initializeSelects);
+  document.addEventListener('DOMContentLoaded', setupMinimizeButton);
 } else {
   applyAllSettings();
   initializeCheckboxes();
   initializeSelects();
+  setupMinimizeButton();
 }
