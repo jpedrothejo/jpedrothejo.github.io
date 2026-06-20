@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>jpedro's Website</title>
-    <link href="style.css" rel="stylesheet" type="text/css" media="all">
-    <link rel="icon" href="images/site icon.ico"> 
-    <script src="settings.js"></script>
-  </head>
-  <body>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>jpedro's Website</title>
+  <link href="style.css" rel="stylesheet" type="text/css" media="all">
+  <link rel="icon" href="images/site icon.ico">
+  <script src="settings.js"></script>
+</head>
+
+<body>
   <div class="topnav">
     <a class="active" href="/" data-full-label="🏠" data-minimized-label="🏠">🏠</a>
     <a href="/projects.html" data-full-label="Projects" data-minimized-label="🧪">Projects</a>
@@ -17,61 +19,76 @@
     <a class="minimize-btn" id="minimizeBtn" title="Minimize">−</a>
   </div>
   <div class="main">
-  <h1>jpedro's Website</h1>
-  <img src="images/profile pic.png" width="225"> 
-  <div class="pfp-name">
-    <h3>jpedro // jpedrothejo // john</h3>
+    <h1>jpedro's Website</h1>
+    <div class="card-bg">
+      <img src="images/profile pic.png" width="225">
+      <div class="pfp-name">
+        <h3>jpedro // jpedrothejo // john</h3>
+      </div>
+
+      <script src="https://unpkg.com/typeit@8.7.1/dist/index.umd.js"></script>
+      <p id="welcome"></p>
+      <script>
+        const messages = [
+          "'I AM THE REPAIRSHOP' - TGTTEL",
+          "welcome to my website!",
+          "i need to learn how to port custom ROMs to phones",
+          "coding sounds fun, i should try it",
+          "follow my social medias below!",
+          "but he made graduation",
+          "aa",
+          "🥺🥺🥺"
+        ];
+        const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+        new TypeIt("#welcome", {
+          strings: [randomMessage],
+          speed: 35,
+          waitUntilVisible: true,
+        }).go();
+      </script>
+    </div>
+
+    <h2 class="social-title">My Socials</h2>
+
+    <div class="social-bg">
+      <a href="youtube.com/@jpedrothejo" class="social-item"><img src="icons/youtube.png" class="icon-img"><span
+          class="social-label">YouTube</span></a>
+      <a href="https://www.tiktok.com/@jpedrothejo" class="social-item"><img src="icons/tiktok.png"
+          class="icon-img"><span class="social-label">TikTok</span></a>
+      <a href="https://github.com/jpedrothejo" class="social-item"><img src="icons/github.jpeg" class="icon-img"><span
+          class="social-label">GitHub</span></a>
+      <a href="https://x.com/jpedroooo_" class="social-item"><img src="icons/twitter.png" class="icon-img"><span
+          class="social-label">Twitter</span></a>
+      <a href="https://www.roblox.com/users/2725283118/profile" class="social-item"><img src="icons/roblox.png"
+          class="icon-img"><span class="social-label">Roblox</span></a>
+      <a href="https://discord.com/users/1076145924474146959" class="social-item"><img src="icons/discord.jpeg"
+          class="icon-img"><span class="social-label">Discord</span></a>
+      <a href="https://bsky.app/profile/jpedrothejohn.bsky.social" class="social-item"><img src="icons/bsky.png"
+          class="icon-img"><span class="social-label">Bluesky</span></a>
+    </div>
+    <h2>What am I doing right now?</h2>
+    <div class="card-bg">
+      <div style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 5px;">
+        <img src="https://api.statusbadges.me/badge/status/944684533108854854" alt="status">
+        <img src="https://api.statusbadges.me/badge/playing/944684533108854854" alt="playing">
+        <img src="https://api.statusbadges.me/badge/vscode/944684533108854854Ks" alt="vscode">
+        <a href="https://api.statusbadges.me/openspotify/944684533108854854" target="_blank" rel="noopener"
+          style="display: flex;"><img src="https://api.statusbadges.me/badge/spotify/944684533108854854"
+            alt="spotify"></a>
+      </div>
+    </div>
+    <h2>About Me</h2>
+    <div class="card-bg">
+      <ul>
+        <li>I'm Brazillian</li>
+        <li>I'm a Demiboy</li>
+        <li>I like technology</li>
+        <li>I'm 13 years old</li>
+        <li>I'm a BFDI fan</li>
+      </ul>
+    </div>
+    <h6>psst, if you see this, join my <a href="https://discord.gg/y5FKFwA4xY">discord server</a> :)</h6>
   </div>
+</body>
 
-  <script src="https://unpkg.com/typeit@8.7.1/dist/index.umd.js"></script>
-  <p id="welcome"></p>
-  <script>
-    const messages = [
-      "'I AM THE REPAIRSHOP' - TGTTEL",
-      "welcome to my website!",
-      "i need to learn how to port custom ROMs to phones",
-      "coding sounds fun, i should try it",
-      "follow my social medias below!",
-      "but he made graduation",
-      "you should totally join my discord server",
-      "🥺🥺🥺"
-    ];
-    const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-    new TypeIt("#welcome", {
-      strings: [randomMessage],
-      speed: 35,
-      waitUntilVisible: true,
-    }).go();
-  </script>
-
-<h2 class="social-title">My Socials</h2>
-
-<div class="social-bg">
-  <a href="youtube.com/@jpedrothejo" class="social-item"><img src="icons/youtube.png" class="icon-img"><span class="social-label">YouTube</span></a>
-  <a href="https://www.tiktok.com/@jpedrothejo" class="social-item"><img src="icons/tiktok.png" class="icon-img"><span class="social-label">TikTok</span></a>
-  <a href="https://github.com/jpedrothejo" class="social-item"><img src="icons/github.jpeg" class="icon-img"><span class="social-label">GitHub</span></a>
-  <a href="https://x.com/jpedroooo_" class="social-item"><img src="icons/twitter.png" class="icon-img"><span class="social-label">Twitter</span></a>
-  <a href="https://www.roblox.com/users/2725283118/profile" class="social-item"><img src="icons/roblox.png" class="icon-img"><span class="social-label">Roblox</span></a>
-  <a href="https://discord.com/users/1076145924474146959" class="social-item"><img src="icons/discord.jpeg" class="icon-img"><span class="social-label">Discord</span></a>
-  <a href="https://bsky.app/profile/jpedrothejohn.bsky.social" class="social-item"><img src="icons/bsky.png" class="icon-img"><span class="social-label">Bluesky</span></a>
-</div>
-<h2>What am I doing right now?</h2>
-<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 5px;">
-  <img src="https://api.statusbadges.me/badge/status/944684533108854854" alt="status">
-  <img src="https://api.statusbadges.me/badge/playing/944684533108854854" alt="playing">
-  <img src="https://api.statusbadges.me/badge/vscode/944684533108854854Ks" alt="vscode">
-  <a href="https://api.statusbadges.me/openspotify/944684533108854854" target="_blank" rel="noopener"><img src="https://api.statusbadges.me/badge/spotify/944684533108854854" alt="spotify"></a>
-</div>
-  <h2>About Me</h2>
-<ul>
-  <li>Brazillian</li>
-  <li>I like technology</li>
-  <li>I like Geometry Dash and stuff like that</li>
-  <li>13yo</li>
-  <li>Kanye West fan</li>
-  <li>BFDI fan</li>
-  <li>Techtoker</li>
-  <h6>psst, if you see this, join my <a href="https://discord.gg/y5FKFwA4xY">discord server</a> :)</h6>
-</div>
-  </body>
 </html>

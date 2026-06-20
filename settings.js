@@ -11,7 +11,7 @@ function applyBlur() {
   const blurEnabled = isEnabled('blurEnabled');
   const blurValue = blurEnabled ? 'blur(20px) saturate(180%)' : 'none';
 
-  document.querySelectorAll('.main, .topnav, .social-bg')
+  document.querySelectorAll('.main, .topnav, .social-bg, .card-bg')
     .forEach(el => {
       el.style.backdropFilter = blurValue;
       el.style.webkitBackdropFilter = blurValue;

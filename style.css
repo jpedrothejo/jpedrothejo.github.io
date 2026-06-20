@@ -34,11 +34,6 @@ html {
   --accent-color-button-bg: #0a00945e;
 }
 
-@media (max-width: 600px) {
-  html {
-    background-attachment: scroll;
-  }
-}
 
 body {
   margin: 0;
@@ -142,7 +137,19 @@ body {
   justify-content: center;
   align-items: center;
   width: fit-content;
-  margin: 0 auto 24px auto;
+  margin: 0 auto;
+}
+
+.card-bg {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #00000039;
+  border-radius: 16px;
+  padding: 14px 18px;
+  width: fit-content;
+  margin: 0 auto;
+  gap: 10px;
 }
 
 .social-item {
@@ -390,6 +397,30 @@ button {
     color: #fff;
     margin: 0;
   }
+
+  .mobile-hidden-setting {
+    display: none !important;
+  }
+
+  .minimize-btn {
+    display: none !important;
+  }
+
+  .social-title {
+    font-size: 1.25rem !important;
+  }
+
+  .social-bg,
+  .card-bg {
+    padding: 8px 12px !important;
+    gap: 8px !important;
+    border-radius: 16px !important;
+  }
+
+  .icon-img {
+    width: 28px !important;
+    height: 28px !important;
+  }
 }
 
 .topnav a:hover {
@@ -417,6 +448,11 @@ button {
 
 .main > * {
   margin: 0;
+}
+
+.main h2 {
+  margin-top: 28px;
+  margin-bottom: 4px;
 }
 
 html.no-bg {
@@ -545,7 +581,8 @@ html.accent-orange {
   border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
-.social-bg {
+.social-bg,
+.card-bg {
   background: var(--accent-color-primary) !important;
   border: 1px solid rgba(255, 255, 255, 0.15);
 }
@@ -560,7 +597,8 @@ html.accent-orange {
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
-.social-bg {
+.social-bg,
+.card-bg {
   border-radius: 24px;
 }
 
