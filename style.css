@@ -252,8 +252,29 @@ button {
 }
 
 /* Topbar position variants */
+.topbar-top .topnav {
+  top: 16px;
+  bottom: auto;
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+  flex-direction: row;
+  animation-name: topnav-enter;
+}
+
+.topbar-bottom .topnav {
+  top: auto;
+  bottom: 16px;
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+  flex-direction: row;
+  animation-name: topnav-enter;
+}
+
 .topbar-left .topnav {
   top: 50%;
+  bottom: auto;
   left: 16px;
   right: auto;
   transform: translateY(-50%);
@@ -263,11 +284,26 @@ button {
 
 .topbar-right .topnav {
   top: 50%;
+  bottom: auto;
   right: 16px;
   left: auto;
   transform: translateY(-50%);
   flex-direction: column;
   animation-name: topnav-right-enter;
+}
+
+/* Margin variants for the main page container based on Topbar position */
+.topbar-top .main {
+  margin: 80px auto 20px auto;
+}
+
+.topbar-bottom .main {
+  margin: 20px auto 80px auto;
+}
+
+.topbar-left .main,
+.topbar-right .main {
+  margin: 20px auto 20px auto;
 }
 
 .topbar-left .minimize-btn,
@@ -357,13 +393,6 @@ button {
 @media (max-width: 600px) {
   .topnav {
     gap: 4px;
-    top: auto;
-    bottom: 16px;
-    left: 50% !important;
-    right: auto !important;
-    transform: translateX(-50%) !important;
-    flex-direction: row !important;
-    animation-name: topnav-enter !important;
   }
 
   .topbar-left .minimize-btn,
@@ -385,7 +414,6 @@ button {
   }
   
   .main {
-    margin: 20px auto 80px auto !important;
     max-width: calc(100% - 10px);
   }
 

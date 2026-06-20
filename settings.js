@@ -59,11 +59,11 @@ function applyWallpaper() {
 }
 
 function applyTopbarPosition() {
-  const position = localStorage.getItem('topbarPosition') || 'top';
-  const validPositions = ['top', 'left', 'right'];
-  const topbarPosition = validPositions.includes(position) ? position : 'top';
+  const position = localStorage.getItem('topbarPosition') || 'bottom';
+  const validPositions = ['top', 'bottom', 'left', 'right'];
+  const topbarPosition = validPositions.includes(position) ? position : 'bottom';
 
-  document.documentElement.classList.remove('topbar-top', 'topbar-left', 'topbar-right');
+  document.documentElement.classList.remove('topbar-top', 'topbar-bottom', 'topbar-left', 'topbar-right');
   document.documentElement.classList.add(`topbar-${topbarPosition}`);
 }
 
