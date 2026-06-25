@@ -48,77 +48,77 @@ body {
 @keyframes page-enter {
   from {
     opacity: 0;
-    transform: translateY(10px) scale(0.98);
+    transform: translateY(10px) scale(0.98) perspective(1px);
   }
 
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0) scale(1) perspective(1px);
   }
 }
 
 @keyframes topnav-enter {
   from {
     opacity: 0;
-    transform: translateX(-50%) translateY(-12px) scale(0.96);
+    transform: translateX(-50%) translateY(-12px) scale(0.96) perspective(1px);
   }
 
   to {
     opacity: 1;
-    transform: translateX(-50%) translateY(0) scale(1);
+    transform: translateX(-50%) translateY(0) scale(1) perspective(1px);
   }
 }
 
 @keyframes topnav-left-enter {
   from {
     opacity: 0;
-    transform: translateY(-50%) translateX(-12px) scale(0.96);
+    transform: translateY(-50%) translateX(-12px) scale(0.96) perspective(1px);
   }
 
   to {
     opacity: 1;
-    transform: translateY(-50%) translateX(0) scale(1);
+    transform: translateY(-50%) translateX(0) scale(1) perspective(1px);
   }
 }
 
 @keyframes topnav-right-enter {
   from {
     opacity: 0;
-    transform: translateY(-50%) translateX(12px) scale(0.96);
+    transform: translateY(-50%) translateX(12px) scale(0.96) perspective(1px);
   }
 
   to {
     opacity: 1;
-    transform: translateY(-50%) translateX(0) scale(1);
+    transform: translateY(-50%) translateX(0) scale(1) perspective(1px);
   }
 }
 
 @keyframes minimize-button-enter {
   0% {
     opacity: 0;
-    transform: translateX(-10px) scale(0.45) rotate(-18deg);
+    transform: translateX(-10px) scale(0.45) rotate(-18deg) perspective(1px);
   }
 
   70% {
     opacity: 1;
-    transform: translateX(2px) scale(1.12) rotate(4deg);
+    transform: translateX(2px) scale(1.12) rotate(4deg) perspective(1px);
   }
 
   100% {
     opacity: 1;
-    transform: translateX(0) scale(1) rotate(0deg);
+    transform: translateX(0) scale(1) rotate(0deg) perspective(1px);
   }
 }
 
 @keyframes minimize-button-enter-vertical {
   0% {
     opacity: 0;
-    transform: translateY(-10px) scale(0.45) rotate(-18deg);
+    transform: translateY(-10px) scale(0.45) rotate(-18deg) perspective(1px);
   }
 
   70% {
     opacity: 1;
-    transform: translateY(2px) scale(1.12) rotate(4deg);
+    transform: translateY(2px) scale(1.12) rotate(4deg) perspective(1px);
   }
 
   100% {
@@ -244,20 +244,19 @@ button {
   position: fixed;
   top: 16px;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-50%) perspective(1px);
   width: fit-content;
   z-index: 1000;
   transition: all 0.3s ease;
   animation: topnav-enter 0.45s ease both;
 }
 
-/* Topbar position variants */
 .topbar-top .topnav {
   top: 16px;
   bottom: auto;
   left: 50%;
   right: auto;
-  transform: translateX(-50%);
+  transform: translateX(-50%) perspective(1px);
   flex-direction: row;
   animation-name: topnav-enter;
 }
@@ -267,7 +266,7 @@ button {
   bottom: 16px;
   left: 50%;
   right: auto;
-  transform: translateX(-50%);
+  transform: translateX(-50%) perspective(1px);
   flex-direction: row;
   animation-name: topnav-enter;
 }
@@ -277,7 +276,7 @@ button {
   bottom: auto;
   left: 16px;
   right: auto;
-  transform: translateY(-50%);
+  transform: translateY(-50%) perspective(1px);
   flex-direction: column;
   animation-name: topnav-left-enter;
 }
@@ -287,12 +286,11 @@ button {
   bottom: auto;
   right: 16px;
   left: auto;
-  transform: translateY(-50%);
+  transform: translateY(-50%) perspective(1px);
   flex-direction: column;
   animation-name: topnav-right-enter;
 }
 
-/* Margin variants for the main page container based on Topbar position */
 .topbar-top .main {
   margin: 80px auto 20px auto;
 }
@@ -312,7 +310,7 @@ button {
   max-width: 28px;
   height: 28px;
   max-height: 0;
-  transform: translateY(-8px) scale(0.7) rotate(-12deg);
+  transform: translateY(-8px) scale(0.7) rotate(-12deg) perspective(1px);
 }
 
 .topbar-left .topnav:hover .minimize-btn,
@@ -320,11 +318,10 @@ button {
 .topbar-right .topnav:hover .minimize-btn,
 .topbar-right .topnav:focus-within .minimize-btn {
   max-height: 28px;
-  transform: translateY(0) scale(1) rotate(0deg);
+  transform: translateY(0) scale(1) rotate(0deg) perspective(1px);
   animation: minimize-button-enter-vertical 0.35s ease both;
 }
 
-/* Minimized state */
 .topbar-minimized .topnav {
   width: auto;
   padding: 4px;
@@ -356,7 +353,7 @@ button {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transform: translateX(-8px) scale(0.7) rotate(-12deg);
+  transform: translateX(-8px) scale(0.7) rotate(-12deg) perspective(1px);
   transform-origin: center;
   transition: background-color 0.3s, color 0.3s, opacity 0.2s ease, max-width 0.3s ease, max-height 0.3s ease, transform 0.2s ease, visibility 0s linear 0.2s;
 }
@@ -367,7 +364,7 @@ button {
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
-  transform: translateX(0) scale(1) rotate(0deg);
+  transform: translateX(0) scale(1) rotate(0deg) perspective(1px);
   animation: minimize-button-enter 0.35s ease both;
   transition-delay: 0s;
 }
@@ -401,7 +398,7 @@ button {
     max-width: 0;
     height: 28px;
     max-height: 28px;
-    transform: translateX(-8px) scale(0.7) rotate(-12deg);
+    transform: translateX(-8px) scale(0.7) rotate(-12deg) perspective(1px);
   }
 
   .topbar-left .topnav:hover .minimize-btn,
@@ -409,7 +406,7 @@ button {
   .topbar-right .topnav:hover .minimize-btn,
   .topbar-right .topnav:focus-within .minimize-btn {
     max-width: 28px;
-    transform: translateX(0) scale(1) rotate(0deg);
+    transform: translateX(0) scale(1) rotate(0deg) perspective(1px);
     animation: minimize-button-enter 0.35s ease both;
   }
 
@@ -576,7 +573,7 @@ input:checked+.slider {
 }
 
 input:checked+.slider:before {
-  transform: translateX(20px);
+  transform: translateX(20px) perspective(1px);
 }
 
 .custom-select {
