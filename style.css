@@ -639,10 +639,11 @@ html.accent-orange {
   border-radius: 20px;
 }
 
-.roms-container {
+.roms-container,
+.devices {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  gap: 10px;
   justify-items: center;
 }
 
