@@ -111,7 +111,7 @@ function initializeSelects() {
   document.querySelectorAll('.custom-select[data-setting-key]').forEach(select => {
     const key = select.dataset.settingKey;
     const savedValue = localStorage.getItem(key);
-    
+
     if (savedValue) {
       select.value = savedValue;
     }

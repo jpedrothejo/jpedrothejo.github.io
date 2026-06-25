@@ -18,6 +18,11 @@
   src: url(/fonts/GoogleSansRounded-Bold.ttf)
 }
 
+@font-face {
+  font-family: SanFrancisco;
+  src: url(/fonts/SF-Pro.otf);
+}
+
 
 html {
   transition: background 0.3s, color 0.3s;
@@ -605,10 +610,10 @@ html.accent-navy {
   --navy-hover-bg: #5c70d633;
 }
 
-html.accent-orange {
-  --accent-color-primary: #ff450033;
-  --accent-color-hover: #e03e0033;
-  --accent-color-button-bg: #c63700;
+html.accent-nord {
+  --accent-color-primary: #3b42523f;
+  --accent-color-hover: #434c5e3a;
+  --accent-color-button-bg: #434c5e;
 }
 
 .main,
