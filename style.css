@@ -639,6 +639,13 @@ html.accent-orange {
   border-radius: 20px;
 }
 
+.roms-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  justify-items: center;
+}
+
 @media (prefers-reduced-motion: reduce) {
 
   *,
@@ -652,7 +659,7 @@ html.accent-orange {
 }
 
 
-@keyframes yt-sidebar-enter {
+/* @keyframes yt-sidebar-enter {
   from {
     opacity: 0;
     transform: translateX(20px);
@@ -731,7 +738,6 @@ html.accent-orange {
   line-height: 1;
 }
 
-/* The collapsible panel — absolutely positioned so it never displaces the tab */
 .yt-sidebar-panel {
   position: absolute;
   right: 100%;
@@ -749,7 +755,6 @@ html.accent-orange {
   flex-direction: column;
   overflow: hidden;
 
-  /* Collapsed: slide right until fully off-screen behind the tab */
   transform: translateY(-50%) translateX(calc(var(--panel-width) + 100%));
   opacity: 0;
   pointer-events: none;
@@ -757,7 +762,6 @@ html.accent-orange {
     opacity 0.3s ease;
 }
 
-/* Open state */
 .yt-sidebar--open .yt-sidebar-panel {
   transform: translateY(-50%) translateX(0);
   opacity: 1;
@@ -896,7 +900,6 @@ html.accent-orange {
   text-align: center;
 }
 
-/* Light mode overrides */
 html.light-mode .yt-sidebar-tab,
 html.light-mode .yt-sidebar-panel {
   background: rgba(255, 255, 255, 0.75) !important;
@@ -922,7 +925,6 @@ html.light-mode .yt-sidebar-close:hover {
   color: #2E3440;
 }
 
-/* Mobile: sidebar becomes a bottom sheet */
 @media (max-width: 600px) {
   .yt-sidebar {
     top: auto;
@@ -966,4 +968,4 @@ html.light-mode .yt-sidebar-close:hover {
   .yt-sidebar--open .yt-sidebar-panel {
     transform: translateY(0);
   }
-}
+} */
