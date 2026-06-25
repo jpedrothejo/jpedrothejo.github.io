@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>jpedro's Website - Settings</title>
   <link href="/style.css" rel="stylesheet" type="text/css" media="all">
-  <link rel="icon" href="site icon.ico" />
+  <link rel="icon" href="images/site icon.ico" />
   <script src="/settings.js"></script>
 </head>
 
@@ -22,92 +22,99 @@
     <div class="main">
       <h1>Settings</h1>
       <div class="card-bg">
-        <div class="settings-toggles" style="margin: 24px auto 24px auto; width: fit-content; text-align: left;">
-          <div class="setting-item">
-            <span>Enable Blur Effect</span>
+        <div class="settings">
+          <h3>Performance Settings</h3>
+
+          <div class="settings-toggles" style="margin: 24px auto 24px auto; width: fit-content; text-align: left;">
+            <div class="setting-item">
+              <span>Blur Effect</span>
+              <label class="switch">
+                <input type="checkbox" class="custom-checkbox" data-setting-key="blurEnabled">
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="setting-item">
+              <span>Background Image</span>
+              <label class="switch">
+                <input type="checkbox" class="custom-checkbox" data-setting-key="bgEnabled">
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="setting-item">
+              <span>Dark Mode</span>
+              <label class="switch">
+                <input type="checkbox" class="custom-checkbox" data-setting-key="darkEnabled">
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="setting-item">
+              <span>Show Social Labels</span>
+              <label class="switch">
+                <input type="checkbox" class="custom-checkbox" data-setting-key="socialLabelsEnabled"
+                  data-default-on="true">
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="setting-item mobile-hidden-setting">
+              <span>Minimal Pagebar</span>
+              <label class="switch">
+                <input type="checkbox" class="custom-checkbox" data-setting-key="topbarMinimized"
+                  data-default-on="false">
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <h3>Visual Settings</h3>
+
+            <div class="setting-item">
+              <span>Adwaita fonts</span>
+              <label class="switch">
+                <input type="checkbox" class="custom-checkbox" data-setting-key="adwaitaEnabled"
+                  data-default-on="false">
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <!-- <div class="setting-item">
+            <span>Potato Mode (Experimental)</span>
             <label class="switch">
-              <input type="checkbox" class="custom-checkbox" data-setting-key="blurEnabled">
+              <input type="checkbox" id="master-toggle">
               <span class="slider"></span>
             </label>
-          </div>
+          </div> -->
 
-          <div class="setting-item">
-            <span>Show Background Image</span>
-            <label class="switch">
-              <input type="checkbox" class="custom-checkbox" data-setting-key="bgEnabled">
-              <span class="slider"></span>
-            </label>
-          </div>
+            <div class="setting-item">
+              <span>Topbar Position</span>
+              <select class="custom-select" data-setting-key="topbarPosition">
+                <option value="bottom">Bottom</option>
+                <option value="top">Top</option>
+                <option value="left">Left</option>
+                <option value="right">Right</option>
+              </select>
+            </div>
 
-          <div class="setting-item">
-            <span>Enable Dark mode</span>
-            <label class="switch">
-              <input type="checkbox" class="custom-checkbox" data-setting-key="darkEnabled">
-              <span class="slider"></span>
-            </label>
-          </div>
+            <div class="setting-item">
+              <span>Wallpaper</span>
+              <select class="custom-select" data-setting-key="wallpaper">
+                <option value="background.jpg">Default</option>
+                <option value="setup.jpg">Windows 95 Setup</option>
+              </select>
+            </div>
 
-          <div class="setting-item">
-            <span>Show Social Labels</span>
-            <label class="switch">
-              <input type="checkbox" class="custom-checkbox" data-setting-key="socialLabelsEnabled"
-                data-default-on="true">
-              <span class="slider"></span>
-            </label>
-          </div>
-
-          <div class="setting-item mobile-hidden-setting">
-            <span>Minimize Pagebar</span>
-            <label class="switch">
-              <input type="checkbox" class="custom-checkbox" data-setting-key="topbarMinimized" data-default-on="false">
-              <span class="slider"></span>
-            </label>
-          </div>
-
-          <div class="setting-item">
-            <span>Use Adwaita fonts</span>
-            <label class="switch">
-              <input type="checkbox" class="custom-checkbox" data-setting-key="adwaitaEnabled" data-default-on="false">
-              <span class="slider"></span>
-            </label>
-          </div>
-
-          <!-- <div class="setting-item">
-        <span>Potato Mode (Experimental)</span>
-        <label class="switch">
-          <input type="checkbox" id="master-toggle">
-          <span class="slider"></span>
-        </label>
-      </div> -->
-
-          <div class="setting-item">
-            <span>Topbar Position</span>
-            <select class="custom-select" data-setting-key="topbarPosition">
-              <option value="bottom">Bottom</option>
-              <option value="top">Top</option>
-              <option value="left">Left</option>
-              <option value="right">Right</option>
-            </select>
-          </div>
-
-          <div class="setting-item">
-            <span>Wallpaper</span>
-            <select class="custom-select" data-setting-key="wallpaper">
-              <option value="background.jpg">Default</option>
-              <option value="setup.jpg">Windows 95 Setup</option>
-            </select>
-          </div>
-
-          <div class="setting-item">
-            <span>Accent Color</span>
-            <select class="custom-select" data-setting-key="accentColor">
-              <option value="default">Default</option>
-              <option value="blue">Blue</option>
-              <option value="orange">Orange</option>
-            </select>
+            <div class="setting-item">
+              <span>Accent Color</span>
+              <select class="custom-select" data-setting-key="accentColor">
+                <option value="default">Default</option>
+                <option value="blue">Blue</option>
+                <option value="orange">Orange</option>
+              </select>
+            </div>
           </div>
         </div>
-      </div>
   </center>
 </body>
 
