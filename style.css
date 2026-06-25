@@ -29,9 +29,9 @@ html {
   background-attachment: fixed;
   background-color: #1a1b26;
   overflow-x: hidden;
-  --accent-color-primary: #0a009433;
-  --accent-color-hover: #0a009433;
-  --accent-color-button-bg: #0a00945e;
+  --accent-color-primary: #5d94c233;
+  --accent-color-hover: #569cd633;
+  --accent-color-button-bg: #4a8ac7;
 }
 
 
