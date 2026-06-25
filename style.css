@@ -595,6 +595,12 @@ html.accent-blue {
   --accent-color-button-bg: #4a8ac7;
 }
 
+html.accent-default {
+  --accent-color-primary: #5d94c233;
+  --accent-color-hover: #569cd633;
+  --accent-color-button-bg: #4a8ac7;
+}
+
 html.accent-navy {
   --accent-color-primary: #5c70d633;
   --accent-color-hover: #7b8fed33;
