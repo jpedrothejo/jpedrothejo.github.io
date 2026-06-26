@@ -8,6 +8,20 @@
   <link href="/style.css" rel="stylesheet" type="text/css" media="all">
   <link rel="icon" href="images/site icon.ico" />
   <script src="/settings.js"></script>
+  <style>
+    /* This forces the desktop to hide it, directly inside the HTML document */
+    @media screen and (min-width: 769px) {
+      .mobile-only-setting {
+        display: none !important;
+      }
+    }
+
+    @media screen and (max-width: 768px) {
+      .mobile-only-setting {
+        display: flex !important;
+      }
+    }
+  </style>
 </head>
 
 <body>
@@ -68,7 +82,7 @@
               </label>
             </div>
 
-            <div class="setting-item">
+            <div class="setting-item mobile-only-setting">
               <span>Minimal Pagebar</span>
               <label class="switch">
                 <input type="checkbox" class="custom-checkbox" data-setting-key="topbarMinimized"
@@ -101,6 +115,7 @@
               <select class="custom-select" data-setting-key="wallpaper">
                 <option value="background.jpg">Default</option>
                 <option value="setup.jpg">Windows 95 Setup</option>
+                <option value="no-bg">None</option>
               </select>
             </div>
 
