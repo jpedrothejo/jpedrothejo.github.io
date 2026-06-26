@@ -154,3 +154,35 @@ if (document.readyState === 'loading') {
   initializeSelects();
   setupMinimizeButton();
 }
+
+function triggerPotatoMode(potatoToggle) {
+  const isPotatoModeOn = potatoToggle.checked;
+  const settingsToDisable = ['blurEnabled', 'socialLabelsEnabled'];
+  const settingToEnable = 'topbarMinimized';
+
+  settingsToDisable.forEach(key => {
+    const targetCheckbox = document.querySelector(`[data-setting-key="${key}"]`);
+    if (targetCheckbox) {
+      targetCheckbox.checked = !isPotatoModeOn;
+      targetCheckbox.disabled = isPotatoModeOn;
+      targetCheckbox.closest('.setting-item')?.classList.toggle('disabled-visual', isPotatoModeOn);
+      targetCheckbox.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+  });
+
+  const enableTarget = document.querySelector(`[data-setting-key="${settingToEnable}"]`);
+  if (enableTarget) {
+    enableTarget.checked = isPotatoModeOn;
+    enableTarget.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+
+  const wallpaperDropdown = document.querySelector('[data-setting-key="wallpaper"]') || document.getElementById('wallpaper');
+  if (wallpaperDropdown) {
+    if (isPotatoModeOn) {
+      wallpaperDropdown.value = 'no-bg';
+    } else {
+      wallpaperDropdown.value = 'background.jpg';
+    }
+    wallpaperDropdown.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+}
