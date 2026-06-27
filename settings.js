@@ -16,10 +16,12 @@ function applyBlur() {
       el.style.backdropFilter = blurValue;
       el.style.webkitBackdropFilter = blurValue;
     });
+
+  document.documentElement.classList.toggle('blur-disabled', !blurEnabled);
 }
 
-function toggleClass(id, className, invert = false) {
-  const enabled = isEnabled(id);
+function toggleClass(id, className, invert = false, defaultOn = true) {
+  const enabled = isEnabled(id, defaultOn);
   const shouldApply = invert ? !enabled : enabled;
   document.documentElement.classList.toggle(className, shouldApply);
 }
@@ -32,9 +34,20 @@ function applyDark() {
   toggleClass('darkEnabled', 'light-mode', true);
 }
 
+function applyReducedAnimation() {
+  toggleClass('reducedAnimation', 'reduced-motion', false, false);
+}
+
 function applyFont() {
-  const enabled = isEnabled('adwaitaEnabled', false);
-  document.documentElement.classList.toggle('adwaita-font', enabled);
+  let fontFamily = localStorage.getItem('fontFamily') || 'sfpro';
+
+  if (!localStorage.getItem('fontFamily')) {
+    localStorage.setItem('fontFamily', fontFamily);
+  }
+
+  document.documentElement.classList.toggle('adwaita-font', fontFamily === 'adwaita');
+  document.documentElement.classList.toggle('sfpro-font', fontFamily === 'sfpro');
+  document.documentElement.classList.toggle('google-font', fontFamily === 'googlesansrounded');
 }
 
 function applySocialLabels() {
@@ -127,6 +140,7 @@ function applyAllSettings() {
   applyBlur();
   applyBg();
   applyDark();
+  applyReducedAnimation();
   applyFont();
   applyAccentColor();
   applySocialLabels();
@@ -174,6 +188,13 @@ function triggerPotatoMode(potatoToggle) {
   if (enableTarget) {
     enableTarget.checked = isPotatoModeOn;
     enableTarget.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+
+  const reducedAnimationTarget = document.querySelector('[data-setting-key="reducedAnimation"]');
+  if (reducedAnimationTarget) {
+    reducedAnimationTarget.checked = isPotatoModeOn;
+    localStorage.setItem('reducedAnimation', isPotatoModeOn ? '1' : '0');
+    reducedAnimationTarget.dispatchEvent(new Event('change', { bubbles: true }));
   }
 
   const wallpaperDropdown = document.querySelector('[data-setting-key="wallpaper"]') || document.getElementById('wallpaper');

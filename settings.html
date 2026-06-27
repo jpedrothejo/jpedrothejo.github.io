@@ -55,6 +55,14 @@
             </label>
           </div>
 
+          <div class="setting-item">
+            <span>Reduced Animation</span>
+            <label class="switch">
+              <input type="checkbox" class="custom-checkbox" data-setting-key="reducedAnimation" data-default-on="false">
+              <span class="slider"></span>
+            </label>
+          </div>
+
           <div class="setting-item mobile-only-setting">
             <span>Minimal Pagebar</span>
             <label class="switch">
@@ -64,11 +72,12 @@
           </div>
 
           <div class="setting-item">
-            <span>Adwaita Fonts</span>
-            <label class="switch">
-              <input type="checkbox" class="custom-checkbox" data-setting-key="adwaitaEnabled" data-default-on="false">
-              <span class="slider"></span>
-            </label>
+            <span>Font</span>
+            <select class="custom-select" data-setting-key="fontFamily">
+              <option value="sfpro">SFPro</option>
+              <option value="googlesansrounded">GoogleSansRounded</option>
+              <option value="adwaita">Adwaita</option>
+            </select>
           </div>
 
           <div class="setting-item">
@@ -112,8 +121,7 @@
           <div class="setting-item">
             <span>Potato Mode</span>
             <label class="switch">
-              <input type="checkbox" id="potato-mode" class="custom-checkbox" data-setting-key="potatoEnabled"
-                onchange="triggerPotatoMode(this)">
+              <input type="checkbox" id="potato-mode" class="custom-checkbox" data-setting-key="potatoEnabled" onchange="triggerPotatoMode(this)">
               <span class="slider"></span>
             </label>
           </div>
