@@ -39,7 +39,7 @@ function applyReducedAnimation() {
 }
 
 function applyFont() {
-  let fontFamily = localStorage.getItem('fontFamily') || 'sfpro';
+  let fontFamily = localStorage.getItem('fontFamily') || 'googlesansrounded';
 
   if (!localStorage.getItem('fontFamily')) {
     localStorage.setItem('fontFamily', fontFamily);

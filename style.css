@@ -157,11 +157,14 @@ body {
   padding: 10px 12px;
   width: fit-content;
   min-width: 220px;
-  max-width: 260px;
+  max-width: 560px;
   margin: 0 auto;
   gap: 8px;
-  height: fit-content;
   box-sizing: border-box;
+}
+
+.card-bg > img {
+  margin: 0 auto;
 }
 
 .card-bg p,
