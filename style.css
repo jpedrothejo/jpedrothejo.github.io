@@ -154,11 +154,14 @@ body {
   align-items: center;
   background: rgba(0, 0, 0, 0.9375);
   border-radius: 16px;
-  padding: 8px 12px;
+  padding: 10px 12px;
   width: fit-content;
+  min-width: 220px;
+  max-width: 260px;
   margin: 0 auto;
-  gap: 5px;
+  gap: 8px;
   height: fit-content;
+  box-sizing: border-box;
 }
 
 .card-bg p,
@@ -253,6 +256,14 @@ img {
   height: auto;
 }
 
+.card-bg > img {
+  width: 220px;
+  max-width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+}
+
 button {
   background-color: #14171d;
   color: #ECEFF4;
@@ -263,6 +274,10 @@ button {
 }
 
 .pfp-name {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
   font-family: GoogleSans-Bold;
   font-optical-sizing: auto;
   font-weight: 700;
