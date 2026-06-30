@@ -23,6 +23,11 @@
   src: url(/fonts/SFPro.otf);
 }
 
+@font-face {
+  font-family: SFPro-Bold;
+  src: url(/fonts/SFPro-Bold.otf);
+}
+
 
 html {
   transition: background 0.3s, color 0.3s;
