@@ -11,13 +11,43 @@ function applyBlur() {
   const blurEnabled = isEnabled('blurEnabled');
   const blurValue = blurEnabled ? 'blur(20px) saturate(180%)' : 'none';
 
-  document.querySelectorAll('.main, .topnav, .social-bg, .card-bg')
+  document.querySelectorAll('.main, .topnav, .social-bg')
     .forEach(el => {
       el.style.backdropFilter = blurValue;
       el.style.webkitBackdropFilter = blurValue;
     });
 
   document.documentElement.classList.toggle('blur-disabled', !blurEnabled);
+}
+
+function applyCardBgBlur() {
+  const blurLevel = localStorage.getItem('cardBgBlur') || 'light';
+  const blurAmounts = {
+    none: 'none',
+    light: 'blur(12.5px)',
+    medium: 'blur(25px)',
+    heavy: 'blur(50px)'
+  };
+  const blurValue = blurAmounts[blurLevel] || blurAmounts.light;
+  const finalValue = blurValue === 'none' ? 'none' : `${blurValue} saturate(180%)`;
+
+  document.querySelectorAll('.card-bg')
+    .forEach(el => {
+      el.style.backdropFilter = finalValue;
+      el.style.webkitBackdropFilter = finalValue;
+    });
+}
+
+function applyBackgroundBlur() {
+  const blurLevel = localStorage.getItem('backgroundBlur') || 'none';
+  const blurAmounts = {
+    none: 'none',
+    light: 'blur(12.5px)',
+    medium: 'blur(25px)',
+    heavy: 'blur(32.5px)'
+  };
+  const blurValue = blurAmounts[blurLevel] || blurAmounts.none;
+  document.documentElement.style.setProperty('--wallpaper-blur', blurValue);
 }
 
 function toggleClass(id, className, invert = false, defaultOn = true) {
@@ -40,14 +70,22 @@ function applyReducedAnimation() {
 
 function applyFont() {
   let fontFamily = localStorage.getItem('fontFamily') || 'googlesansrounded';
+  const boldEnabled = isEnabled('fontBold', false);
 
   if (!localStorage.getItem('fontFamily')) {
     localStorage.setItem('fontFamily', fontFamily);
   }
 
+  if (fontFamily === 'googlesansbold') {
+    fontFamily = 'googlesansrounded';
+    localStorage.setItem('fontFamily', fontFamily);
+  }
+
   document.documentElement.classList.toggle('adwaita-font', fontFamily === 'adwaita');
-  document.documentElement.classList.toggle('sfpro-font', fontFamily === 'sfpro');
-  document.documentElement.classList.toggle('google-font', fontFamily === 'googlesansrounded');
+  document.documentElement.classList.toggle('sfpro-font', fontFamily === 'sfpro' && !boldEnabled);
+  document.documentElement.classList.toggle('sfpro-bold-font', fontFamily === 'sfpro' && boldEnabled);
+  document.documentElement.classList.toggle('google-font', fontFamily === 'googlesansrounded' && !boldEnabled);
+  document.documentElement.classList.toggle('google-bold-font', fontFamily === 'googlesansrounded' && boldEnabled);
 }
 
 function applySocialLabels() {
@@ -68,7 +106,44 @@ function applyAccentColor() {
 
 function applyWallpaper() {
   const wallpaper = localStorage.getItem('wallpaper') || 'background.jpg';
-  document.documentElement.style.backgroundImage = `url(/images/${wallpaper})`;
+  document.documentElement.classList.toggle('gradient-wallpaper', wallpaper === 'gradient');
+  const gradientStatic = wallpaper === 'gradient' && isEnabled('gradientStopMotion', false);
+  document.documentElement.classList.toggle('gradient-static', gradientStatic);
+
+  if (wallpaper === 'gradient') {
+    applyGradientSettings();
+  } else if (wallpaper === 'no-bg') {
+    document.documentElement.style.setProperty('--wallpaper-image', 'none');
+  } else {
+    document.documentElement.style.setProperty('--wallpaper-image', `url(/images/${wallpaper})`);
+  }
+
+  toggleGradientSettings(wallpaper === 'gradient');
+}
+
+function applyGradientSettings() {
+  const customizeColors = isEnabled('gradientCustomizeColors', false);
+  const defaultColors = ['#0f172a', '#4f46e5', '#ec4899', '#22d3ee'];
+  const colors = [];
+
+  for (let i = 1; i <= 4; i++) {
+    const color = localStorage.getItem(`gradientColor${i}`);
+    colors.push(color || defaultColors[i - 1]);
+  }
+
+  const activeColors = customizeColors ? colors : defaultColors;
+  document.documentElement.style.setProperty('--gradient-colors', activeColors.join(', '));
+  document.documentElement.style.setProperty('--wallpaper-image', `linear-gradient(135deg, ${activeColors.join(', ')})`);
+}
+
+function toggleGradientSettings(show) {
+  document.querySelectorAll('.gradient-settings').forEach(el => {
+    el.style.display = show ? 'flex' : 'none';
+  });
+  document.querySelectorAll('.gradient-color-pickers').forEach(el => {
+    const customizeColors = isEnabled('gradientCustomizeColors', false);
+    el.style.display = show && customizeColors ? 'flex' : 'none';
+  });
 }
 
 function applyTopbarPosition() {
@@ -112,10 +187,21 @@ function initializeCheckboxes() {
 
     checkbox.checked = getSettingBooleanState(key, defaultOnForCheckbox);
 
+    if (key === 'gradientCustomizeColors') {
+      document.querySelectorAll('.gradient-color-pickers').forEach(el => {
+        el.style.display = checkbox.checked ? 'flex' : 'none';
+      });
+    }
+
     checkbox.addEventListener('change', (event) => {
       const isChecked = event.target.checked;
       localStorage.setItem(key, isChecked ? '1' : '0');
       applyAllSettings();
+      if (key === 'gradientCustomizeColors') {
+        document.querySelectorAll('.gradient-color-pickers').forEach(el => {
+          el.style.display = isChecked ? 'flex' : 'none';
+        });
+      }
     });
   });
 }
@@ -132,12 +218,22 @@ function initializeSelects() {
     select.addEventListener('change', (event) => {
       localStorage.setItem(key, event.target.value);
       applyAllSettings();
+      if (key === 'wallpaper') {
+        toggleGradientSettings(event.target.value === 'gradient');
+      }
     });
   });
+
+  const wallpaperSelect = document.querySelector('[data-setting-key="wallpaper"]');
+  if (wallpaperSelect) {
+    toggleGradientSettings(wallpaperSelect.value === 'gradient');
+  }
 }
 
 function applyAllSettings() {
   applyBlur();
+  applyCardBgBlur();
+  applyBackgroundBlur();
   applyBg();
   applyDark();
   applyReducedAnimation();

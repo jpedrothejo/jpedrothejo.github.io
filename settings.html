@@ -70,6 +70,14 @@
               <span class="slider"></span>
             </label>
           </div>
+          
+          <div class="setting-item">
+            <span>Bold Font</span>
+            <label class="switch">
+              <input type="checkbox" class="custom-checkbox" data-setting-key="fontBold" data-default-on="false">
+              <span class="slider"></span>
+            </label>
+          </div>
 
           <div class="setting-item">
             <span>Font</span>
@@ -95,7 +103,53 @@
             <select class="custom-select" data-setting-key="wallpaper">
               <option value="background.jpg">Default</option>
               <option value="setup.jpg">Windows 95 Setup</option>
+              <option value="gradient">Gradient</option>
               <option value="no-bg">None</option>
+            </select>
+          </div>
+
+          <div class="gradient-settings" style="display:none; flex-direction:column; gap:8px; margin-bottom:12px;">
+            <div class="setting-item">
+              <span>Custom Gradient Colors</span>
+              <label class="switch">
+                <input type="checkbox" class="custom-checkbox" data-setting-key="gradientCustomizeColors" data-default-on="false">
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="gradient-color-pickers" style="display:none; flex-wrap:wrap; gap:8px;">
+              <div class="setting-item" style="width:100%;">
+                <span>Color 1</span>
+                <input type="color" class="custom-color" data-setting-key="gradientColor1" value="#0f172a">
+              </div>
+              <div class="setting-item" style="width:100%;">
+                <span>Color 2</span>
+                <input type="color" class="custom-color" data-setting-key="gradientColor2" value="#4f46e5">
+              </div>
+              <div class="setting-item" style="width:100%;">
+                <span>Color 3</span>
+                <input type="color" class="custom-color" data-setting-key="gradientColor3" value="#ec4899">
+              </div>
+              <div class="setting-item" style="width:100%;">
+                <span>Color 4</span>
+                <input type="color" class="custom-color" data-setting-key="gradientColor4" value="#22d3ee">
+              </div>
+            </div>
+            <div class="setting-item">
+              <span>Stop Gradient Motion</span>
+              <label class="switch">
+                <input type="checkbox" class="custom-checkbox" data-setting-key="gradientStopMotion" data-default-on="false">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="setting-item">
+            <span>Background Blur</span>
+            <select class="custom-select" data-setting-key="backgroundBlur">
+              <option value="none">None</option>
+              <option value="light">Light</option>
+              <option value="medium">Medium</option>
+              <option value="heavy">Heavy</option>
             </select>
           </div>
 
@@ -121,7 +175,7 @@
           <div class="setting-item">
             <span>Potato Mode</span>
             <label class="switch">
-              <input type="checkbox" id="potato-mode" class="custom-checkbox" data-setting-key="potatoEnabled" onchange="triggerPotatoMode(this)">
+              <input type="checkbox" id="potato-mode" class="custom-checkbox" data-setting-key="potatoEnabled" data-default-on="false" onchange="triggerPotatoMode(this)">
               <span class="slider"></span>
             </label>
           </div>
