@@ -199,7 +199,7 @@ html.gradient-static body::before {
   align-items: center;
   background: rgba(0, 0, 0, 0.9375);
   border-radius: 16px;
-  padding: 10px 12px;
+  padding: 14px;
   width: fit-content;
   min-width: 220px;
   max-width: 560px;
@@ -210,6 +210,9 @@ html.gradient-static body::before {
 
 .card-bg > img {
   margin: 0 auto;
+  display: block;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
 }
 
 .card-bg p,
@@ -346,7 +349,7 @@ button {
   align-items: center;
   gap: 4px;
   position: fixed;
-  top: 16px;
+  top: 18px;
   left: 50%;
   transform: translateX(-50%) perspective(1px);
   width: fit-content;
@@ -356,7 +359,7 @@ button {
 }
 
 .topbar-top .topnav {
-  top: 16px;
+  top: 18px;
   bottom: auto;
   left: 50%;
   right: auto;

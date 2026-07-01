@@ -9,7 +9,7 @@ const isEnabled = (key, defaultOn = true) => getSettingBooleanState(key, default
 
 function applyBlur() {
   const blurEnabled = isEnabled('blurEnabled');
-  const blurValue = blurEnabled ? 'blur(20px) saturate(180%)' : 'none';
+  const blurValue = blurEnabled ? 'blur(4.75px) saturate(180%)' : 'none';
 
   document.querySelectorAll('.main, .topnav, .social-bg')
     .forEach(el => {
@@ -24,9 +24,9 @@ function applyCardBgBlur() {
   const blurLevel = localStorage.getItem('cardBgBlur') || 'light';
   const blurAmounts = {
     none: 'none',
-    light: 'blur(12.5px)',
-    medium: 'blur(25px)',
-    heavy: 'blur(50px)'
+    light: 'blur(4.75px)',
+    medium: 'blur(4.75px)',
+    heavy: 'blur(4.75px)'
   };
   const blurValue = blurAmounts[blurLevel] || blurAmounts.light;
   const finalValue = blurValue === 'none' ? 'none' : `${blurValue} saturate(180%)`;
@@ -42,9 +42,9 @@ function applyBackgroundBlur() {
   const blurLevel = localStorage.getItem('backgroundBlur') || 'none';
   const blurAmounts = {
     none: 'none',
-    light: 'blur(12.5px)',
-    medium: 'blur(25px)',
-    heavy: 'blur(32.5px)'
+    light: 'blur(4.75px)',
+    medium: 'blur(4.75px)',
+    heavy: 'blur(4.75px)'
   };
   const blurValue = blurAmounts[blurLevel] || blurAmounts.none;
   document.documentElement.style.setProperty('--wallpaper-blur', blurValue);
