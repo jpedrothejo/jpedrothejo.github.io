@@ -61,16 +61,18 @@ body {
 body::before {
   content: "";
   position: fixed;
-  top: -1px;
-  right: -1px;
-  bottom: -1px;
-  left: -1px;
+  top: -50px;
+  right: -50px;
+  bottom: -50px;
+  left: -50px;
   background-image: var(--wallpaper-image, url(/images/background.jpg));
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
   filter: var(--wallpaper-blur, none);
-  will-change: filter;
+  transform: scale(1.1);
+  transform-origin: center center;
+  will-change: filter, transform;
   z-index: -1;
   pointer-events: none;
 }
@@ -256,6 +258,10 @@ html.gradient-static body::before {
 
 html.show-social-labels .social-label {
   display: block;
+}
+
+html.hide-figcaptions figcaption {
+  display: none !important;
 }
 
 .icon-img {

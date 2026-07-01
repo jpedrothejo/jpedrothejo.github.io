@@ -39,9 +39,9 @@
           <h3>Visual Settings</h3>
 
           <div class="setting-item">
-            <span>Dark Mode</span>
+            <span>Light Mode</span>
             <label class="switch">
-              <input type="checkbox" class="custom-checkbox" data-setting-key="darkEnabled">
+              <input type="checkbox" class="custom-checkbox" data-setting-key="darkEnabled" data-default-on="false">
               <span class="slider"></span>
             </label>
           </div>
@@ -51,6 +51,14 @@
             <label class="switch">
               <input type="checkbox" class="custom-checkbox" data-setting-key="socialLabelsEnabled"
                 data-default-on="true">
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-item">
+            <span>Show Figcaptions</span>
+            <label class="switch">
+              <input type="checkbox" class="custom-checkbox" data-setting-key="hideFigcaptions" data-default-on="true">
               <span class="slider"></span>
             </label>
           </div>
@@ -79,35 +87,7 @@
             </label>
           </div>
 
-          <div class="setting-item">
-            <span>Font</span>
-            <select class="custom-select" data-setting-key="fontFamily">
-              <option value="sfpro">SFPro</option>
-              <option value="googlesansrounded" selected>GoogleSansRounded</option>
-              <option value="adwaita">Adwaita</option>
-            </select>
-          </div>
-
-          <div class="setting-item">
-            <span>Topbar Position</span>
-            <select class="custom-select" data-setting-key="topbarPosition">
-              <option value="bottom">Bottom</option>
-              <option value="top">Top</option>
-              <option value="left">Left</option>
-              <option value="right">Right</option>
-            </select>
-          </div>
-
-          <div class="setting-item">
-            <span>Wallpaper</span>
-            <select class="custom-select" data-setting-key="wallpaper">
-              <option value="background.jpg">Default</option>
-              <option value="setup.jpg">Windows 95 Setup</option>
-              <option value="gradient">Gradient</option>
-              <option value="no-bg">None</option>
-            </select>
-          </div>
-
+          
           <div class="gradient-settings" style="display:none; flex-direction:column; gap:8px; margin-bottom:12px;">
             <div class="setting-item">
               <span>Custom Gradient Colors</span>
@@ -116,6 +96,7 @@
                 <span class="slider"></span>
               </label>
             </div>
+            
             <div class="gradient-color-pickers" style="display:none; flex-wrap:wrap; gap:8px;">
               <div class="setting-item" style="width:100%;">
                 <span>Color 1</span>
@@ -134,6 +115,7 @@
                 <input type="color" class="custom-color" data-setting-key="gradientColor4" value="#22d3ee">
               </div>
             </div>
+
             <div class="setting-item">
               <span>Stop Gradient Motion</span>
               <label class="switch">
@@ -144,7 +126,36 @@
           </div>
 
           <div class="setting-item">
-            <span>Background Blur</span>
+            <span>Font</span>
+            <select class="custom-select" data-setting-key="fontFamily">
+              <option value="googlesansrounded" selected>GoogleSansRounded</option>
+              <option value="adwaita">Adwaita</option>
+              <option value="sfpro">SFPro</option>
+            </select>
+          </div>
+
+          <div class="setting-item">
+            <span>Topbar Position</span>
+            <select class="custom-select" data-setting-key="topbarPosition">
+              <option value="top">Top</option>
+              <option value="bottom">Bottom</option>
+              <option value="left">Left</option>
+              <option value="right">Right</option>
+            </select>
+          </div>
+
+          <div class="setting-item">
+            <span>Wallpaper</span>
+            <select class="custom-select" data-setting-key="wallpaper">
+              <option value="background.jpg">Default</option>
+              <option value="setup.jpg">Windows 95 Setup</option>
+              <option value="gradient">Gradient</option>
+              <option value="no-bg">None</option>
+            </select>
+          </div>
+
+          <div class="setting-item">
+            <span>Wallpaper Blur</span>
             <select class="custom-select" data-setting-key="backgroundBlur">
               <option value="none">None</option>
               <option value="light">Light</option>

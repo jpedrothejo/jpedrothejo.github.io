@@ -61,7 +61,7 @@ function applyBg() {
 }
 
 function applyDark() {
-  toggleClass('darkEnabled', 'light-mode', true);
+  toggleClass('darkEnabled', 'light-mode', false, false);
 }
 
 function applyReducedAnimation() {
@@ -90,6 +90,11 @@ function applyFont() {
 
 function applySocialLabels() {
   toggleClass('socialLabelsEnabled', 'show-social-labels', false);
+}
+
+function applyFigcaptionVisibility() {
+  const hideFigcaptions = !isEnabled('hideFigcaptions', true);
+  document.documentElement.classList.toggle('hide-figcaptions', hideFigcaptions);
 }
 
 function applyAccentColor() {
@@ -151,7 +156,9 @@ function applyTopbarPosition() {
   const validPositions = ['top', 'bottom', 'left', 'right'];
   const topbarPosition = validPositions.includes(position) ? position : 'bottom';
 
-  document.documentElement.classList.remove('topbar-top', 'topbar-bottom', 'topbar-left', 'topbar-right');
+  document.documentElement.classList.remove(
+    'topbar-top', 'topbar-bottom', 'topbar-left', 'topbar-right'
+  );
   document.documentElement.classList.add(`topbar-${topbarPosition}`);
 }
 
@@ -206,6 +213,22 @@ function initializeCheckboxes() {
   });
 }
 
+function initializeColorPickers() {
+  document.querySelectorAll('.custom-color[data-setting-key]').forEach(input => {
+    const key = input.dataset.settingKey;
+    const savedValue = localStorage.getItem(key);
+
+    if (savedValue) {
+      input.value = savedValue;
+    }
+
+    input.addEventListener('input', (event) => {
+      localStorage.setItem(key, event.target.value);
+      applyAllSettings();
+    });
+  });
+}
+
 function initializeSelects() {
   document.querySelectorAll('.custom-select[data-setting-key]').forEach(select => {
     const key = select.dataset.settingKey;
@@ -240,6 +263,7 @@ function applyAllSettings() {
   applyFont();
   applyAccentColor();
   applySocialLabels();
+  applyFigcaptionVisibility();
   applyWallpaper();
   applyTopbarPosition();
   applyTopbarMinimized();
@@ -256,11 +280,13 @@ applyTopbarPosition();
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', applyAllSettings);
   document.addEventListener('DOMContentLoaded', initializeCheckboxes);
+  document.addEventListener('DOMContentLoaded', initializeColorPickers);
   document.addEventListener('DOMContentLoaded', initializeSelects);
   document.addEventListener('DOMContentLoaded', setupMinimizeButton);
 } else {
   applyAllSettings();
   initializeCheckboxes();
+  initializeColorPickers();
   initializeSelects();
   setupMinimizeButton();
 }
