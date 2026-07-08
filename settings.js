@@ -39,14 +39,8 @@ function applyCardBgBlur() {
 }
 
 function applyBackgroundBlur() {
-  const blurLevel = localStorage.getItem('backgroundBlur') || 'none';
-  const blurAmounts = {
-    none: 'none',
-    light: 'blur(4.75px)',
-    medium: 'blur(4.75px)',
-    heavy: 'blur(4.75px)'
-  };
-  const blurValue = blurAmounts[blurLevel] || blurAmounts.none;
+  const blurEnabled = isEnabled('backgroundBlur', false);
+  const blurValue = blurEnabled ? 'blur(4.75px)' : 'none';
   document.documentElement.style.setProperty('--wallpaper-blur', blurValue);
 }
 

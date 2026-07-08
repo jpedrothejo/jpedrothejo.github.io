@@ -35,7 +35,7 @@ html {
   background: none;
   background-color: #1a1b26;
   overflow-x: hidden;
-  --wallpaper-image: url(/images/background.jpg);
+  --wallpaper-image: none;
   --wallpaper-blur: none;
   --accent-color-primary: #5d94c233;
   --accent-color-primary-opaque: rgba(93, 148, 194, 1);
@@ -671,9 +671,11 @@ html.no-bg body::before {
 
 .switch {
   position: relative;
-  display: inline-block;
-  width: 44px;
+  display: inline-flex;
+  min-width: 120px;
+  width: auto;
   height: 24px;
+  justify-content: flex-end;
   flex-shrink: 0;
 }
 
@@ -687,9 +689,9 @@ html.no-bg body::before {
   position: absolute;
   cursor: pointer;
   top: 0;
-  left: 0;
   right: 0;
   bottom: 0;
+  width: 44px;
   background-color: #4c566a;
   transition: background-color 0.2s ease, transform 0.2s ease;
   border-radius: 24px;
