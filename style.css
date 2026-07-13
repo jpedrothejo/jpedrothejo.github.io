@@ -281,7 +281,7 @@ a {
   color: lightskyblue;
 }
 
-a:hover {
+a:not(.device-card-link):hover {
   color: var(--accent-color-hover);
   transition: 0.3s ease, opacity 0.3s ease;
   opacity: 0.7;
@@ -855,13 +855,125 @@ html.blur-disabled .card-bg {
 .roms-container,
 .devices {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, minmax(260px, 1fr));
+  gap: 18px;
+  justify-items: stretch;
+  width: 100%;
+  align-items: stretch;
+}
+
+@media (max-width: 720px) {
+  .devices {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding: 0 12px;
+  }
+
+  .topnav {
+    gap: 2px;
+    padding: 6px 8px;
+  }
+
+  .topnav a {
+    font-size: 0.9rem;
+    padding: 8px 10px;
+  }
+
+  .device-card {
+    min-height: 220px;
+  }
+
+  .device-card img {
+    max-height: 120px;
+  }
+}
+
+.device-card,
+.roms-container figure,
+.roms-container .phone-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.device-card {
+  width: 100%;
+  min-width: 0;
+  max-width: none;
+  margin: 0;
+  padding: 18px;
+  border-radius: 20px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  will-change: transform, box-shadow, border-color;
+  min-height: 0;
+  justify-content: center;
+}
+
+.device-card .item {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   gap: 10px;
-  justify-items: center;
+  text-align: center;
+  flex: 1;
+}
+
+.device-card figcaption {
+  margin: 0;
+}
+
+.device-card-link {
+  display: flex;
+  width: 100%;
+  text-decoration: none;
+  color: inherit;
+  align-items: stretch;
+}
+
+.device-card-link:hover .device-card,
+.device-card-link:focus-visible .device-card {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.device-card {
+  flex: 1;
+}
+
+.device-card img {
+  max-height: 130px;
+  object-fit: contain;
+}
+
+.device-card figcaption {
+  color: #ffffff;
+  opacity: 1;
+}
+
+.device-card .item {
+  opacity: 0;
+  transform: translateY(10px);
+  animation: device-card-appear 0.6s ease forwards;
+}
+
+.device-card:nth-child(1) .item { animation-delay: 0.08s; }
+.device-card:nth-child(2) .item { animation-delay: 0.16s; }
+.device-card:nth-child(3) .item { animation-delay: 0.24s; }
+.device-card:nth-child(4) .item { animation-delay: 0.32s; }
+.device-card:nth-child(5) .item { animation-delay: 0.40s; }
+.device-card:nth-child(6) .item { animation-delay: 0.48s; }
+.device-card:nth-child(7) .item { animation-delay: 0.56s; }
+
+@keyframes device-card-appear {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-
   *,
   *::before,
   *::after {

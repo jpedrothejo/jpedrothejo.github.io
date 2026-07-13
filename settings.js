@@ -87,8 +87,14 @@ function applySocialLabels() {
 }
 
 function applyFigcaptionVisibility() {
-  const hideFigcaptions = !isEnabled('hideFigcaptions', true);
-  document.documentElement.classList.toggle('hide-figcaptions', hideFigcaptions);
+  if (localStorage.getItem('hideFigcaptions') !== null && localStorage.getItem('showFigcaptions') === null) {
+    const oldValue = localStorage.getItem('hideFigcaptions');
+    localStorage.setItem('showFigcaptions', oldValue === '1' ? '0' : '1');
+    localStorage.removeItem('hideFigcaptions');
+  }
+
+  const showFigcaptions = isEnabled('showFigcaptions', true);
+  document.documentElement.classList.toggle('hide-figcaptions', !showFigcaptions);
 }
 
 function applyAccentColor() {
