@@ -28,6 +28,7 @@
     <a class="active" href="/" data-full-label="🏠" data-minimized-label="🏠">🏠</a>
     <a href="/projects.html" data-full-label="Projects" data-minimized-label="🧪">Projects</a>
     <a href="/devices.html" data-full-label="Devices" data-minimized-label="📱">Devices</a>
+    <a href="/minecraft%20server.html" data-full-label="Minecraft" data-minimized-label="⛏️">Minecraft</a>
     <a href="/settings.html" data-full-label="Settings" data-minimized-label="⚙️">Settings</a>
     <a class="minimize-btn" id="minimizeBtn" title="Minimize">−</a>
   </div>
@@ -73,7 +74,7 @@
           </div>
 
           <div class="setting-item mobile-only-setting">
-            <span>Minimal Pagebar</span>
+            <span>Small Pagebar</span>
             <label class="switch">
               <input type="checkbox" class="custom-checkbox" data-setting-key="topbarMinimized" data-default-on="false">
               <span class="slider"></span>
@@ -88,7 +89,14 @@
             </label>
           </div>
 
-          
+          <div class="setting-item">
+            <span>Wallpaper Blur</span>
+            <label class="switch">
+              <input type="checkbox" class="custom-checkbox" data-setting-key="backgroundBlur" data-default-on="false">
+              <span class="slider"></span>
+            </label>
+          </div>
+
           <div class="gradient-settings" style="display:none; flex-direction:column; gap:8px; margin-bottom:12px;">
             <div class="setting-item">
               <span>Custom Gradient Colors</span>
@@ -153,14 +161,6 @@
               <option value="gradient">Gradient</option>
               <option value="no-bg">None</option>
             </select>
-          </div>
-
-          <div class="setting-item">
-            <span>Wallpaper Blur</span>
-            <label class="switch">
-              <input type="checkbox" class="custom-checkbox" data-setting-key="backgroundBlur" data-default-on="false">
-              <span class="slider"></span>
-            </label>
           </div>
 
           <div class="setting-item">

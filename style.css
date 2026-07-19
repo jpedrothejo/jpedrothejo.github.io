@@ -72,9 +72,14 @@ body::before {
   filter: var(--wallpaper-blur, none);
   transform: scale(1.1);
   transform-origin: center center;
-  will-change: filter, transform;
+  will-change: filter, transform, opacity;
   z-index: -1;
   pointer-events: none;
+  transition: opacity 0.32s ease, filter 0.32s ease, transform 0.32s ease;
+}
+
+html.wallpaper-transitioning body::before {
+  opacity: 0;
 }
 
 html.gradient-wallpaper body::before {
@@ -180,6 +185,26 @@ html.gradient-static body::before {
   }
 }
 
+@keyframes minimize-button-reveal {
+  0% {
+    width: 0;
+    opacity: 0;
+    transform: translateX(-8px) scale(0.7) rotate(-12deg) perspective(1px);
+  }
+
+  60% {
+    width: 28px;
+    opacity: 1;
+    transform: translateX(2px) scale(1.02) rotate(2deg) perspective(1px);
+  }
+
+  100% {
+    width: 28px;
+    opacity: 1;
+    transform: translateX(0) scale(1) rotate(0deg) perspective(1px);
+  }
+}
+
 .social-bg {
   display: flex;
   gap: 12px;
@@ -196,7 +221,7 @@ html.gradient-static body::before {
 .card-bg {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
   background: rgba(0, 0, 0, 0.9375);
   border-radius: 16px;
   padding: 14px;
@@ -206,6 +231,27 @@ html.gradient-static body::before {
   margin: 0 auto;
   gap: 8px;
   box-sizing: border-box;
+}
+
+.card-bg > * {
+  margin: 0;
+}
+
+.card-bg > .settings {
+  width: 100%;
+  min-width: 0;
+  text-align: left;
+  padding: 0;
+  margin: 0;
+}
+
+.card-bg h2 {
+  margin: 0 0 2px 0;
+}
+
+.card-bg .settings h2,
+.card-bg .settings p {
+  margin: 0;
 }
 
 .card-bg > img {
@@ -354,8 +400,18 @@ button {
   transform: translateX(-50%) perspective(1px);
   width: fit-content;
   z-index: 1000;
-  transition: all 0.3s ease;
+  transition: padding 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
+              width 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
+              gap 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
+              transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
+              border-radius 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
   animation: topnav-enter 0.45s ease both;
+}
+
+html.topbar-transitioning .topnav,
+html.topbar-transitioning .topnav a:not(.minimize-btn),
+html.topbar-transitioning .minimize-btn {
+  transition-duration: 0.28s !important;
 }
 
 .topbar-top .topnav {
@@ -415,18 +471,29 @@ button {
 .topbar-right .minimize-btn {
   width: 28px;
   max-width: 28px;
-  height: 28px;
+  height: 0;
   max-height: 0;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
   transform: translateY(-8px) scale(0.7) rotate(-12deg) perspective(1px);
+  transition: height 0.25s cubic-bezier(0.2, 0.8, 0.2, 1),
+              opacity 0.2s ease,
+              transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1),
+              visibility 0s linear 0.2s;
 }
 
 .topbar-left .topnav:hover .minimize-btn,
 .topbar-left .topnav:focus-within .minimize-btn,
 .topbar-right .topnav:hover .minimize-btn,
 .topbar-right .topnav:focus-within .minimize-btn {
+  height: 28px;
   max-height: 28px;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
   transform: translateY(0) scale(1) rotate(0deg) perspective(1px);
-  animation: minimize-button-enter-vertical 0.35s ease both;
+  transition-delay: 0s;
 }
 
 .topbar-minimized .topnav {
@@ -442,6 +509,12 @@ button {
   align-items: center;
   justify-content: center;
   font-size: 14px;
+  transition: width 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
+              height 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
+              padding 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
+              font-size 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
+              opacity 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
+              transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .minimize-btn {
@@ -451,7 +524,7 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
+  width: 0;
   max-width: 0;
   height: 28px;
   max-height: 28px;
@@ -462,18 +535,33 @@ button {
   pointer-events: none;
   transform: translateX(-8px) scale(0.7) rotate(-12deg) perspective(1px);
   transform-origin: center;
-  transition: background-color 0.3s, color 0.3s, opacity 0.2s ease, max-width 0.3s ease, max-height 0.3s ease, transform 0.2s ease, visibility 0s linear 0.2s;
+  flex-shrink: 0;
+  transition: width 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
+              background-color 0.3s,
+              color 0.3s,
+              opacity 0.2s ease,
+              transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
+              visibility 0s linear 0.2s;
 }
 
 .topnav:hover .minimize-btn,
 .topnav:focus-within .minimize-btn {
+  width: 28px;
   max-width: 28px;
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
   transform: translateX(0) scale(1) rotate(0deg) perspective(1px);
-  animation: minimize-button-enter 0.35s ease both;
+  animation: minimize-button-reveal 0.28s cubic-bezier(0.2, 0.8, 0.2, 1) both;
   transition-delay: 0s;
+}
+
+.topnav:not(:hover):not(:focus-within) .minimize-btn {
+  animation: none;
+  transition: width 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
+              opacity 0.18s ease,
+              transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
+              visibility 0s linear 0.2s;
 }
 
 .minimize-btn:hover {
@@ -491,17 +579,19 @@ button {
   font-family: GoogleSans-Bold;
   font-weight: 100;
   margin: 0;
-  transition: background-color 0.3s, color 0.3s, opacity 0.3s;
+  transition: background-color 0.3s, color 0.3s, opacity 0.3s, padding 0.28s cubic-bezier(0.2, 0.8, 0.2, 1), font-size 0.28s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 @media (max-width: 600px) {
   .topnav {
     gap: 4px;
+    padding: 4px 5px;
+    align-items: center;
   }
 
   .topbar-left .minimize-btn,
   .topbar-right .minimize-btn {
-    width: 28px;
+    width: 0;
     max-width: 0;
     height: 28px;
     max-height: 28px;
@@ -512,9 +602,9 @@ button {
   .topbar-left .topnav:focus-within .minimize-btn,
   .topbar-right .topnav:hover .minimize-btn,
   .topbar-right .topnav:focus-within .minimize-btn {
+    width: 28px;
     max-width: 28px;
     transform: translateX(0) scale(1) rotate(0deg) perspective(1px);
-    animation: minimize-button-enter 0.35s ease both;
   }
 
   .main {
@@ -528,6 +618,7 @@ button {
     padding: 4px 5px;
     color: #fff;
     margin: 0;
+    line-height: 1;
   }
 
   .mobile-hidden-setting {
@@ -535,7 +626,10 @@ button {
   }
 
   .minimize-btn {
-    display: none !important;
+    display: flex !important;
+    height: 28px;
+    min-height: 28px;
+    box-sizing: border-box;
   }
 
   .social-title {
@@ -871,12 +965,14 @@ html.blur-disabled .card-bg {
 
   .topnav {
     gap: 2px;
-    padding: 6px 8px;
+    padding: 4px 5px;
+    align-items: center;
   }
 
   .topnav a {
     font-size: 0.9rem;
-    padding: 8px 10px;
+    padding: 4px 5px;
+    line-height: 1;
   }
 
   .device-card {

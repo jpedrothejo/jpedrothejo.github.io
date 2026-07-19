@@ -109,21 +109,37 @@ function applyAccentColor() {
   }
 }
 
-function applyWallpaper() {
+function applyWallpaper(animate = false) {
   const wallpaper = localStorage.getItem('wallpaper') || 'background.jpg';
-  document.documentElement.classList.toggle('gradient-wallpaper', wallpaper === 'gradient');
-  const gradientStatic = wallpaper === 'gradient' && isEnabled('gradientStopMotion', false);
-  document.documentElement.classList.toggle('gradient-static', gradientStatic);
+  const root = document.documentElement;
 
-  if (wallpaper === 'gradient') {
-    applyGradientSettings();
-  } else if (wallpaper === 'no-bg') {
-    document.documentElement.style.setProperty('--wallpaper-image', 'none');
+  const applyWallpaperSettings = () => {
+    root.classList.toggle('gradient-wallpaper', wallpaper === 'gradient');
+    const gradientStatic = wallpaper === 'gradient' && isEnabled('gradientStopMotion', false);
+    root.classList.toggle('gradient-static', gradientStatic);
+
+    if (wallpaper === 'gradient') {
+      applyGradientSettings();
+    } else if (wallpaper === 'no-bg') {
+      root.style.setProperty('--wallpaper-image', 'none');
+    } else {
+      root.style.setProperty('--wallpaper-image', `url(/images/${wallpaper})`);
+    }
+
+    toggleGradientSettings(wallpaper === 'gradient');
+  };
+
+  if (animate) {
+    root.classList.remove('wallpaper-transitioning');
+    void root.offsetWidth;
+    root.classList.add('wallpaper-transitioning');
+    window.setTimeout(() => {
+      applyWallpaperSettings();
+      root.classList.remove('wallpaper-transitioning');
+    }, 120);
   } else {
-    document.documentElement.style.setProperty('--wallpaper-image', `url(/images/${wallpaper})`);
+    applyWallpaperSettings();
   }
-
-  toggleGradientSettings(wallpaper === 'gradient');
 }
 
 function applyGradientSettings() {
@@ -162,13 +178,24 @@ function applyTopbarPosition() {
   document.documentElement.classList.add(`topbar-${topbarPosition}`);
 }
 
-function applyTopbarMinimized() {
+function applyTopbarMinimized(animate = false) {
   const minimized = isEnabled('topbarMinimized', false);
-  document.documentElement.classList.toggle('topbar-minimized', minimized);
+  const root = document.documentElement;
+
+  root.classList.toggle('topbar-minimized', minimized);
   document.querySelectorAll('.topnav a[data-full-label][data-minimized-label]')
     .forEach(link => {
       link.textContent = minimized ? link.dataset.minimizedLabel : link.dataset.fullLabel;
     });
+
+  if (animate) {
+    root.classList.remove('topbar-transitioning');
+    void root.offsetWidth;
+    root.classList.add('topbar-transitioning');
+    window.setTimeout(() => {
+      root.classList.remove('topbar-transitioning');
+    }, 320);
+  }
 }
 
 function setupMinimizeButton() {
@@ -178,7 +205,7 @@ function setupMinimizeButton() {
       e.preventDefault();
       const current = isEnabled('topbarMinimized', false);
       localStorage.setItem('topbarMinimized', current ? '0' : '1');
-      applyTopbarMinimized();
+      applyTopbarMinimized(true);
       const checkbox = document.querySelector('.custom-checkbox[data-setting-key="topbarMinimized"]');
       if (checkbox) {
         checkbox.checked = !current;
@@ -203,7 +230,7 @@ function initializeCheckboxes() {
     checkbox.addEventListener('change', (event) => {
       const isChecked = event.target.checked;
       localStorage.setItem(key, isChecked ? '1' : '0');
-      applyAllSettings();
+      applyAllSettings(key === 'topbarMinimized');
       if (key === 'gradientCustomizeColors') {
         document.querySelectorAll('.gradient-color-pickers').forEach(el => {
           el.style.display = isChecked ? 'flex' : 'none';
@@ -240,7 +267,7 @@ function initializeSelects() {
 
     select.addEventListener('change', (event) => {
       localStorage.setItem(key, event.target.value);
-      applyAllSettings();
+      applyAllSettings(key === 'topbarMinimized', key === 'wallpaper');
       if (key === 'wallpaper') {
         toggleGradientSettings(event.target.value === 'gradient');
       }
@@ -253,7 +280,7 @@ function initializeSelects() {
   }
 }
 
-function applyAllSettings() {
+function applyAllSettings(animateTopbar = false, animateWallpaper = false) {
   applyBlur();
   applyCardBgBlur();
   applyBackgroundBlur();
@@ -264,9 +291,9 @@ function applyAllSettings() {
   applyAccentColor();
   applySocialLabels();
   applyFigcaptionVisibility();
-  applyWallpaper();
+  applyWallpaper(animateWallpaper);
   applyTopbarPosition();
-  applyTopbarMinimized();
+  applyTopbarMinimized(animateTopbar);
 }
 
 applyBg();
