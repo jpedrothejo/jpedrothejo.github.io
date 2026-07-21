@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>jpedro's Website - Files</title>
+  <link href="/scripts/style.css" rel="stylesheet" type="text/css" media="all">
+  <link rel="icon" href="/images/site icon.ico">
+  <script src="/scripts/settings.js"></script>
+  <script src="/scripts/files.js" defer></script>
+</head>
+<body>
+  <div class="topnav">
+    <a href="/" data-full-label="🏠" data-minimized-label="🏠">🏠</a>
+    <a href="/projects.html" data-full-label="Projects" data-minimized-label="🧪">Projects</a>
+    <a href="/devices.html" data-full-label="Devices" data-minimized-label="📱">Devices</a>
+    <a class="active" href="/files.html" data-full-label="Files" data-minimized-label="📁">Files</a>
+    <a href="/minecraft%20server.html" data-full-label="Minecraft" data-minimized-label="⛏️">Minecraft</a>
+    <a href="/settings.html" data-full-label="Settings" data-minimized-label="⚙️">Settings</a>
+    <a class="minimize-btn" id="minimizeBtn" title="Minimize">−</a>
+  </div>
+
+  <div class="main">
+    <div class="card-bg" style="padding:18px 22px; width:min(1100px,94vw); box-sizing:border-box;">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+        <div>
+          <h1 style="margin:6px 0 2px 0;">Files</h1>
+          <p style="margin:0;opacity:0.8">Selection of files I found cool and decided to put here. Note that there's nothing here currently.</p>
+        </div>
+        <input id="search" class="file-search" placeholder="Type to search...">
+      </div>
+
+      <div class="card-bg" style="padding:12px; margin-top:12px; width:100%; box-sizing:border-box; background: rgba(0,0,0,0.6);">
+        <div style="display:flex;align-items:center;gap:10px;margin-top:0;margin-bottom:12px;color:var(--muted-color,#caced6);">
+          <a href="/" style="text-decoration:none;">🏠</a>
+          <span>/</span>
+        </div>
+
+        <div class="file-list-container" style="overflow:auto">
+        <table class="file-table" style="width:100%;border-collapse:collapse;">
+          <thead>
+            <tr style="text-align:left;opacity:0.9;border-bottom:1px solid rgba(255,255,255,0.06);">
+              <th style="padding:10px 8px">Name</th>
+              <th style="padding:10px 8px;width:110px">Size</th>
+              <th style="padding:10px 8px;width:160px">Date</th>
+            </tr>
+          </thead>
+          <tbody id="file-list">
+            <tr><td colspan="3" style="padding:18px 8px;opacity:0.8">Loading files…</td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

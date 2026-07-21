@@ -1,3 +1,44 @@
+.file-table td,
+.file-table th {
+  font-size: 14px;
+  padding: 8px 6px;
+  color: inherit;
+}
+
+.file-table a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.file-table a:hover {
+  color: #ffffff !important;
+  text-decoration: underline;
+}
+
+.file-search {
+  min-width: 220px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.06);
+  background: rgba(255,255,255,0.02);
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 14px;
+}
+
+/* Placeholder color rules for consistency across browsers */
+.file-search::placeholder { color: rgba(255,255,255,0.85); opacity: 1; }
+.file-search::-webkit-input-placeholder { color: rgba(255,255,255,0.85); }
+.file-search:-ms-input-placeholder { color: rgba(255,255,255,0.85); }
+.file-search::-ms-input-placeholder { color: rgba(255,255,255,0.85); }
+
+.card-bg h1 {
+  margin: 6px 0 2px 0;
+  font-size: 20px;
+}
+
+.card-bg p { margin: 0; font-size: 13px; opacity: 0.85; }
+
 @font-face {
   font-family: AdwaitaSans;
   src: url(/fonts/AdwaitaSans-Regular.ttf);
@@ -728,6 +769,22 @@ html.no-bg body::before {
 .sfpro-font body,
 .sfpro-font .pfp-name,
 .sfpro-font .topnav a {
+
+/* Hide scrollbar but keep scrollable area for the file listing container */
+.file-list-container {
+  -ms-overflow-style: none; /* IE/Edge */
+  scrollbar-width: none; /* Firefox */
+}
+.file-list-container::-webkit-scrollbar { width: 0; height: 0; }
+
+/* Make sure the table doesn't show a large default scrollbar on small viewports */
+.file-table { min-width: 0; width:100%; table-layout: auto; }
+
+.file-table td {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
   font-family: SFPro, sans-serif !important;
 }
 
