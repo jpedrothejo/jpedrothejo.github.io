@@ -1,4 +1,4 @@
-const SERVER_URL = 'http://192.168.1.122:5000';
+const SERVER_URL = 'https://major-owls-drum.loca.lt';
 let currentPath = '';
 
 async function loadFiles(path = '') {
