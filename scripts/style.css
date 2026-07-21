@@ -271,7 +271,7 @@ html.gradient-static body::before {
   width: fit-content;
   min-width: 220px;
   max-width: 560px;
-  margin: 0;
+  margin: 0 auto;
   gap: 8px;
   box-sizing: border-box;
 }
@@ -713,8 +713,8 @@ html.topbar-transitioning .minimize-btn {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  align-items: flex-start;
-  text-align: left;
+  align-items: center;
+  text-align: center;
   animation: page-enter 0.45s ease 0.08s both;
 }
 
@@ -968,6 +968,15 @@ html.accent-nord {
   --accent-color-hover-opaque: #434c5e;
   --accent-color-button-bg: #434c5e;
   --accent-color-button-bg-opaque: #434c5e;
+}
+
+body.files-page .main {
+  align-items: flex-start;
+  text-align: left;
+}
+
+body.files-page .card-bg {
+  margin: 0;
 }
 
 .main,
