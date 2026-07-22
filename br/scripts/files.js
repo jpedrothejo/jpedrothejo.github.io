@@ -26,7 +26,7 @@ async function loadFiles(path = '') {
     if (currentPath !== '') {
       const parentPath = currentPath.substring(0, currentPath.lastIndexOf('/')).replace(/\/$/, '');
       const backRow = document.createElement('tr');
-      backRow.innerHTML = `<td colspan="3" style="padding:10px 8px">📁 <a href="#" onclick="loadFiles('${parentPath}'); return false;">.. (Go Back)</a></td>`;
+      backRow.innerHTML = `<td colspan="3" style="padding:10px 8px">📁 <a href="#" onclick="loadFiles('${parentPath}'); return false;">.. (Voltar)</a></td>`;
       listElement.appendChild(backRow);
     }
 
@@ -60,13 +60,13 @@ async function loadFiles(path = '') {
 
     if (data.folders.length === 0 && data.files.length === 0) {
       const emptyRow = document.createElement('tr');
-      emptyRow.innerHTML = '<td colspan="3" style="padding:18px 8px;opacity:0.8">This folder is empty.</td>';
+      emptyRow.innerHTML = '<td colspan="3" style="padding:18px 8px;opacity:0.8">Essa pasta está vazia.</td>';
       listElement.appendChild(emptyRow);
     }
 
   } catch (error) {
     console.error('Error fetching directory content:', error);
-    listElement.innerHTML = '<tr><td colspan="3" style="color:red; padding:10px 8px;">Failed to connect to the file server. Maybe the server is down?</td></tr>';
+    listElement.innerHTML = '<tr><td colspan="3" style="color:red; padding:10px 8px;">Erro à carregar arquivos. Talvez o servidor não esteja funcionando?</td></tr>';
   }
 }
 

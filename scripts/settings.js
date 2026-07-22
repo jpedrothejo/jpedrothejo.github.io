@@ -7,6 +7,63 @@ function getSettingBooleanState(key, defaultOn) {
 
 const isEnabled = (key, defaultOn = true) => getSettingBooleanState(key, defaultOn);
 
+function getPreferredLanguage() {
+  const storedValue = localStorage.getItem('language');
+  if (storedValue === 'en' || storedValue === 'pt-br') {
+    return storedValue;
+  }
+
+  return window.location.pathname.startsWith('/br/') || window.location.pathname === '/br' ? 'pt-br' : 'en';
+}
+
+function getLocalizedPath(pathname = window.location.pathname, language = getPreferredLanguage()) {
+  const normalizedPath = pathname === '/br' || pathname === '/br/'
+    ? '/'
+    : pathname.startsWith('/br/')
+      ? pathname.slice(3) || '/'
+      : pathname;
+
+  const cleanPath = normalizedPath === '' ? '/' : normalizedPath;
+
+  if (language === 'pt-br') {
+    return cleanPath === '/' ? '/br/' : `/br${cleanPath}`;
+  }
+
+  return cleanPath;
+}
+
+function getLocalizedHref(href, language = getPreferredLanguage()) {
+  if (!href || href.startsWith('http') || href.startsWith('mailto:') || href.startsWith('tel:') || href.startsWith('#')) {
+    return href;
+  }
+
+  const url = new URL(href, window.location.href);
+  url.pathname = getLocalizedPath(url.pathname, language);
+  return `${url.pathname}${url.search}${url.hash}`;
+}
+
+function applyLanguage() {
+  const language = getPreferredLanguage();
+  const currentPath = window.location.pathname;
+  const targetPath = getLocalizedPath(currentPath, language);
+
+  document.documentElement.lang = language === 'pt-br' ? 'pt-BR' : 'en';
+  document.documentElement.dataset.language = language;
+
+  document.querySelectorAll('a[href]').forEach(link => {
+    const href = link.getAttribute('href');
+    const localizedHref = getLocalizedHref(href, language);
+    if (localizedHref !== href) {
+      link.setAttribute('href', localizedHref);
+    }
+  });
+
+  if (targetPath !== currentPath) {
+    const targetUrl = `${targetPath}${window.location.search}${window.location.hash}`;
+    window.location.replace(targetUrl);
+  }
+}
+
 function applyBlur() {
   const blurEnabled = isEnabled('blurEnabled');
   const blurValue = blurEnabled ? 'blur(4.75px) saturate(180%)' : 'none';
@@ -281,6 +338,7 @@ function initializeSelects() {
 }
 
 function applyAllSettings(animateTopbar = false, animateWallpaper = false) {
+  applyLanguage();
   applyBlur();
   applyCardBgBlur();
   applyBackgroundBlur();
