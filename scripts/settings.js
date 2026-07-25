@@ -77,23 +77,6 @@ function applyBlur() {
   document.documentElement.classList.toggle('blur-disabled', !blurEnabled);
 }
 
-function applyCardBgBlur() {
-  const blurLevel = localStorage.getItem('cardBgBlur') || 'light';
-  const blurAmounts = {
-    none: 'none',
-    light: 'blur(4.75px)',
-    medium: 'blur(4.75px)',
-    heavy: 'blur(4.75px)'
-  };
-  const blurValue = blurAmounts[blurLevel] || blurAmounts.light;
-  const finalValue = blurValue === 'none' ? 'none' : `${blurValue} saturate(180%)`;
-
-  document.querySelectorAll('.card-bg')
-    .forEach(el => {
-      el.style.backdropFilter = finalValue;
-      el.style.webkitBackdropFilter = finalValue;
-    });
-}
 
 function applyBackgroundBlur() {
   const blurEnabled = isEnabled('backgroundBlur', false);
@@ -340,7 +323,6 @@ function initializeSelects() {
 function applyAllSettings(animateTopbar = false, animateWallpaper = false) {
   applyLanguage();
   applyBlur();
-  applyCardBgBlur();
   applyBackgroundBlur();
   applyBg();
   applyDark();

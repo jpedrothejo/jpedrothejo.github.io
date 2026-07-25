@@ -26,7 +26,6 @@
   font-size: 14px;
 }
 
-/* Placeholder color rules for consistency across browsers */
 .file-search::placeholder { color: rgba(255,255,255,0.85); opacity: 1; }
 .file-search::-webkit-input-placeholder { color: rgba(255,255,255,0.85); }
 .file-search:-ms-input-placeholder { color: rgba(255,255,255,0.85); }
@@ -79,11 +78,11 @@ html {
   --wallpaper-image: none;
   --wallpaper-blur: none;
   --accent-color-primary: #5d94c233;
-  --accent-color-primary-opaque: rgba(93, 148, 194, 1);
+  --accent-color-primary-opaque: #5d94c280;
   --accent-color-hover: #569cd633;
-  --accent-color-hover-opaque: rgba(86, 156, 214, 1);
-  --accent-color-button-bg: #4a8ac7;
-  --accent-color-button-bg-opaque: rgba(74, 138, 199, 1);
+  --accent-color-hover-opaque: #569cd680;
+  --accent-color-button-bg: #4a8ac780;
+  --accent-color-button-bg-opaque: #4a8ac780;
 }
 
 
@@ -365,7 +364,7 @@ html.hide-figcaptions figcaption {
 a {
   color: var(--accent-color-primary);
   text-decoration: none;
-  color: lightskyblue;
+  color: #87cefa;
 }
 
 a:not(.device-card-link):hover {
@@ -770,14 +769,12 @@ html.no-bg body::before {
 .sfpro-font .pfp-name,
 .sfpro-font .topnav a {
 
-/* Hide scrollbar but keep scrollable area for the file listing container */
 .file-list-container {
-  -ms-overflow-style: none; /* IE/Edge */
-  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 .file-list-container::-webkit-scrollbar { width: 0; height: 0; }
 
-/* Make sure the table doesn't show a large default scrollbar on small viewports */
 .file-table { min-width: 0; width:100%; table-layout: auto; }
 
 .file-table td {
@@ -934,35 +931,35 @@ html.reduced-motion .main {
 html.accent-blue {
   --accent-color-primary: rgba(93, 148, 194, 0.0925);
   --accent-color-hover: rgba(86, 156, 214, 0.0925);
-  --accent-color-button-bg: #4a8ac7;
+  --accent-color-button-bg: #4a8bc780;
 }
 
 html.accent-default {
-  --accent-color-primary: rgba(93, 148, 194, 0.0925);
-  --accent-color-primary-opaque: #5d94c2;
+  --accent-color-primary: rgba(81, 92, 102, 0.093);
+  --accent-color-primary-opaque: #5d95c280;
   --accent-color-hover: rgba(86, 156, 214, 0.0925);
-  --accent-color-hover-opaque: #569cd6;
-  --accent-color-button-bg: #4a8ac7;
-  --accent-color-button-bg-opaque: #4a8ac7;
+  --accent-color-hover-opaque: #569cd680;
+  --accent-color-button-bg: #4a8bc780;
+  --accent-color-button-bg-opaque: #4a8ac780;
 }
 
 html.accent-navy {
   --accent-color-primary: rgba(92, 112, 214, 0.0925);
-  --accent-color-primary-opaque: #5c70d6;
+  --accent-color-primary-opaque: #5c70d680;
   --accent-color-hover: rgba(123, 143, 237, 0.0925);
   --accent-color-hover-opaque: #7b8fed;
-  --accent-color-button-bg: #4052b5;
-  --accent-color-button-bg-opaque: #4052b5;
+  --accent-color-button-bg: #4052b580;
+  --accent-color-button-bg-opaque: #4052b580;
   --navy-hover-bg: rgba(92, 112, 214, 0.0925);
 }
 
 html.accent-nord {
-  --accent-color-primary: rgba(59, 66, 82, 0.0925);
-  --accent-color-primary-opaque: #3b4252;
+  --accent-color-primary: rgba(59, 66, 82, 0.123);
+  --accent-color-primary-opaque: #3b425280;
   --accent-color-hover: rgba(67, 76, 94, 0.0925);
   --accent-color-hover-opaque: #434c5e;
-  --accent-color-button-bg: #434c5e;
-  --accent-color-button-bg-opaque: #434c5e;
+  --accent-color-button-bg: #434c5e80;
+  --accent-color-button-bg-opaque: #434c5e80;
 }
 
 .main,
