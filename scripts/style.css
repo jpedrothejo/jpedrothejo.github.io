@@ -433,7 +433,6 @@ button {
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  gap: 4px;
   position: fixed;
   top: 18px;
   left: 50%;
@@ -442,8 +441,8 @@ button {
   z-index: 1000;
   transition: padding 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
               width 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
-              gap 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
               transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
+              visibility 0s linear 0.2s;
               border-radius 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
   animation: topnav-enter 0.45s ease both;
 }
@@ -619,7 +618,8 @@ html.topbar-transitioning .minimize-btn {
   font-family: GoogleSans-Bold;
   font-weight: 100;
   margin: 0;
-  transition: background-color 0.3s, color 0.3s, opacity 0.3s, padding 0.28s cubic-bezier(0.2, 0.8, 0.2, 1), font-size 0.28s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+  margin-right: 4px;
+  transition: background-color 0.3s, color 0.3s, opacity 0.3s, padding 0.28s cubic-bezier(0.2, 0.8, 0.2, 1), font-size 0.28s cubic-bezier(0.2, 0.8, 0.2, 0.2, 1), transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 @media (max-width: 600px) {
@@ -977,7 +977,8 @@ html.accent-nord {
 html.blur-disabled .main,
 html.blur-disabled .topnav,
 html.blur-disabled .social-bg,
-html.blur-disabled .card-bg {
+html.blur-disabled .card-bg,
+html.blur-disabled .popup-empty {
   background: var(--accent-color-primary-opaque) !important;
 }
 

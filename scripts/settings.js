@@ -66,9 +66,9 @@ function applyLanguage() {
 
 function applyBlur() {
   const blurEnabled = isEnabled('blurEnabled');
-  const blurValue = blurEnabled ? 'blur(4.75px) saturate(180%)' : 'none';
+  const blurValue = blurEnabled ? 'blur(10px) saturate(180%)' : 'none';
 
-  document.querySelectorAll('.main, .topnav, .social-bg')
+  document.querySelectorAll('.main, .topnav, .social-bg, .popup-overlay, .popup-empty')
     .forEach(el => {
       el.style.backdropFilter = blurValue;
       el.style.webkitBackdropFilter = blurValue;
@@ -80,7 +80,7 @@ function applyBlur() {
 
 function applyBackgroundBlur() {
   const blurEnabled = isEnabled('backgroundBlur', false);
-  const blurValue = blurEnabled ? 'blur(4.75px)' : 'none';
+  const blurValue = blurEnabled ? 'blur(2.5px)' : 'none';
   document.documentElement.style.setProperty('--wallpaper-blur', blurValue);
 }
 
@@ -95,7 +95,7 @@ function applyBg() {
 }
 
 function applyDark() {
-  toggleClass('darkEnabled', 'light-mode', false, false);
+  toggleClass('darkEnabled', 'light-mode', true, true);
 }
 
 function applyReducedAnimation() {
