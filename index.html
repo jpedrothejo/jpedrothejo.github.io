@@ -15,6 +15,7 @@
     <a class="active" href="/" data-full-label="🏠" data-minimized-label="🏠">🏠</a>
     <a href="/devices.html" data-full-label="Devices" data-minimized-label="📱">Devices</a>
     <a href="/files.html" data-full-label="Files" data-minimized-label="📁">Files</a>
+    <a href="/projects.html" data-full-label="Projects" data-minimized-label="📂">Projects</a>
     <a href="/minecraft%20server.html" data-full-label="Minecraft" data-minimized-label="⛏️">Minecraft</a>
     <a href="/settings.html" data-full-label="Settings" data-minimized-label="⚙️">Settings</a>
     <a class="minimize-btn" id="minimizeBtn" title="Minimize">−</a>
@@ -85,7 +86,7 @@
     <div class="card-bg">
       <ul>
         <li>I'm Brazillian</li>
-        <li>I'm a Demiboy</li>
+        <li>I'm Genderfluid</li>
         <li>I like technology</li>
         <li>I like gaming</li>
         <li>I'm 13 years old</li>
@@ -96,4 +97,41 @@
     </div>
   </div>
 </body>
+
+<div class="device-modal-overlay" id="languageModalOverlay" hidden>
+  <div class="device-modal" role="dialog" aria-modal="true" aria-labelledby="languageModalTitle">
+    <h2 id="languageModalTitle">Choose your language</h2>
+    <p>Pick your preferred language for this website.</p>
+    <div class="language-modal-actions">
+      <button class="language-choice-btn" data-lang="en" type="button">English</button>
+      <button class="language-choice-btn" data-lang="pt" type="button">Português</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const languageOverlay = document.getElementById('languageModalOverlay');
+    const languageButtons = document.querySelectorAll('.language-choice-btn');
+
+    const closeLanguageModal = () => {
+      languageOverlay.hidden = true;
+      document.body.classList.remove('device-modal-open');
+    };
+
+    const hasSeenLanguagePrompt = localStorage.getItem('site-language-prompt-seen');
+    if (!hasSeenLanguagePrompt) {
+      languageOverlay.hidden = false;
+      document.body.classList.add('device-modal-open');
+    }
+
+    languageButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        localStorage.setItem('site-language-prompt-seen', 'true');
+        localStorage.setItem('site-language', button.dataset.lang || 'en');
+        closeLanguageModal();
+      });
+    });
+  });
+</script>
 </html>

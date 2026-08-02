@@ -139,10 +139,34 @@ function applyFigcaptionVisibility() {
 
 function applyAccentColor() {
   const accent = localStorage.getItem('accentColor') || 'default';
+  const experimentalEnabled = isEnabled('experimentalFeaturesEnabled', false);
+  const customColor = localStorage.getItem('customAccentColor') || '#5d94c2';
+  const customAccentSetting = document.getElementById('custom-accent-setting');
+
+  if (customAccentSetting) {
+    customAccentSetting.style.display = experimentalEnabled ? 'flex' : 'none';
+  }
 
   Array.from(document.documentElement.classList).forEach(className => {
     if (className.startsWith('accent-')) document.documentElement.classList.remove(className);
   });
+
+  if (experimentalEnabled && customColor) {
+    document.documentElement.style.setProperty('--accent-color-primary', `${customColor}22`);
+    document.documentElement.style.setProperty('--accent-color-primary-opaque', `${customColor}80`);
+    document.documentElement.style.setProperty('--accent-color-hover', `${customColor}33`);
+    document.documentElement.style.setProperty('--accent-color-hover-opaque', `${customColor}80`);
+    document.documentElement.style.setProperty('--accent-color-button-bg', `${customColor}80`);
+    document.documentElement.style.setProperty('--accent-color-button-bg-opaque', `${customColor}80`);
+    return;
+  }
+
+  document.documentElement.style.removeProperty('--accent-color-primary');
+  document.documentElement.style.removeProperty('--accent-color-primary-opaque');
+  document.documentElement.style.removeProperty('--accent-color-hover');
+  document.documentElement.style.removeProperty('--accent-color-hover-opaque');
+  document.documentElement.style.removeProperty('--accent-color-button-bg');
+  document.documentElement.style.removeProperty('--accent-color-button-bg-opaque');
 
   if (accent !== 'default') {
     document.documentElement.classList.add(`accent-${accent}`);
@@ -269,6 +293,16 @@ function initializeCheckboxes() {
 
     checkbox.addEventListener('change', (event) => {
       const isChecked = event.target.checked;
+      if (key === 'experimentalFeaturesEnabled' && isChecked) {
+        const password = window.prompt('The settings that will appear ARE experimental. It could break a thing or two, please tell me if it does.Enter the password to enable this:');
+        if (password !== 'jpedro') {
+          event.target.checked = false;
+          localStorage.setItem(key, '0');
+          applyAllSettings();
+          return;
+        }
+      }
+
       localStorage.setItem(key, isChecked ? '1' : '0');
       applyAllSettings(key === 'topbarMinimized');
       if (key === 'gradientCustomizeColors') {

@@ -25,9 +25,10 @@
 
 <body>
   <div class="topnav">
-    <a class="active" href="/" data-full-label="🏠" data-minimized-label="🏠">🏠</a>
+    <a href="/" data-full-label="🏠" data-minimized-label="🏠">🏠</a>
     <a href="/devices.html" data-full-label="Dispositivos" data-minimized-label="📱">Dispositivos</a>
     <a href="/files.html" data-full-label="Arquivos" data-minimized-label="📁">Arquivos</a>
+    <a href="/projects.html" data-full-label="Projetos" data-minimized-label="📄">Projetos</a>
     <a href="/minecraft%20server.html" data-full-label="Minecraft" data-minimized-label="⛏️">Minecraft</a>
     <a href="/settings.html" data-full-label="Config." data-minimized-label="⚙️">Config.</a>
     <a class="minimize-btn" id="minimizeBtn" title="Minimize">−</a>
@@ -37,170 +38,227 @@
       <h1>Configurações</h1>
       <div class="card-bg">
         <div class="settings" style="text-align: left;">
-          <h3>Visuais</h3>
+          <div class="settings-section">
+            <h3>Visuais</h3>
 
-          <div class="setting-item">
-            <span>Modo Escuro</span>
-            <label class="switch">
-              <input type="checkbox" class="custom-checkbox" data-setting-key="darkEnabled" data-default-on="false">
-              <span class="slider"></span>
-            </label>
-          </div>
-
-          <div class="setting-item">
-            <span>Mostrar Rótulos da Rede Social</span>
-            <label class="switch">
-              <input type="checkbox" class="custom-checkbox" data-setting-key="socialLabelsEnabled"
-                data-default-on="true">
-              <span class="slider"></span>
-            </label>
-          </div>
-
-          <div class="setting-item">
-            <span>Mostrar Figcaptions</span>
-            <label class="switch">
-              <input type="checkbox" class="custom-checkbox" data-setting-key="showFigcaptions" data-default-on="true">
-              <span class="slider"></span>
-            </label>
-          </div>
-
-          <div class="setting-item mobile-only-setting">
-            <span>Pagebar Pequena</span>
-            <label class="switch">
-              <input type="checkbox" class="custom-checkbox" data-setting-key="topbarMinimized" data-default-on="false">
-              <span class="slider"></span>
-            </label>
-          </div>
-          
-          <div class="setting-item">
-            <span>Fonte Negrita</span>
-            <label class="switch">
-              <input type="checkbox" class="custom-checkbox" data-setting-key="fontBold" data-default-on="false">
-              <span class="slider"></span>
-            </label>
-          </div>
-
-          <div class="gradient-settings" style="display:none; flex-direction:column; gap:8px; margin-bottom:12px;">
             <div class="setting-item">
-              <span>Cores Customizadas do Gradiente</span>
+              <span>Modo Escuro</span>
               <label class="switch">
-                <input type="checkbox" class="custom-checkbox" data-setting-key="gradientCustomizeColors" data-default-on="false">
+                <input type="checkbox" class="custom-checkbox" data-setting-key="darkEnabled" data-default-on="false">
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="setting-item">
+              <span>Mostrar Rótulos da Rede Social</span>
+              <label class="switch">
+                <input type="checkbox" class="custom-checkbox" data-setting-key="socialLabelsEnabled"
+                  data-default-on="true">
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="setting-item">
+              <span>Mostrar Figcaptions</span>
+              <label class="switch">
+                <input type="checkbox" class="custom-checkbox" data-setting-key="showFigcaptions" data-default-on="true">
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="setting-item">
+              <span>Pagebar Pequena</span>
+              <label class="switch">
+                <input type="checkbox" class="custom-checkbox" data-setting-key="topbarMinimized" data-default-on="false">
                 <span class="slider"></span>
               </label>
             </div>
             
-            <div class="gradient-color-pickers" style="display:none; flex-wrap:wrap; gap:8px;">
-              <div class="setting-item" style="width:100%;">
-                <span>Cor 1</span>
-                <input type="color" class="custom-color" data-setting-key="gradientColor1" value="#0f172a">
+            <div class="setting-item">
+              <span>Fonte Negrita</span>
+              <label class="switch">
+                <input type="checkbox" class="custom-checkbox" data-setting-key="fontBold" data-default-on="false">
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="gradient-settings" style="display:none; flex-direction:column; gap:8px; margin-bottom:12px;">
+              <div class="setting-item">
+                <span>Cores Customizadas do Gradiente</span>
+                <label class="switch">
+                  <input type="checkbox" class="custom-checkbox" data-setting-key="gradientCustomizeColors" data-default-on="false">
+                  <span class="slider"></span>
+                </label>
               </div>
-              <div class="setting-item" style="width:100%;">
-                <span>Cor 2</span>
-                <input type="color" class="custom-color" data-setting-key="gradientColor2" value="#4f46e5">
+              
+              <div class="gradient-color-pickers" style="display:none; flex-wrap:wrap; gap:8px;">
+                <div class="setting-item" style="width:100%;">
+                  <span>Cor 1</span>
+                  <input type="color" class="custom-color" data-setting-key="gradientColor1" value="#0f172a">
+                </div>
+                <div class="setting-item" style="width:100%;">
+                  <span>Cor 2</span>
+                  <input type="color" class="custom-color" data-setting-key="gradientColor2" value="#4f46e5">
+                </div>
+                <div class="setting-item" style="width:100%;">
+                  <span>Cor 3</span>
+                  <input type="color" class="custom-color" data-setting-key="gradientColor3" value="#ec4899">
+                </div>
+                <div class="setting-item" style="width:100%;">
+                  <span>Cor 4</span>
+                  <input type="color" class="custom-color" data-setting-key="gradientColor4" value="#22d3ee">
+                </div>
               </div>
-              <div class="setting-item" style="width:100%;">
-                <span>Cor 3</span>
-                <input type="color" class="custom-color" data-setting-key="gradientColor3" value="#ec4899">
-              </div>
-              <div class="setting-item" style="width:100%;">
-                <span>Cor 4</span>
-                <input type="color" class="custom-color" data-setting-key="gradientColor4" value="#22d3ee">
+
+              <div class="setting-item">
+                <span>Parar Movimento do Gradiente</span>
+                <label class="switch">
+                  <input type="checkbox" class="custom-checkbox" data-setting-key="gradientStopMotion" data-default-on="false">
+                  <span class="slider"></span>
+                </label>
               </div>
             </div>
 
             <div class="setting-item">
-              <span>Parar Movimento do Gradiente</span>
+              <span>Fonte</span>
+              <select class="custom-select" data-setting-key="fontFamily">
+                <option value="googlesansrounded" selected>GoogleSansRounded</option>
+                <option value="adwaita">Adwaita</option>
+                <option value="sfpro">SFPro</option>
+              </select>
+            </div>
+
+            <div class="setting-item">
+              <span>Idioma</span>
+              <select class="custom-select" data-setting-key="language">
+                <option value="en">English</option>
+                <option value="pt-br">Português (Brasil)</option>
+              </select>
+            </div>
+
+            <div class="setting-item">
+              <span>Posição da Pagebar</span>
+              <select class="custom-select" data-setting-key="topbarPosition">
+                <option value="top">Cima</option>
+                <option value="bottom">Baixo</option>
+                <option value="left">Esquerda</option>
+                <option value="right">Direita</option>
+              </select>
+            </div>
+
+            <div class="setting-item">
+              <span>Papel de Parede</span>
+              <select class="custom-select" data-setting-key="wallpaper">
+                <option value="background.jpg">Predefinido</option>
+                <option value="setup.jpg">Setup do Windows 95</option>
+                <option value="water.jpg">Água do Windows 7</option>
+                <option value="gradient">Gradiente</option>
+                <option value="no-bg">Nenhum</option>
+              </select>
+            </div>
+
+            <div class="setting-item">
+              <span>Cor de Acento</span>
+              <select class="custom-select" data-setting-key="accentColor">
+                <option value="default">Azul</option>
+                <option value="navy">Azul Marinho</option>
+                <option value="nord">Nord</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <h3>Desempenho</h3>
+
+            <div class="setting-item">
+              <span>Efeito de Desfoque</span>
               <label class="switch">
-                <input type="checkbox" class="custom-checkbox" data-setting-key="gradientStopMotion" data-default-on="false">
+                <input type="checkbox" class="custom-checkbox" data-setting-key="blurEnabled">
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="setting-item">
+              <span>Desfocar Papel de Parede</span>
+              <label class="switch">
+                <input type="checkbox" class="custom-checkbox" data-setting-key="backgroundBlur" data-default-on="true">
+                <span class="slider"></span>
+              </label>
+            </div>
+            
+            <div class="setting-item">
+              <span>Reduzir Animações</span>
+              <label class="switch">
+                <input type="checkbox" class="custom-checkbox" data-setting-key="reducedAnimation" data-default-on="false">
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="setting-item">
+              <span>Modo Fraco</span>
+              <label class="switch">
+                <input type="checkbox" id="potato-mode" class="custom-checkbox" data-setting-key="potatoEnabled" data-default-on="false" onchange="triggerPotatoMode(this)">
                 <span class="slider"></span>
               </label>
             </div>
           </div>
 
-          <div class="setting-item">
-            <span>Fonte</span>
-            <select class="custom-select" data-setting-key="fontFamily">
-              <option value="googlesansrounded" selected>GoogleSansRounded</option>
-              <option value="adwaita">Adwaita</option>
-              <option value="sfpro">SFPro</option>
-            </select>
-          </div>
+          <div class="settings-section">
+            <h3>Configurações Experimentais</h3>
 
-          
-          <div class="setting-item">
-            <span>Idioma</span>
-            <select class="custom-select" data-setting-key="language">
-              <option value="en">English</option>
-              <option value="pt-br">Português (Brasil)</option>
-            </select>
-          </div>
+            <div class="setting-item" id="experimental-toggle-item">
+              <span>Recursos Experimentais</span>
+              <label class="switch">
+                <input type="checkbox" class="custom-checkbox" data-setting-key="experimentalFeaturesEnabled" data-default-on="false">
+                <span class="slider"></span>
+              </label>
+            </div>
 
-          <div class="setting-item">
-            <span>Posição da Pagebar</span>
-            <select class="custom-select" data-setting-key="topbarPosition">
-              <option value="top">Cima</option>
-              <option value="bottom">Baixo</option>
-              <option value="left">Esquerda</option>
-              <option value="right">Direita</option>
-            </select>
-          </div>
-
-          <div class="setting-item">
-            <span>Papel de Parede</span>
-            <select class="custom-select" data-setting-key="wallpaper">
-              <option value="background.jpg">Predefinido</option>
-              <option value="setup.jpg">Setup do Windows 95</option>
-              <option value="water.jpg">Água do Windows 7</option>
-              <option value="gradient">Gradiente</option>
-              <option value="no-bg">Nenhum</option>
-            </select>
-          </div>
-
-          <div class="setting-item">
-            <span>Cor de Acento</span>
-            <select class="custom-select" data-setting-key="accentColor">
-              <option value="default">Azul</option>
-              <option value="navy">Azul Marinho</option>
-              <option value="nord">Nord</option>
-            </select>
-          </div>
-
-          <h3>Performance Settings</h3>
-
-          <div class="setting-item">
-            <span>Efeito de Desfoque</span>
-            <label class="switch">
-              <input type="checkbox" class="custom-checkbox" data-setting-key="blurEnabled">
-              <span class="slider"></span>
-            </label>
-          </div>
-
-          <div class="setting-item">
-            <span>Desfocar Papel de Parede</span>
-            <label class="switch">
-              <input type="checkbox" class="custom-checkbox" data-setting-key="backgroundBlur" data-default-on="true">
-              <span class="slider"></span>
-            </label>
-          </div>
-          
-          <div class="setting-item">
-            <span>Reduzir Animações</span>
-            <label class="switch">
-              <input type="checkbox" class="custom-checkbox" data-setting-key="reducedAnimation" data-default-on="false">
-              <span class="slider"></span>
-            </label>
-          </div>
-
-          <div class="setting-item">
-            <span>Modo Fraco</span>
-            <label class="switch">
-              <input type="checkbox" id="potato-mode" class="custom-checkbox" data-setting-key="potatoEnabled" data-default-on="false" onchange="triggerPotatoMode(this)">
-              <span class="slider"></span>
-            </label>
+            <div class="setting-item" id="custom-accent-setting" style="display:none;">
+              <span>Cor de Acento Customizada</span>
+              <input type="color" class="custom-color" data-setting-key="customAccentColor" value="#5d94c2">
+            </div>
           </div>
         </div>
       </div>
     </div>
   </center>
+
+<div class="device-modal-overlay" id="languageModalOverlay" hidden>
+  <div class="device-modal" role="dialog" aria-modal="true" aria-labelledby="languageModalTitle">
+    <h2 id="languageModalTitle">Escolha seu idioma</h2>
+    <p>Selecione seu idioma preferido para este site.</p>
+    <div class="language-modal-actions">
+      <button class="language-choice-btn" data-lang="en" type="button">English</button>
+      <button class="language-choice-btn" data-lang="pt" type="button">Português</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const languageOverlay = document.getElementById('languageModalOverlay');
+    const languageButtons = document.querySelectorAll('.language-choice-btn');
+
+    const closeLanguageModal = () => {
+      languageOverlay.hidden = true;
+      document.body.classList.remove('device-modal-open');
+    };
+
+    const hasSeenLanguagePrompt = localStorage.getItem('site-language-prompt-seen');
+    if (!hasSeenLanguagePrompt) {
+      languageOverlay.hidden = false;
+      document.body.classList.add('device-modal-open');
+    }
+
+    languageButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        localStorage.setItem('site-language-prompt-seen', 'true');
+        localStorage.setItem('site-language', button.dataset.lang || 'en');
+        closeLanguageModal();
+      });
+    });
+  });
+</script>
 </body>
 </html>

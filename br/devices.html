@@ -12,9 +12,10 @@
 
 <body>
   <div class="topnav">
-    <a class="active" href="/" data-full-label="🏠" data-minimized-label="🏠">🏠</a>
+    <a href="/" data-full-label="🏠" data-minimized-label="🏠">🏠</a>
     <a href="/devices.html" data-full-label="Dispositivos" data-minimized-label="📱">Dispositivos</a>
     <a href="/files.html" data-full-label="Arquivos" data-minimized-label="📁">Arquivos</a>
+    <a href="/projects.html" data-full-label="Projetos" data-minimized-label="📄">Projetos</a>
     <a href="/minecraft%20server.html" data-full-label="Minecraft" data-minimized-label="⛏️">Minecraft</a>
     <a href="/settings.html" data-full-label="Config." data-minimized-label="⚙️">Config.</a>
     <a class="minimize-btn" id="minimizeBtn" title="Minimize">−</a>
@@ -23,80 +24,186 @@
 
     <div class="main">
       <h1>Dispositivos eu tenho</h1>
-      
+
       <div class="devices">
-        <a class="device-card-link" href="https://xdaforums.com/t/shared-rom-megapack-for-on7xelte-devices.4767550/">
+        <a class="device-card-link device-card-trigger" href="#" data-device-title="Samsung Galaxy J7 Prime (SM-G610M)" data-device-content="Exynos 7870, 3GB RAM, 32GB de Armazenamento, Tela de 5.5-polegadas, Câmera traseira de 13MP, Câmera frontal de 8MP, LineageOS 18.1 Android 11, Quebrado" data-device-links='[{"url":"https://www.gsmarena.com/samsung_galaxy_j7_prime-8314.php#g610mds","label":"O link para o GSMArena dele"},{"url":"https://xdaforums.com/t/shared-rom-megapack-for-on7xelte-devices.4767550/","label":"Megapack de ROM para dispositivos SM-G610x"}]'>
           <div class="card-bg device-card">
             <figure class="item">
               <img src="/images/j7 prime.png" width="57">
               <figcaption>Samsung Galaxy J7 Prime (SM-G610M)</figcaption>
-              <figcaption>(quebrado)</figcaption>
-              <figcaption>(LineageOS 18.1)</figcaption>
             </figure>
           </div>
         </a>
 
-        <a class="device-card-link" href="https://www.gsmarena.com/samsung_galaxy_s25-13610.php">
+        <a class="device-card-link device-card-trigger" href="#" data-device-title="Samsung Galaxy S25 (SM-S931B)" data-device-content="Snapdragon 8 Elite, 12GB RAM, 256GB de Armazenamento, Tela de 6.2-polegadas, Câmera principal de 50MP, Câmera telephoto de 10MP, Câmera ultrawide de 12MP, Câmera frontal de 12MP, OneUI 8.5 Android 16, Celular atual" data-device-links='[{"url":"https://www.gsmarena.com/samsung_galaxy_s25-13610.php","label":"Link para o GSMArena dele"}]'>
           <div class="card-bg device-card">
             <figure class="item">
               <img src="/images/s25.png" width="77">
               <figcaption>Samsung Galaxy S25 (SM-S931B)</figcaption>
-              <figcaption>(OneUI 8.5)</figcaption>
             </figure>
           </div>
         </a>
 
-        <div class="card-bg device-card">
-          <figure class="item">
-            <img src="/images/dell inspiron.png" width="110">
-            <figcaption>Dell Inspiron 14z 5423 (i3-3227U)</figcaption>
-          </figure>
-        </div>
+        <a class="device-card-link device-card-trigger" href="#" data-device-title="Dell Inspiron 14z 5423 (i3-3227U)" data-device-content="i3-3227U, Sem RAM, Sem Armazenamento, Tela de 14-polegadas (quebrada), Intel HD Graphics 4000, Sem SO (sem armazenamento)" data-device-links='[{"url":"https://mobilespecs.net/laptop/DELL/DELL_INSPIRON_5423.html","label":"Link para o MobileSpecs dele"}]'>
+          <div class="card-bg device-card">
+            <figure class="item">
+              <img src="/images/dell inspiron.png" width="110">
+              <figcaption>Dell Inspiron 14z 5423 (i3-3227U)</figcaption>
+            </figure>
+          </div>
+        </a>
 
-        <div class="card-bg device-card">
-          <figure class="item">
-            <img src="/images/latitude.png" width="96">
-            <figcaption>Dell Latitude d620 (Intel Core 2 Duo)</figcaption>
-          </figure>
-        </div>
+        <a class="device-card-link device-card-trigger" href="#" data-device-title="Dell Latitude d620 (Intel Core 2 Duo)" data-device-content="Intel Core 2 Duo, 512MB RAM, Sem Armazenamento, Tela de 14-polegadas, Intel GMA 950, Sem SO (sem armazenamento)" data-device-links='[{"url":"https://mobilespecs.net/laptop/DELL/DELL_LATITUDE_D620.html","label":"Link para o MobileSpecs dele"}]'>
+          <div class="card-bg device-card">
+            <figure class="item">
+              <img src="/images/latitude.png" width="96">
+              <figcaption>Dell Latitude d620 (Intel Core 2 Duo)</figcaption>
+            </figure>
+          </div>
+        </a>
 
-        <div class="card-bg device-card">
-          <figure class="item">
-            <img src="/images/ideapad.png" width="122">
-            <figcaption>Lenovo Ideapad S145 81XM (i3-8130U)</figcaption>
-            <figcaption>(server de minecraft, Fedora 44)</figcaption>
-          </figure>
-         </div>
-        </div>  
+        <a class="device-card-link device-card-trigger" href="#" data-device-title="Lenovo Ideapad S145 81XM (i3-8130U)" data-device-content="i3-8130U, 8GB RAM, 256GB de Armazenamento, Tela de 15.6-polegadas (quebrada), Intel UHD Graphics 620, Fedora 44 Linux, Servidor Minecraft">
+          <div class="card-bg device-card">
+            <figure class="item">
+              <img src="/images/ideapad.png" width="122">
+              <figcaption>Lenovo Ideapad S145 81XM (i3-8130U)</figcaption>
+            </figure>
+          </div>
+        </a>
+
+        <a class="device-card-link device-card-trigger" href="#" data-device-title="PC (i5-10400f)" data-device-content="i5-10400f, 8GB RAM, 240GB SATA SSD + 1TB HDD, Tela de 24-polegadas, RTX 3050 6GB , Windows 11 Pro 25H2, PC atual">
+          <div class="card-bg device-card">
+            <figure class="item">
+              <h2>Sem imagem ainda :(</h2>
+              <figcaption>PC (i5-10400f)</figcaption>
+            </figure>
+          </div>
+        </a>
+      </div>
 
       <h1>Dispositivos eu tive</h1>
 
-       <div class="devices">
-        <a class="device-card-link" href="https://www.gsmarena.com/apple_iphone_xr-9320.php">
+      <div class="devices">
+        <a class="device-card-link device-card-trigger" href="#" data-device-title="Apple iPhone XR (A2105)" data-device-content="A12 Bionic, 64GB Armazenamento, Tela de 6.1-polegadas, Câmera principal de 12MP, Câmera frontal de 12MP, iOS 18.7.7, Quebrado e jogado fora" data-device-links='[{"url":"https://www.gsmarena.com/apple_iphone_xr-9320.php#a2105","label":"Link para o GSMArena dele"}]'>
           <div class="card-bg device-card">
             <figure class="item">
               <img src="/images/iphone.png" width="110">
               <figcaption>Apple iPhone XR (A2105)</figcaption>
-              <figcaption>(jogado fora, quebrado)</figcaption>
-              <figcaption>(iOS 18.7.7[?])</figcaption>
             </figure>
           </div>
         </a>
 
-
-        <a class="device-card-link" href="https://xdaforums.com/t/shared-megapack-for-x1s-devices.4767548/">
+        <a class="device-card-link device-card-trigger" href="#" data-device-title="Samsung Galaxy S20 4G (SM-G980F/DS)" data-device-content="Exynos 990 (homeheater), 128GB Armazenamento, Tela de 6.2-polegadas, Câmera principal de 12MP, Câmera telephoto de 10MP, Câmera ultrawide de 12MP, Câmera frontal de 10MP, crDroid 12.1 Android 16, Jogado fora e quebrado" data-device-links='[{"url":"https://www.gsmarena.com/samsung_galaxy_s20-10081.php","label":"Link para o GSMArena dele"},{"url":"https://xdaforums.com/t/shared-megapack-for-x1s-devices.4767548/","label":"Megapack de ROM para dispositivos SM-G980x"}]'>
           <div class="card-bg device-card">
             <figure class="item">
               <img src="/images/s20.png" width="115">
               <figcaption>Samsung Galaxy S20 4G (SM-G980F/DS)</figcaption>
-              <figcaption>(jogado fora, quebrado)</figcaption>
-              <figcaption>(crDroid 12.1)</figcaption>
             </figure>
           </div>
         </a>
       </div>
     </div>
+  </center>
+
+  <div class="device-modal-overlay" id="deviceModalOverlay" hidden>
+    <div class="device-modal" role="dialog" aria-modal="true" aria-labelledby="deviceModalTitle">
+      <button class="device-modal-close" id="deviceModalClose" type="button" aria-label="Close">×</button>
+      <h2 id="deviceModalTitle">Device</h2>
+      <ul id="deviceModalBody" class="device-modal-list"></ul>
+    </div>
   </div>
-</center>
+
+  <div class="device-modal-overlay" id="languageModalOverlay" hidden>
+    <div class="device-modal" role="dialog" aria-modal="true" aria-labelledby="languageModalTitle">
+      <h2 id="languageModalTitle">Escolha seu idioma</h2>
+      <p>Selecione seu idioma preferido para este site.</p>
+      <div class="language-modal-actions">
+        <button class="language-choice-btn" data-lang="en" type="button">English</button>
+        <button class="language-choice-btn" data-lang="pt" type="button">Português</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const overlay = document.getElementById('deviceModalOverlay');
+      const title = document.getElementById('deviceModalTitle');
+      const body = document.getElementById('deviceModalBody');
+      const closeBtn = document.getElementById('deviceModalClose');
+
+      const closeModal = () => {
+        overlay.hidden = true;
+        document.body.classList.remove('device-modal-open');
+      };
+
+      document.querySelectorAll('.device-card-trigger').forEach((trigger) => {
+        trigger.addEventListener('click', (event) => {
+          event.preventDefault();
+          title.textContent = trigger.dataset.deviceTitle || 'Device';
+          const rawContent = trigger.dataset.deviceContent || 'placeholder';
+          const items = rawContent.split(',').map((item) => item.trim()).filter(Boolean);
+          body.innerHTML = '';
+          items.forEach((item) => {
+            const li = document.createElement('li');
+            li.textContent = item;
+            body.appendChild(li);
+          });
+
+          const rawLinks = trigger.dataset.deviceLinks;
+          if (rawLinks) {
+            try {
+              const links = JSON.parse(rawLinks);
+              links.forEach((linkInfo) => {
+                const li = document.createElement('li');
+                li.innerHTML = `<a href="${linkInfo.url}" target="_blank" rel="noopener noreferrer">${linkInfo.label}</a>`;
+                body.appendChild(li);
+              });
+            } catch (e) {
+              console.error('Could not parse device links', e);
+            }
+          }
+
+          overlay.hidden = false;
+          document.body.classList.add('device-modal-open');
+        });
+      });
+
+      closeBtn.addEventListener('click', closeModal);
+      overlay.addEventListener('click', (event) => {
+        if (event.target === overlay) {
+          closeModal();
+        }
+      });
+
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && !overlay.hidden) {
+          closeModal();
+        }
+      });
+
+      const languageOverlay = document.getElementById('languageModalOverlay');
+      const languageButtons = document.querySelectorAll('.language-choice-btn');
+
+      const closeLanguageModal = () => {
+        languageOverlay.hidden = true;
+        document.body.classList.remove('device-modal-open');
+      };
+
+      const hasSeenLanguagePrompt = localStorage.getItem('site-language-prompt-seen');
+      if (!hasSeenLanguagePrompt) {
+        languageOverlay.hidden = false;
+        document.body.classList.add('device-modal-open');
+      }
+
+      languageButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          localStorage.setItem('site-language-prompt-seen', 'true');
+          localStorage.setItem('site-language', button.dataset.lang || 'en');
+          closeLanguageModal();
+        });
+      });
+    });
+  </script>
 </body>
+
 </html>
