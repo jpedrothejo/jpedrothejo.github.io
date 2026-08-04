@@ -108,30 +108,4 @@
     </div>
   </div>
 </div>
-
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const languageOverlay = document.getElementById('languageModalOverlay');
-    const languageButtons = document.querySelectorAll('.language-choice-btn');
-
-    const closeLanguageModal = () => {
-      languageOverlay.hidden = true;
-      document.body.classList.remove('device-modal-open');
-    };
-
-    const hasSeenLanguagePrompt = localStorage.getItem('site-language-prompt-seen');
-    if (!hasSeenLanguagePrompt) {
-      languageOverlay.hidden = false;
-      document.body.classList.add('device-modal-open');
-    }
-
-    languageButtons.forEach((button) => {
-      button.addEventListener('click', () => {
-        localStorage.setItem('site-language-prompt-seen', 'true');
-        localStorage.setItem('site-language', button.dataset.lang || 'en');
-        closeLanguageModal();
-      });
-    });
-  });
-</script>
 </html>

@@ -223,42 +223,5 @@
       </div>
     </div>
   </center>
-
-<div class="device-modal-overlay" id="languageModalOverlay" hidden>
-  <div class="device-modal" role="dialog" aria-modal="true" aria-labelledby="languageModalTitle">
-    <h2 id="languageModalTitle">Escolha seu idioma</h2>
-    <p>Selecione seu idioma preferido para este site.</p>
-    <div class="language-modal-actions">
-      <button class="language-choice-btn" data-lang="en" type="button">English</button>
-      <button class="language-choice-btn" data-lang="pt" type="button">Português</button>
-    </div>
-  </div>
-</div>
-
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const languageOverlay = document.getElementById('languageModalOverlay');
-    const languageButtons = document.querySelectorAll('.language-choice-btn');
-
-    const closeLanguageModal = () => {
-      languageOverlay.hidden = true;
-      document.body.classList.remove('device-modal-open');
-    };
-
-    const hasSeenLanguagePrompt = localStorage.getItem('site-language-prompt-seen');
-    if (!hasSeenLanguagePrompt) {
-      languageOverlay.hidden = false;
-      document.body.classList.add('device-modal-open');
-    }
-
-    languageButtons.forEach((button) => {
-      button.addEventListener('click', () => {
-        localStorage.setItem('site-language-prompt-seen', 'true');
-        localStorage.setItem('site-language', button.dataset.lang || 'en');
-        closeLanguageModal();
-      });
-    });
-  });
-</script>
 </body>
 </html>
