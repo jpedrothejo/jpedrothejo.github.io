@@ -394,7 +394,7 @@ if (document.readyState === 'loading') {
 
 function triggerPotatoMode(potatoToggle) {
   const isPotatoModeOn = potatoToggle.checked;
-  const settingsToDisable = ['blurEnabled', 'socialLabelsEnabled'];
+  const settingsToDisable = ['blurEnabled', 'socialLabelsEnabled', 'backgroundBlur'];
   const settingToEnable = 'topbarMinimized';
 
   settingsToDisable.forEach(key => {

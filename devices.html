@@ -115,6 +115,17 @@
 </div>
 
 <script>
+    document.addEventListener('DOMContentLoaded', () => {
+    const overlay = document.getElementById('deviceModalOverlay');
+    const title = document.getElementById('deviceModalTitle');
+    const body = document.getElementById('deviceModalBody');
+    const closeBtn = document.getElementById('deviceModalClose');
+
+    const closeModal = () => {
+      overlay.hidden = true;
+      document.body.classList.remove('device-modal-open');
+    };
+    
     document.querySelectorAll('.device-card-trigger').forEach((trigger) => {
       trigger.addEventListener('click', (event) => {
         event.preventDefault();
@@ -160,6 +171,7 @@
         closeModal();
       }
     });
+   }); 
 </script>
 </body>
 </html>

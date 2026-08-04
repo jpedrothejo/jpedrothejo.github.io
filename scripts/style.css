@@ -762,7 +762,7 @@ html.no-bg body::before {
 .light-mode h6,
 .light-mode li,
 .light-mode .setting-item {
-  color: var(--accent-color-primary);
+  color: #2E3440;
 }
 
 .light-mode a {
@@ -1077,6 +1077,10 @@ html.blur-disabled .popup-empty {
   justify-content: center;
 }
 
+.device-card a {
+  color: #ffffff
+}
+
 .device-card .item {
   margin: 0;
   display: flex;
@@ -1153,7 +1157,7 @@ html.blur-disabled .popup-empty {
 .device-modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(7, 10, 20, 0.55);
+  background: var(--accent-color-primary);
   backdrop-filter: blur(18px) saturate(140%);
   -webkit-backdrop-filter: blur(18px) saturate(140%);
   display: flex;
@@ -1167,7 +1171,7 @@ html.blur-disabled .popup-empty {
 .device-modal {
   width: min(480px, 100%);
   background: var(--accent-color-primary);
-  border: 1px solid var(--accent-color-primary-opaque);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 24px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255,255,255,0.08);
   padding: 24px;
