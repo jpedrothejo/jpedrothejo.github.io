@@ -147,6 +147,17 @@ function applyAccentColor() {
     customAccentSetting.style.display = experimentalEnabled ? 'flex' : 'none';
   }
 
+  const customWallpaperSetting = document.getElementById('custom-wallpaper-setting');
+  if (customWallpaperSetting) {
+    customWallpaperSetting.style.display = experimentalEnabled ? 'flex' : 'none';
+  }
+
+  const wallpaperSelect = document.querySelector('[data-setting-key="wallpaper"]');
+  if (wallpaperSelect) {
+    const customOption = wallpaperSelect.querySelector('option[value="custom"]');
+    if (customOption) customOption.hidden = !experimentalEnabled;
+  }
+
   Array.from(document.documentElement.classList).forEach(className => {
     if (className.startsWith('accent-')) document.documentElement.classList.remove(className);
   });
@@ -186,6 +197,16 @@ function applyWallpaper(animate = false) {
       applyGradientSettings();
     } else if (wallpaper === 'no-bg') {
       root.style.setProperty('--wallpaper-image', 'none');
+    } else if (wallpaper === 'custom') {
+      const experimentalEnabled = isEnabled('experimentalFeaturesEnabled', false);
+      const customValue = localStorage.getItem('customWallpaper') || '';
+      if (experimentalEnabled && customValue) {
+        const isAbsolute = /^(https?:\/\/|\/|data:)/i.test(customValue);
+        const url = isAbsolute ? customValue : `/images/${customValue}`;
+        root.style.setProperty('--wallpaper-image', `url(${url})`);
+      } else {
+        root.style.setProperty('--wallpaper-image', `url(/images/background.jpg)`);
+      }
     } else {
       root.style.setProperty('--wallpaper-image', `url(/images/${wallpaper})`);
     }
@@ -232,14 +253,20 @@ function toggleGradientSettings(show) {
 }
 
 function applyTopbarPosition() {
-  const position = localStorage.getItem('topbarPosition') || 'bottom';
+  const saved = localStorage.getItem('topbarPosition');
+  const isMobile = window.matchMedia('(max-width: 600px)').matches;
+  const defaultPosition = isMobile ? 'bottom' : 'top';
+  const position = saved || defaultPosition;
   const validPositions = ['top', 'bottom', 'left', 'right'];
-  const topbarPosition = validPositions.includes(position) ? position : 'bottom';
+  const topbarPosition = validPositions.includes(position) ? position : defaultPosition;
 
-  document.documentElement.classList.remove(
-    'topbar-top', 'topbar-bottom', 'topbar-left', 'topbar-right'
-  );
+  document.documentElement.classList.remove('topbar-top', 'topbar-bottom', 'topbar-left', 'topbar-right');
   document.documentElement.classList.add(`topbar-${topbarPosition}`);
+
+  const select = document.querySelector('[data-setting-key="topbarPosition"]');
+  if (select && !saved) {
+    select.value = topbarPosition;
+  }
 }
 
 function applyTopbarMinimized(animate = false) {
@@ -383,13 +410,17 @@ if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initializeCheckboxes);
   document.addEventListener('DOMContentLoaded', initializeColorPickers);
   document.addEventListener('DOMContentLoaded', initializeSelects);
+  document.addEventListener('DOMContentLoaded', initializeInputs);
   document.addEventListener('DOMContentLoaded', setupMinimizeButton);
+  document.addEventListener('DOMContentLoaded', showLanguagePromptIfFirstTime);
 } else {
   applyAllSettings();
   initializeCheckboxes();
   initializeColorPickers();
   initializeSelects();
+  initializeInputs();
   setupMinimizeButton();
+  showLanguagePromptIfFirstTime();
 }
 
 function triggerPotatoMode(potatoToggle) {
@@ -429,4 +460,115 @@ function triggerPotatoMode(potatoToggle) {
     }
     wallpaperDropdown.dispatchEvent(new Event('change', { bubbles: true }));
   }
+}
+
+function initializeInputs() {
+  document.querySelectorAll('.custom-text[data-setting-key]').forEach(input => {
+    const key = input.dataset.settingKey;
+    const saved = localStorage.getItem(key);
+    if (saved) input.value = saved;
+
+    input.addEventListener('input', (event) => {
+      localStorage.setItem(key, event.target.value);
+      applyAllSettings();
+    });
+  });
+
+  document.querySelectorAll('.custom-file[data-setting-key]').forEach(input => {
+    const key = input.dataset.settingKey;
+    const filenameLabel = input.parentElement?.querySelector('.custom-file-label');
+    const saved = localStorage.getItem(key);
+    if (saved) {
+      if (saved.startsWith('data:')) {
+        if (filenameLabel) filenameLabel.textContent = 'Selected image';
+      } else {
+        if (filenameLabel) filenameLabel.textContent = saved;
+      }
+    }
+
+    input.addEventListener('change', (event) => {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const dataUrl = e.target.result;
+        try {
+          localStorage.setItem(key, dataUrl);
+        } catch (err) {
+          console.warn('Failed to store image in localStorage; using filename fallback', err);
+          localStorage.setItem(key, file.name);
+        }
+        if (filenameLabel) filenameLabel.textContent = file.name;
+        applyAllSettings(false, true);
+      };
+      reader.readAsDataURL(file);
+    });
+  });
+}
+
+function showLanguagePromptIfFirstTime() {
+  if (localStorage.getItem('languagePromptShown') === '1') return;
+
+  const existing = document.getElementById('languageModalOverlay');
+  if (existing) {
+    const overlay = existing;
+    overlay.hidden = false;
+    requestAnimationFrame(() => overlay.classList.add('show'));
+    document.body.classList.add('device-modal-open');
+    const buttons = overlay.querySelectorAll('.language-choice-btn');
+    buttons.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const lang = btn.dataset.lang === 'pt' ? 'pt-br' : 'en';
+        localStorage.setItem('language', lang);
+        localStorage.setItem('languagePromptShown', '1');
+        applyAllSettings();
+        overlay.classList.remove('show');
+        overlay.addEventListener('transitionend', function handler() {
+          overlay.hidden = true;
+          document.body.classList.remove('device-modal-open');
+          overlay.removeEventListener('transitionend', handler);
+        });
+      });
+    });
+    return;
+  }
+
+  const overlay = document.createElement('div');
+  overlay.className = 'device-modal-overlay';
+  overlay.id = 'firstTimeLangOverlay';
+  overlay.hidden = false;
+  requestAnimationFrame(() => overlay.classList.add('show'));
+  document.body.classList.add('device-modal-open');
+
+  const modal = document.createElement('div');
+  modal.className = 'device-modal';
+  modal.setAttribute('role', 'dialog');
+  modal.setAttribute('aria-modal', 'true');
+
+  modal.innerHTML = `
+    <h2 id="firstTimeLangTitle">Choose your language</h2>
+    <p>Select your preferred language for this website.</p>
+    <div style="display:flex; gap:8px; margin-top:12px;">
+      <button class="language-choice-btn" data-lang="en" type="button">English</button>
+      <button class="language-choice-btn" data-lang="pt-br" type="button">Português</button>
+    </div>
+  `;
+
+  overlay.appendChild(modal);
+  document.body.appendChild(overlay);
+
+  modal.querySelectorAll('.language-choice-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const lang = btn.dataset.lang;
+      localStorage.setItem('language', lang);
+      localStorage.setItem('languagePromptShown', '1');
+      applyAllSettings();
+      overlay.classList.remove('show');
+      overlay.addEventListener('transitionend', function handler() {
+        overlay.hidden = true;
+        document.body.classList.remove('device-modal-open');
+        overlay.removeEventListener('transitionend', handler);
+      });
+    });
+  });
 }

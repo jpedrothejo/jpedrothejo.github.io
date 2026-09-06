@@ -46,10 +46,96 @@
 }
 
 .settings-section + .settings-section {
-  margin-top: -12px;
-  padding-top: 12px;
+  margin-top: 6px;
+  padding-top: 8px;
   border-top: 1px solid rgba(255, 255, 255, 0.14);
-  margin-bottom: 0;
+  margin-bottom: 12px;
+}
+
+.setting-item input[type="text"],
+.setting-item input[type="file"],
+.setting-item .custom-text,
+.setting-item .custom-file {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.06);
+  color: inherit;
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 13px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.setting-item input[type="file"] {
+  padding: 6px 8px;
+}
+
+.custom-file-label {
+  margin-left: 8px;
+  font-size: 13px;
+  color: rgba(255,255,255,0.85);
+}
+
+.custom-file {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+
+.custom-file-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: var(--accent-color-button-bg);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-family: inherit;
+  cursor: pointer;
+  appearance: none;
+  transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, color 0.2s ease;
+  background-image: none;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  font-size: 13px;
+}
+
+.custom-file-button:hover,
+.custom-file-button:focus {
+  background-color: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-1px) scale(1.01);
+}
+
+.custom-file-label {
+  margin-left: 10px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.85);
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.setting-item { display:flex; gap:10px; align-items:center; justify-content: space-between; }
+.setting-item > span { flex: 0 0 auto; }
+.setting-item > .custom-select,
+.setting-item > .custom-file-button,
+.setting-item > .custom-file-label,
+.setting-item > .switch { flex: 0 0 auto; }
+
+.control-group {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+  align-items: center;
 }
 
 .settings-section h3 {
@@ -1165,7 +1251,15 @@ html.blur-disabled .popup-empty {
   justify-content: center;
   padding: 20px;
   z-index: 2000;
-  animation: device-modal-fade-in 0.22s ease forwards;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.22s ease, visibility 0s linear 0.22s;
+}
+
+.device-modal-overlay.show {
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0s;
 }
 
 .device-modal {
@@ -1178,9 +1272,31 @@ html.blur-disabled .popup-empty {
   color: #f8fafc;
   position: relative;
   transform: translateY(8px) scale(0.98);
-  animation: device-modal-pop-in 0.24s ease forwards;
+  opacity: 0;
+  transition: transform 0.24s ease, opacity 0.24s ease;
   backdrop-filter: blur(20px) saturate(135%);
   -webkit-backdrop-filter: blur(20px) saturate(135%);
+}
+
+.device-modal-overlay.show .device-modal {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+
+.language-choice-btn {
+  background-color: var(--accent-color-button-bg);
+  color: #ffffff;
+  border: 1px solid rgba(255,255,255,0.28);
+  padding: 8px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
+}
+
+.language-choice-btn:hover,
+.language-choice-btn:focus {
+  background-color: rgba(255,255,255,0.16);
+  transform: translateY(-1px);
 }
 
 .device-modal-close {

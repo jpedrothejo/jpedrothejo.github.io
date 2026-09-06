@@ -27,9 +27,7 @@
   <div class="topnav">
     <a class="active" href="/" data-full-label="🏠" data-minimized-label="🏠">🏠</a>
     <a href="/devices.html" data-full-label="Devices" data-minimized-label="📱">Devices</a>
-    <a href="/files.html" data-full-label="Files" data-minimized-label="📁">Files</a>
     <a href="/projects.html" data-full-label="Projects" data-minimized-label="📂">Projects</a>
-    <a href="/minecraft%20server.html" data-full-label="Minecraft" data-minimized-label="⛏️">Minecraft</a>
     <a href="/settings.html" data-full-label="Settings" data-minimized-label="⚙️">Settings</a>
     <a class="minimize-btn" id="minimizeBtn" title="Minimize">−</a>
   </div>
@@ -118,6 +116,16 @@
                 </label>
               </div>
             </div>
+            
+            <div class="setting-item" id="custom-wallpaper-setting" style="display:none; align-items:center;">
+              <span>Custom Wallpaper</span>
+              <div class="control-group">
+                <input id="custom-wallpaper-input" type="file" accept="image/*" class="custom-file" data-setting-key="customWallpaper">
+                <label for="custom-wallpaper-input" class="custom-file-button">Select File</label>
+                <span class="custom-file-label" id="custom-wallpaper-filename"></span>
+              </div>
+            </div>
+
 
             <div class="setting-item">
               <span>Font</span>
@@ -153,6 +161,7 @@
                 <option value="setup.jpg">Windows 95 Setup</option>
                 <option value="water.jpg">Windows 7 Water</option>
                 <option value="gradient">Gradient</option>
+                <option value="custom" hidden>Custom</option>
                 <option value="no-bg">None</option>
               </select>
             </div>

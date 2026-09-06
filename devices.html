@@ -14,9 +14,7 @@
   <div class="topnav">
     <a class="active" href="/" data-full-label="🏠" data-minimized-label="🏠">🏠</a>
     <a href="/devices.html" data-full-label="Devices" data-minimized-label="📱">Devices</a>
-    <a href="/files.html" data-full-label="Files" data-minimized-label="📁">Files</a>
     <a href="/projects.html" data-full-label="Projects" data-minimized-label="📂">Projects</a>
-    <a href="/minecraft%20server.html" data-full-label="Minecraft" data-minimized-label="⛏️">Minecraft</a>
     <a href="/settings.html" data-full-label="Settings" data-minimized-label="⚙️">Settings</a>
     <a class="minimize-btn" id="minimizeBtn" title="Minimize">−</a>
   </div>
@@ -71,7 +69,7 @@
           </div>
         </a>
 
-        <a class="device-card-link device-card-trigger" href="#" data-device-title="Custom-Built PC (i5-10400f)" data-device-content="i5-10400f, 8GB RAM, 240GB SATA SSD + 1TB HDD, 24-inch Display, RTX 3050 6GB , Windows 11 Pro 25H2, Main PC">
+        <a class="device-card-link device-card-trigger" href="#" data-device-title="Custom-Built PC (i5-10400f)" data-device-content="i5-10400F, 8GB DDR4 2600MHz RAM Single Channel (RAM is too expensive here in brazil :(), 240GB SATA SSD + 1TB HDD, 24-inch Display, RTX 3050 6GB, Windows 11 Pro 25H2, Main PC">
           <div class="card-bg device-card">
             <figure class="item">
               <h2>No image yet :(</h2>
@@ -122,8 +120,12 @@
     const closeBtn = document.getElementById('deviceModalClose');
 
     const closeModal = () => {
-      overlay.hidden = true;
-      document.body.classList.remove('device-modal-open');
+      overlay.classList.remove('show');
+      overlay.addEventListener('transitionend', function handler() {
+        overlay.hidden = true;
+        document.body.classList.remove('device-modal-open');
+        overlay.removeEventListener('transitionend', handler);
+      });
     };
     
     document.querySelectorAll('.device-card-trigger').forEach((trigger) => {
@@ -155,6 +157,8 @@
           }
         }
         overlay.hidden = false;
+        // allow layout, then add show to trigger transition
+        requestAnimationFrame(() => overlay.classList.add('show'));
         document.body.classList.add('device-modal-open');
       });
     });
@@ -167,7 +171,7 @@
     });
 
     document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape' && !overlay.hidden) {
+      if (event.key === 'Escape' && overlay.classList.contains('show')) {
         closeModal();
       }
     });

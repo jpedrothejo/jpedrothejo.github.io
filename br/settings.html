@@ -27,9 +27,7 @@
   <div class="topnav">
     <a href="/" data-full-label="🏠" data-minimized-label="🏠">🏠</a>
     <a href="/devices.html" data-full-label="Dispositivos" data-minimized-label="📱">Dispositivos</a>
-    <a href="/files.html" data-full-label="Arquivos" data-minimized-label="📁">Arquivos</a>
     <a href="/projects.html" data-full-label="Projetos" data-minimized-label="📄">Projetos</a>
-    <a href="/minecraft%20server.html" data-full-label="Minecraft" data-minimized-label="⛏️">Minecraft</a>
     <a href="/settings.html" data-full-label="Config." data-minimized-label="⚙️">Config.</a>
     <a class="minimize-btn" id="minimizeBtn" title="Minimize">−</a>
   </div>
@@ -153,8 +151,18 @@
                 <option value="setup.jpg">Setup do Windows 95</option>
                 <option value="water.jpg">Água do Windows 7</option>
                 <option value="gradient">Gradiente</option>
+                <option value="custom" hidden>Personalizado</option>
                 <option value="no-bg">Nenhum</option>
               </select>
+            </div>
+
+            <div class="setting-item" id="custom-wallpaper-setting" style="display:none; align-items:center;">
+              <span>Papel de Parede Customizado</span>
+              <div class="control-group">
+                <input id="custom-wallpaper-input-br" type="file" accept="image/*" class="custom-file" data-setting-key="customWallpaper">
+                <label for="custom-wallpaper-input-br" class="custom-file-button">Selecionar Arquivo</label>
+                <span class="custom-file-label" id="custom-wallpaper-filename"></span>
+              </div>
             </div>
 
             <div class="setting-item">
