@@ -25,6 +25,10 @@ function getLocalizedPath(pathname = window.location.pathname, language = getPre
 
   const cleanPath = normalizedPath === '' ? '/' : normalizedPath;
 
+  if (cleanPath === '/archived.html' || cleanPath.startsWith('/archived/')) {
+    return cleanPath;
+  }
+
   if (language === 'pt-br') {
     return cleanPath === '/' ? '/br/' : `/br${cleanPath}`;
   }
@@ -105,16 +109,8 @@ function applyReducedAnimation() {
 function applyFont() {
   let fontFamily = localStorage.getItem('fontFamily') || 'googlesansrounded';
   const boldEnabled = isEnabled('fontBold', false);
-
-  if (!localStorage.getItem('fontFamily')) {
-    localStorage.setItem('fontFamily', fontFamily);
-  }
-
-  if (fontFamily === 'googlesansbold') {
-    fontFamily = 'googlesansrounded';
-    localStorage.setItem('fontFamily', fontFamily);
-  }
-
+  if (!localStorage.getItem('fontFamily')) localStorage.setItem('fontFamily', fontFamily);
+  if (fontFamily === 'googlesansbold') fontFamily = 'googlesansrounded';
   document.documentElement.classList.toggle('adwaita-font', fontFamily === 'adwaita');
   document.documentElement.classList.toggle('sfpro-font', fontFamily === 'sfpro' && !boldEnabled);
   document.documentElement.classList.toggle('sfpro-bold-font', fontFamily === 'sfpro' && boldEnabled);
@@ -127,96 +123,32 @@ function applySocialLabels() {
 }
 
 function applyFigcaptionVisibility() {
-  if (localStorage.getItem('hideFigcaptions') !== null && localStorage.getItem('showFigcaptions') === null) {
-    const oldValue = localStorage.getItem('hideFigcaptions');
-    localStorage.setItem('showFigcaptions', oldValue === '1' ? '0' : '1');
-    localStorage.removeItem('hideFigcaptions');
-  }
-
   const showFigcaptions = isEnabled('showFigcaptions', true);
   document.documentElement.classList.toggle('hide-figcaptions', !showFigcaptions);
 }
 
 function applyAccentColor() {
   const accent = localStorage.getItem('accentColor') || 'default';
-  const experimentalEnabled = isEnabled('experimentalFeaturesEnabled', false);
-  const customColor = localStorage.getItem('customAccentColor') || '#5d94c2';
-  const customAccentSetting = document.getElementById('custom-accent-setting');
-
-  if (customAccentSetting) {
-    customAccentSetting.style.display = experimentalEnabled ? 'flex' : 'none';
-  }
-
-  const customWallpaperSetting = document.getElementById('custom-wallpaper-setting');
-  if (customWallpaperSetting) {
-    customWallpaperSetting.style.display = experimentalEnabled ? 'flex' : 'none';
-  }
-
-  const wallpaperSelect = document.querySelector('[data-setting-key="wallpaper"]');
-  if (wallpaperSelect) {
-    const customOption = wallpaperSelect.querySelector('option[value="custom"]');
-    if (customOption) customOption.hidden = !experimentalEnabled;
-  }
-
-  Array.from(document.documentElement.classList).forEach(className => {
-    if (className.startsWith('accent-')) document.documentElement.classList.remove(className);
-  });
-
-  if (experimentalEnabled && customColor) {
-    document.documentElement.style.setProperty('--accent-color-primary', `${customColor}22`);
-    document.documentElement.style.setProperty('--accent-color-primary-opaque', `${customColor}80`);
-    document.documentElement.style.setProperty('--accent-color-hover', `${customColor}33`);
-    document.documentElement.style.setProperty('--accent-color-hover-opaque', `${customColor}80`);
-    document.documentElement.style.setProperty('--accent-color-button-bg', `${customColor}80`);
-    document.documentElement.style.setProperty('--accent-color-button-bg-opaque', `${customColor}80`);
-    return;
-  }
-
-  document.documentElement.style.removeProperty('--accent-color-primary');
-  document.documentElement.style.removeProperty('--accent-color-primary-opaque');
-  document.documentElement.style.removeProperty('--accent-color-hover');
-  document.documentElement.style.removeProperty('--accent-color-hover-opaque');
-  document.documentElement.style.removeProperty('--accent-color-button-bg');
-  document.documentElement.style.removeProperty('--accent-color-button-bg-opaque');
-
-  if (accent !== 'default') {
-    document.documentElement.classList.add(`accent-${accent}`);
-  }
+  document.documentElement.classList.remove('accent-navy', 'accent-nord');
+  if (accent !== 'default') document.documentElement.classList.add(`accent-${accent}`);
 }
 
 function applyWallpaper(animate = false) {
   const wallpaper = localStorage.getItem('wallpaper') || 'background.jpg';
   const root = document.documentElement;
-
   const applyWallpaperSettings = () => {
     root.classList.toggle('gradient-wallpaper', wallpaper === 'gradient');
-    const gradientStatic = wallpaper === 'gradient' && isEnabled('gradientStopMotion', false);
-    root.classList.toggle('gradient-static', gradientStatic);
-
+    root.classList.toggle('gradient-static', wallpaper === 'gradient' && isEnabled('gradientStopMotion', false));
     if (wallpaper === 'gradient') {
       applyGradientSettings();
     } else if (wallpaper === 'no-bg') {
       root.style.setProperty('--wallpaper-image', 'none');
-    } else if (wallpaper === 'custom') {
-      const experimentalEnabled = isEnabled('experimentalFeaturesEnabled', false);
-      const customValue = localStorage.getItem('customWallpaper') || '';
-      if (experimentalEnabled && customValue) {
-        const isAbsolute = /^(https?:\/\/|\/|data:)/i.test(customValue);
-        const url = isAbsolute ? customValue : `/images/${customValue}`;
-        root.style.setProperty('--wallpaper-image', `url(${url})`);
-      } else {
-        root.style.setProperty('--wallpaper-image', `url(/images/background.jpg)`);
-      }
     } else {
       root.style.setProperty('--wallpaper-image', `url(/images/${wallpaper})`);
     }
-
     toggleGradientSettings(wallpaper === 'gradient');
   };
-
   if (animate) {
-    root.classList.remove('wallpaper-transitioning');
-    void root.offsetWidth;
     root.classList.add('wallpaper-transitioning');
     window.setTimeout(() => {
       applyWallpaperSettings();

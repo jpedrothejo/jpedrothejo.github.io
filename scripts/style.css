@@ -547,7 +547,7 @@ button {
               width 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
               transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
               visibility 0s linear 0.2s;
-              border-radius 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+              border-radius: 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
   animation: topnav-enter 0.45s ease both;
 }
 
@@ -1253,7 +1253,7 @@ html.blur-disabled .popup-empty {
   z-index: 2000;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.22s ease, visibility 0s linear 0.22s;
+  transition: opacity 0.24s ease, visibility 0s linear 0.24s;
 }
 
 .device-modal-overlay.show {
@@ -1271,15 +1271,13 @@ html.blur-disabled .popup-empty {
   padding: 24px;
   color: #f8fafc;
   position: relative;
-  transform: translateY(8px) scale(0.98);
   opacity: 0;
-  transition: transform 0.24s ease, opacity 0.24s ease;
+  transition: opacity 0.24s ease;
   backdrop-filter: blur(20px) saturate(135%);
   -webkit-backdrop-filter: blur(20px) saturate(135%);
 }
 
 .device-modal-overlay.show .device-modal {
-  transform: translateY(0) scale(1);
   opacity: 1;
 }
 

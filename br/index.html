@@ -46,20 +46,20 @@
       </script>
     </div>
 
-    <h2 class="social-title">Minhas Redes</h2>
+    <h2 class="social-title">Minhas Redes Sociais</h2>
 
     <div class="social-bg">
-      <a href="youtube.com/@jpedrothejo" class="social-item"><img src="/icons/youtube.png" class="icon-img"><span
+        <a href="#" class="social-item" data-social-links='[{"url":"https://www.youtube.com/@jpedrothejo","label":"Canal principal"},{"url":"https://www.youtube.com/@jpedrothevlogs","label":"Canal alternativo"},{"url":"https://www.youtube.com/@jpedrothegames","label":"Canal de jogos"}]'><img src="/icons/youtube.png" class="icon-img"><span
           class="social-label">YouTube</span></a>
-      <a href="https://www.tiktok.com/@jpedrothejo" class="social-item"><img src="/icons/tiktok.png"
+        <a href="#" class="social-item" data-social-links='[{"url":"https://www.tiktok.com/@jpedrothejo","label":"Conta principal"},{"url":"https://www.tiktok.com/@pa1qxxx","label":"Conta alternativa"}]'><img src="/icons/tiktok.png"
           class="icon-img"><span class="social-label">TikTok</span></a>
       <a href="https://github.com/jpedrothejo" class="social-item"><img src="/icons/github.jpeg" class="icon-img"><span
           class="social-label">GitHub</span></a>
       <a href="https://x.com/jpedroooo_" class="social-item"><img src="/icons/twitter.png" class="icon-img"><span
           class="social-label">Twitter</span></a>
-      <a href="https://www.roblox.com/users/2725283118/profile" class="social-item"><img src="/icons/roblox.png"
+        <a href="#" class="social-item" data-social-links='[{"url":"https://www.roblox.com/users/2725283118/profile","label":"Conta principal"},{"url":"https://www.roblox.com/users/7576236611/profile","label":"Alternativa 1"},{"url":"https://www.roblox.com/users/11304318429/profile","label":"Alternativa 2"}]'><img src="/icons/roblox.png"
           class="icon-img"><span class="social-label">Roblox</span></a>
-      <a href="https://discord.com/users/1076145924474146959" class="social-item"><img src="/icons/discord.jpeg"
+        <a href="#" class="social-item" data-social-links='[{"url":"https://discord.com/users/944684533108854854","label":"Principal"},{"url":"https://discord.com/users/1076145924474146959","label":"Alternativo"},{"url":"https://discord.gg/vK8PEz2gEk","label":"Servidor"}]'><img src="/icons/discord.jpeg"
           class="icon-img"><span class="social-label">Discord</span></a>        
       <a href="https://bsky.app/profile/jpedrothejohn.bsky.social" class="social-item"><img src="/icons/bsky.png"
           class="icon-img"><span class="social-label">Bluesky</span></a>
@@ -90,4 +90,63 @@
     </div>
   </div>
 </body>
+<div class="device-modal-overlay" id="socialModalOverlay" hidden>
+  <div class="device-modal" role="dialog" aria-modal="true" aria-labelledby="socialModalTitle">
+    <button class="device-modal-close" id="socialModalClose" type="button" aria-label="Fechar">×</button>
+    <h2 id="socialModalTitle">Rede social</h2>
+    <ul id="socialModalBody" class="device-modal-list"></ul>
+  </div>
+</div>
+<script>
+  (() => {
+    const overlay = document.getElementById('socialModalOverlay');
+    const title = document.getElementById('socialModalTitle');
+    const body = document.getElementById('socialModalBody');
+    const closeBtn = document.getElementById('socialModalClose');
+
+    document.querySelectorAll('.social-bg .social-item').forEach((item) => {
+      const href = item.getAttribute('href') || '';
+      const excluded = /(github\.com|x\.com|twitter\.com|bsky\.app)/i;
+      if (excluded.test(href)) return;
+
+      item.addEventListener('click', (event) => {
+        event.preventDefault();
+        title.textContent = item.querySelector('.social-label')?.textContent || 'Rede social';
+        body.innerHTML = '';
+
+        try {
+          const links = JSON.parse(item.dataset.socialLinks || '[]');
+          links.forEach((link) => {
+            const listItem = document.createElement('li');
+            listItem.innerHTML = `<a href="${link.url}" target="_blank" rel="noopener noreferrer">${link.label || link.url}</a>`;
+            body.appendChild(listItem);
+          });
+        } catch (error) {
+          return;
+        }
+
+        overlay.hidden = false;
+        requestAnimationFrame(() => overlay.classList.add('show'));
+        document.body.classList.add('device-modal-open');
+      });
+    });
+
+    const closeModal = () => {
+      overlay.classList.remove('show');
+      overlay.addEventListener('transitionend', function handler() {
+        overlay.hidden = true;
+        document.body.classList.remove('device-modal-open');
+        overlay.removeEventListener('transitionend', handler);
+      });
+    };
+
+    closeBtn.addEventListener('click', closeModal);
+    overlay.addEventListener('click', (event) => {
+      if (event.target === overlay) closeModal();
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && overlay.classList.contains('show')) closeModal();
+    });
+  })();
+</script>
 </html>
