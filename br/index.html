@@ -8,6 +8,7 @@
   <link href="/scripts/style.css" rel="stylesheet" type="text/css" media="all">
   <link rel="icon" href="/images/site icon.ico">
   <script src="/scripts/settings.js"></script>
+  <script src="/scripts/status-badges.js" defer></script>
 </head>
 
 <body>
@@ -73,18 +74,29 @@
           <a href="https://github.com/jpedrothejo" class="social-item"><img src="/icons/github.jpeg" class="icon-img"><span class="social-label">GitHub</span></a>
           <a href="https://x.com/jpedroooo_" class="social-item"><img src="/icons/twitter.png" class="icon-img"><span class="social-label">Twitter</span></a>
           <a href="#" class="social-item" data-social-links='[{"url":"https://www.roblox.com/users/2725283118/profile","label":"Conta principal"},{"url":"https://www.roblox.com/users/7576236611/profile","label":"Alternativa 1"},{"url":"https://www.roblox.com/users/11304318429/profile","label":"Alternativa 2"}]'><img src="/icons/roblox.png" class="icon-img"><span class="social-label">Roblox</span></a>
-          <a href="#" class="social-item" data-social-links='[{"url":"https://discord.com/users/944684533108854854","label":"Principal"},{"url":"https://discord.com/users/1076145924474146959","label":"Alternativo"},{"url":"https://discord.gg/vK8PEz2gEk","label":"Servidor"}]'><img src="/icons/discord.jpeg" class="icon-img"><span class="social-label">Discord</span></a>
-          <a href="https://bsky.app/profile/jpedrothejohn.bsky.social" class="social-item"><img src="/icons/bsky.png" class="icon-img"><span class="social-label">Bluesky</span></a>
+          <a href="#" class="social-item" data-social-links='[{"url":"https://discord.com/users/944684533108854854","label":"Principal"},{"url":"https://discord.com/users/1076145924474146959","label":"Alternativo"},{"url":"https://discord.gg/vK8PEz2gEk","label":"Servidor"}]'><img src="/icons/discord.png" class="icon-img"><span class="social-label">Discord</span></a>
+          <a href="https://bsky.app/profile/jpedrothejohn.bsky.social" class="social-item"><img src="/icons/bsky.png" class="icon-img bsky-icon"><span class="social-label">Bluesky</span></a>
         </div>
       </section>
 
       <section class="card-bg home-category home-status">
         <h2>O que estou fazendo agora?</h2>
-        <div class="status-badges">
-          <img class="status-badge" src="https://api.statusbadges.me/badge/status/944684533108854854" alt="status">
-          <img class="status-badge" src="https://api.statusbadges.me/badge/playing/944684533108854854" alt="playing">
-          <img class="status-badge" src="https://api.statusbadges.me/badge/vscode/944684533108854854Ks" alt="vscode">
-          <a href="https://api.statusbadges.me/openspotify/944684533108854854" target="_blank" rel="noopener" style="display:flex;"><img class="status-badge" src="https://api.statusbadges.me/badge/spotify/944684533108854854" alt="spotify"></a>
+        <div class="status-badges" data-presence-badges>
+          <span class="status-badge" data-badge="presence" data-status="loading">
+            <span class="status-badge-dot" aria-hidden="true"></span>
+            <span class="status-badge-label">Discord</span>
+            <span class="status-badge-value" aria-live="polite">Carregando</span>
+          </span>
+          <span class="status-badge coding-status-badge" data-badge="coding" data-status="loading">
+            <span class="status-badge-dot" aria-hidden="true"></span>
+            <span class="status-badge-label">Programando</span>
+            <span class="status-badge-value" aria-live="polite">Carregando</span>
+          </span>
+          <a class="status-badge status-badge-link" data-badge="spotify" href="https://api.statusbadges.me/openspotify/944684533108854854" target="_blank" rel="noopener" hidden>
+            <span class="status-badge-dot" aria-hidden="true"></span>
+            <span class="status-badge-label">Spotify</span>
+            <span class="status-badge-value"></span>
+          </a>
         </div>
       </section>
     </div>
@@ -104,6 +116,7 @@
       const title = document.getElementById('socialModalTitle');
       const body = document.getElementById('socialModalBody');
       const closeBtn = document.getElementById('socialModalClose');
+      let closeTimeout;
 
       document.querySelectorAll('.home-social-links .social-item').forEach((item) => {
         const href = item.getAttribute('href') || '';
@@ -124,20 +137,23 @@
           } catch (error) {
             return;
           }
+          window.clearTimeout(closeTimeout);
           overlay.hidden = false;
-          requestAnimationFrame(() => overlay.classList.add('show'));
+          overlay.classList.remove('show');
+          void overlay.offsetWidth;
           document.body.classList.add('device-modal-open');
+          requestAnimationFrame(() => overlay.classList.add('show'));
         });
       });
 
       const closeModal = () => {
+        window.clearTimeout(closeTimeout);
         overlay.classList.remove('show');
-        overlay.addEventListener('transitionend', function handler(event) {
-          if (event.target !== overlay || event.propertyName !== 'opacity') return;
+        closeTimeout = window.setTimeout(() => {
+          if (overlay.classList.contains('show')) return;
           overlay.hidden = true;
           document.body.classList.remove('device-modal-open');
-          overlay.removeEventListener('transitionend', handler);
-        });
+        }, 260);
       };
 
       closeBtn.addEventListener('click', closeModal);

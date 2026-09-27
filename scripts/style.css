@@ -558,7 +558,7 @@ html.gradient-static body::before {
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   padding: 0;
   margin: 0;
   background: transparent;
@@ -566,13 +566,68 @@ html.gradient-static body::before {
 }
 
 .status-badge {
-  display: block;
-  border-radius: 999px;
-  background: transparent;
-  padding: 0;
-  border: none;
-  max-height: 32px;
-  width: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  max-width: 100%;
+  min-height: 32px;
+  box-sizing: border-box;
+  padding: 6px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.045);
+  color: #eceff4;
+  font-size: 12px;
+  line-height: 1.2;
+  text-align: left;
+}
+
+.status-badge-link,
+.status-badge-link:visited {
+  color: inherit;
+  text-decoration: none;
+}
+
+.status-badge-label {
+  flex: 0 0 auto;
+  color: rgba(236, 239, 244, 0.68);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.status-badge-value {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.status-badge-dot {
+  flex: 0 0 8px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #9aa4b2;
+}
+
+.status-badge[data-status="online"] .status-badge-dot {
+  background: #46c98b;
+}
+
+.status-badge[data-status="idle"] .status-badge-dot {
+  background: #f1bb58;
+}
+
+.status-badge[data-status="dnd"] .status-badge-dot {
+  background: #e56b73;
+}
+
+.status-badge[data-status="offline"],
+.status-badge[data-status="unavailable"] {
+  opacity: 0.72;
 }
 
 .social-item {
@@ -806,6 +861,10 @@ button {
   height: 32px;
 }
 
+.home-social-links .bsky-icon {
+  transform: scale(1.5);
+}
+
 .topnav {
   background-color: #00000039;
   overflow: visible;
@@ -1024,10 +1083,10 @@ html.topbar-transitioning .minimize-btn {
 
   .profile-layout {
     grid-template-columns: minmax(0, 1fr);
-    justify-items: start;
+    justify-items: center;
     gap: 14px;
     width: 100%;
-    text-align: left;
+    text-align: center;
   }
 
   .profile-avatar {
@@ -1035,12 +1094,13 @@ html.topbar-transitioning .minimize-btn {
   }
 
   .profile-copy {
+    align-items: center;
     width: 100%;
   }
 
   .profile-copy .pfp-name {
-    justify-content: flex-start;
-    text-align: left;
+    justify-content: center;
+    text-align: center;
   }
 
   .topnav {
@@ -1134,6 +1194,12 @@ html.topbar-transitioning .minimize-btn {
 
 .main>* {
   margin: 0;
+}
+
+.main.projects-main {
+  align-items: center;
+  width: fit-content;
+  max-width: 95vw;
 }
 
 .main h2 {

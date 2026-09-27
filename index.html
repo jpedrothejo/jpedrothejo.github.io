@@ -8,6 +8,7 @@
   <link href="/scripts/style.css" rel="stylesheet" type="text/css" media="all">
   <link rel="icon" href="/images/site icon.ico">
   <script src="/scripts/settings.js"></script>
+  <script src="/scripts/status-badges.js" defer></script>
 </head>
 
 <body>
@@ -79,21 +80,26 @@
           class="social-label">Twitter</span></a>
         <a href="#" class="social-item" data-social-links='[{"url":"https://www.roblox.com/users/2725283118/profile","label":"Main Account"},{"url":"https://www.roblox.com/users/7576236611/profile","label":"Alt 1"},{"url":"https://www.roblox.com/users/11304318429/profile","label":"Alt 2"}]'><img src="icons/roblox.png"
           class="icon-img"><span class="social-label">Roblox</span></a>
-        <a href="#" class="social-item" data-social-links='[{"url":"https://discord.com/users/944684533108854854","label":"Main"},{"url":"https://discord.com/users/1076145924474146959","label":"Alt"},{"url":"https://discord.gg/vK8PEz2gEk","label":"Server"}]'><img src="icons/discord.jpeg"
+        <a href="#" class="social-item" data-social-links='[{"url":"https://discord.com/users/944684533108854854","label":"Main"},{"url":"https://discord.com/users/1076145924474146959","label":"Alt"},{"url":"https://discord.gg/vK8PEz2gEk","label":"Server"}]'><img src="icons/discord.png"
           class="icon-img"><span class="social-label">Discord</span></a>
         <a href="https://bsky.app/profile/jpedrothejohn.bsky.social" class="social-item"><img src="icons/bsky.png"
-          class="icon-img"><span class="social-label">Bluesky</span></a>
+          class="icon-img bsky-icon"><span class="social-label">Bluesky</span></a>
         </div>
       </section>
 
       <section class="card-bg home-category home-status">
-        <h2>What am I doing right now?</h2>
-        <div class="status-badges">
-          <img class="status-badge" src="https://api.statusbadges.me/badge/status/944684533108854854" alt="status">
-          <img class="status-badge" src="https://api.statusbadges.me/badge/vscode/944684533108854854Ks" alt="vscode">
-          <a href="https://api.statusbadges.me/openspotify/944684533108854854" target="_blank" rel="noopener"
-            style="display: flex;"><img class="status-badge" src="https://api.statusbadges.me/badge/spotify/944684533108854854"
-              alt="spotify"></a>
+        <h2>Status</h2>
+        <div class="status-badges" data-presence-badges>
+          <span class="status-badge" data-badge="presence" data-status="loading">
+            <span class="status-badge-dot" aria-hidden="true"></span>
+            <span class="status-badge-label">Discord</span>
+            <span class="status-badge-value" aria-live="polite">Loading</span>
+          </span>
+          <span class="status-badge coding-status-badge" data-badge="coding" data-status="loading">
+            <span class="status-badge-dot" aria-hidden="true"></span>
+            <span class="status-badge-label">Coding</span>
+            <span class="status-badge-value" aria-live="polite">Loading</span>
+          </span>
         </div>
       </section>
     </div>
@@ -106,6 +112,7 @@
     const title = document.getElementById('socialModalTitle');
     const body = document.getElementById('socialModalBody');
     const closeBtn = document.getElementById('socialModalClose');
+    let closeTimeout;
 
     
 
@@ -141,41 +148,33 @@
           body.appendChild(li);
         }
 
+        window.clearTimeout(closeTimeout);
         overlay.hidden = false;
-        requestAnimationFrame(() => overlay.classList.add('show'));
+        overlay.classList.remove('show');
+        void overlay.offsetWidth;
         document.body.classList.add('device-modal-open');
+        requestAnimationFrame(() => overlay.classList.add('show'));
       });
     });
 
-      closeBtn.addEventListener('click', () => {
+      const closeModal = () => {
+        window.clearTimeout(closeTimeout);
         overlay.classList.remove('show');
-        overlay.addEventListener('transitionend', function handler() {
+        closeTimeout = window.setTimeout(() => {
+          if (overlay.classList.contains('show')) return;
           overlay.hidden = true;
           document.body.classList.remove('device-modal-open');
-          overlay.removeEventListener('transitionend', handler);
-        });
-      });
+        }, 260);
+      };
+
+      closeBtn.addEventListener('click', closeModal);
 
       overlay.addEventListener('click', (event) => {
-        if (event.target === overlay) {
-          overlay.classList.remove('show');
-          overlay.addEventListener('transitionend', function handler() {
-            overlay.hidden = true;
-            document.body.classList.remove('device-modal-open');
-            overlay.removeEventListener('transitionend', handler);
-          });
-        }
+        if (event.target === overlay) closeModal();
       });
 
       document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape' && overlay.classList.contains('show')) {
-          overlay.classList.remove('show');
-          overlay.addEventListener('transitionend', function handler() {
-            overlay.hidden = true;
-            document.body.classList.remove('device-modal-open');
-            overlay.removeEventListener('transitionend', handler);
-          });
-        }
+        if (event.key === 'Escape' && overlay.classList.contains('show')) closeModal();
       });
   });
   </script>
@@ -198,5 +197,5 @@
     <ul id="socialModalBody" class="device-modal-list"></ul>
   </div>
 </div>
-</html>
+</body>
 </html>

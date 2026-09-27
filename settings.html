@@ -39,14 +39,6 @@
             <h3>Visual Settings</h3>
 
             <div class="setting-item">
-              <span>Dark Mode</span>
-              <label class="switch">
-                <input type="checkbox" class="custom-checkbox" data-setting-key="darkEnabled" data-default-on="true">
-                <span class="slider"></span>
-              </label>
-            </div>
-
-            <div class="setting-item">
               <span>Show Social Labels</span>
               <label class="switch">
                 <input type="checkbox" class="custom-checkbox" data-setting-key="socialLabelsEnabled"
@@ -115,25 +107,15 @@
                 </label>
               </div>
             </div>
-            
-            <div class="setting-item" id="custom-wallpaper-setting" style="display:none; align-items:center;">
-              <span>Custom Wallpaper</span>
-              <div class="control-group">
-                <input id="custom-wallpaper-input" type="file" accept="image/*" class="custom-file" data-setting-key="customWallpaper">
-                <label for="custom-wallpaper-input" class="custom-file-button">Select File</label>
-                <span class="custom-file-label" id="custom-wallpaper-filename"></span>
-              </div>
-            </div>
-
 
             <div class="setting-item">
               <span>Font</span>
               <select class="custom-select" data-setting-key="fontFamily">
-                <option value="googlesansrounded" selected>Google Sans</option>
+                <option value="googlesansrounded">Google Sans</option>
                 <option value="adwaita">Adwaita</option>
                 <option value="sfpro">SF Pro</option>
                 <option value="inter">Inter</option>
-                <option value="plusjakarta">Plus Jakarta</option>
+                <option value="plusjakarta" selected>Plus Jakarta</option>
                 <option value="arial">Arial</option>
                 <option value="custom" hidden>Custom Font</option>
               </select>
@@ -175,7 +157,7 @@
               <select class="custom-select" data-setting-key="accentColor">
                 <option value="default">Blue</option>
                 <option value="navy">Navy Blue</option>
-                <option value="nord">Nord</option>
+                <option value="nord" selected>Nord</option>
                 <option value="custom" hidden>Custom</option>
               </select>
             </div>
@@ -233,6 +215,7 @@
                 <span>Custom Accent Color</span>
                 <input type="color" class="custom-color" data-setting-key="customAccentColor" value="#5d94c2">
               </div>
+
               <div class="setting-item" id="custom-font-setting">
                 <span>Custom Font</span>
                 <div class="control-group">
@@ -241,6 +224,15 @@
                   <span class="custom-file-label"></span>
                   <span class="custom-font-error" role="alert" hidden>Font could not be saved. Choose a smaller file.</span>
                 </div>
+              </div>
+
+              <div class="setting-item" id="custom-wallpaper-setting">
+                <span>Custom Wallpaper</span>
+                <div class="control-group">
+                 <input id="custom-wallpaper-input" type="file" accept="image/*" class="custom-file" data-setting-key="customWallpaper">
+                  <label for="custom-wallpaper-input" class="custom-file-button">Select File</label>
+                  <span class="custom-file-label" id="custom-wallpaper-filename"></span>
+               </div>
               </div>
             </div>
           </div>

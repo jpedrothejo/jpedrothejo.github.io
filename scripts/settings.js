@@ -107,18 +107,20 @@ function applyReducedAnimation() {
 }
 
 function applyFont() {
-  let fontFamily = localStorage.getItem('fontFamily') || 'googlesansrounded';
+  let fontFamily = localStorage.getItem('fontFamily') || 'plusjakarta';
   const boldEnabled = isEnabled('fontBold', false);
   const customFontData = localStorage.getItem('customFontData') || '';
   const hasCustomFont = /^data:[^;]+;base64,/.test(customFontData);
   if (!localStorage.getItem('fontFamily')) localStorage.setItem('fontFamily', fontFamily);
   if (fontFamily === 'googlesansbold') fontFamily = 'googlesansrounded';
   if (fontFamily === 'custom' && !hasCustomFont) {
-    fontFamily = 'googlesansrounded';
+    fontFamily = 'plusjakarta';
     localStorage.setItem('fontFamily', fontFamily);
   }
   const customFontOption = document.querySelector('[data-setting-key="fontFamily"] option[value="custom"]');
   if (customFontOption) customFontOption.hidden = !hasCustomFont;
+  const boldSetting = document.querySelector('[data-setting-key="fontBold"]')?.closest('.setting-item');
+  if (boldSetting) boldSetting.style.display = fontFamily === 'adwaita' ? 'none' : '';
   const customFontStyle = document.getElementById('custom-font-face');
   if (hasCustomFont) {
     const style = customFontStyle || document.createElement('style');
@@ -248,7 +250,7 @@ function applyFigcaptionVisibility() {
 }
 
 function applyAccentColor() {
-  const accent = localStorage.getItem('accentColor') || 'default';
+  const accent = localStorage.getItem('accentColor') || 'nord';
   const root = document.documentElement;
   const customOption = document.querySelector('[data-setting-key="accentColor"] option[value="custom"]');
   if (customOption) customOption.hidden = accent !== 'custom';
@@ -282,14 +284,21 @@ function applyAccentColor() {
 }
 
 function applyWallpaper(animate = false) {
-  const wallpaper = localStorage.getItem('wallpaper') || 'pattern';
+  const savedWallpaper = localStorage.getItem('wallpaper') || 'pattern';
+  const customWallpaper = localStorage.getItem('customWallpaper') || '';
+  const hasCustomWallpaper = /^data:image\/[^;]+;base64,/.test(customWallpaper);
+  const wallpaper = savedWallpaper === 'custom' && !hasCustomWallpaper ? 'pattern' : savedWallpaper;
   const root = document.documentElement;
+  const customWallpaperOption = document.querySelector('[data-setting-key="wallpaper"] option[value="custom"]');
+  if (customWallpaperOption) customWallpaperOption.hidden = !hasCustomWallpaper;
   const applyWallpaperSettings = () => {
     root.classList.toggle('gradient-wallpaper', wallpaper === 'gradient');
     root.classList.toggle('gradient-static', wallpaper === 'gradient' && isEnabled('gradientStopMotion', false));
     root.classList.toggle('pattern-wallpaper', wallpaper === 'pattern');
     if (wallpaper === 'gradient') {
       applyGradientSettings();
+    } else if (wallpaper === 'custom' && hasCustomWallpaper) {
+      root.style.setProperty('--wallpaper-image', `url("${customWallpaper}")`);
     } else if (wallpaper === 'no-bg' || wallpaper === 'pattern') {
       root.style.setProperty('--wallpaper-image', 'none');
     } else {
@@ -553,7 +562,7 @@ function triggerPotatoMode(potatoToggle) {
     if (isPotatoModeOn) {
       wallpaperDropdown.value = 'no-bg';
     } else {
-      wallpaperDropdown.value = 'background.jpg';
+      wallpaperDropdown.value = 'pattern';
     }
     wallpaperDropdown.dispatchEvent(new Event('change', { bubbles: true }));
   }
@@ -628,6 +637,15 @@ function initializeInputs() {
           localStorage.setItem(key, file.name);
         }
         if (filenameLabel) filenameLabel.textContent = file.name;
+        if (key === 'customWallpaper' && typeof dataUrl === 'string' && dataUrl.startsWith('data:image/')) {
+          const wallpaperOption = document.querySelector('[data-setting-key="wallpaper"] option[value="custom"]');
+          if (wallpaperOption) wallpaperOption.hidden = false;
+          const wallpaperSelect = document.querySelector('[data-setting-key="wallpaper"]');
+          if (wallpaperSelect) {
+            wallpaperSelect.value = 'custom';
+            localStorage.setItem('wallpaper', 'custom');
+          }
+        }
         applyAllSettings(false, true);
       };
       reader.readAsDataURL(file);
