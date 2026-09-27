@@ -19,40 +19,56 @@
     <a class="minimize-btn" id="minimizeBtn" title="Minimize">−</a>
   </div>
 
-  <div class="main">
+  <div class="main home-main">
     <h1>jpedro's Website</h1>
     <p></p>
 
-    <div class="card-bg">
-      <img src="images/profile pic.png" width="225">
-      <div class="pfp-name">
-        <h3>jpedro // jpedrothejo // john</h3>
+    <div class="profile-layout">
+      <div class="profile-avatar">
+        <img src="images/profile pic.png" width="225" alt="Profile picture">
+      </div>
+      <div class="profile-copy">
+        <div class="pfp-name">
+          <h3>jpedro // jpedrothejo // john</h3>
+        </div>
+        <div class="card-bg profile-typeit">
+          <script src="https://unpkg.com/typeit@8.7.1/dist/index.umd.js"></script>
+          <p id="welcome"></p>
+          <script>
+            const messages = [
+              "''You're not a good person. You know that, Right?''",
+              "welcome to my website!",
+              "check my socials below!",
+              "hi",
+              "check my projects at the <a href='/projects.html'>projects page</a>!",
+            ];
+            const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+            new TypeIt("#welcome", {
+              strings: [randomMessage],
+              speed: 35,
+              waitUntilVisible: true,
+            }).go();
+          </script>
+        </div>
       </div>
     </div>
 
-    <div class="card-bg">  
-      <script src="https://unpkg.com/typeit@8.7.1/dist/index.umd.js"></script>
-      <p id="welcome"></p>
-      <script>
-        const messages = [
-          "''You're not a good person. You know that, Right?''",
-          "welcome to my website!",
-          "check my socials below!",
-          "hi",
-          "check my projects at the <a href='/projects.html'>projects page</a>!",
-        ];
-        const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-        new TypeIt("#welcome", {
-          strings: [randomMessage],
-          speed: 35,
-          waitUntilVisible: true,
-        }).go();
-      </script>
-    </div>
+    <div class="home-categories">
+      <section class="card-bg home-category home-about">
+        <h2>About Me</h2>
+        <ul>
+          <li>I'm Brazillian</li>
+          <li>I'm Genderfluid</li>
+          <li>I like technology</li>
+          <li>I like gaming</li>
+          <li>I'm 13 years old</li>
+          <li>I'm a BFDI fan</li>
+        </ul>
+      </section>
 
-    <h2 class="social-title">My Socials</h2>
-
-    <div class="social-bg">
+      <section class="card-bg home-category home-socials">
+        <h2 class="social-title">My Socials</h2>
+        <div class="home-social-links">
         <a href="#" class="social-item" data-social-links='[{"url":"https://www.youtube.com/@jpedrothejo","label":"Main Channel"},{"url":"https://www.youtube.com/@jpedrothevlogs","label":"Alt. Channel"},{"url":"https://www.youtube.com/@jpedrothegames","label":"Gaming Channel"}]'><img src="icons/youtube.png" class="icon-img"><span
           class="social-label">YouTube</span></a>
         <a href="#" class="social-item" data-social-links='[{"url":"https://www.tiktok.com/@jpedrothejo","label":"Main Account"},{"url":"https://www.tiktok.com/@pa1qxxx","label":"Alt Account"}]'><img src="icons/tiktok.png"
@@ -67,32 +83,19 @@
           class="icon-img"><span class="social-label">Discord</span></a>
         <a href="https://bsky.app/profile/jpedrothejohn.bsky.social" class="social-item"><img src="icons/bsky.png"
           class="icon-img"><span class="social-label">Bluesky</span></a>
-    </div>
+        </div>
+      </section>
 
-    <h2>What am I doing right now?</h2>
-    <div class="card-bg">
-      <div class="status-badges">
-        <img class="status-badge" src="https://api.statusbadges.me/badge/status/944684533108854854" alt="status">
-        <img class="status-badge" src="https://api.statusbadges.me/badge/playing/944684533108854854" alt="playing">
-        <img class="status-badge" src="https://api.statusbadges.me/badge/vscode/944684533108854854Ks" alt="vscode">
-        <a href="https://api.statusbadges.me/openspotify/944684533108854854" target="_blank" rel="noopener"
-          style="display: flex;"><img class="status-badge" src="https://api.statusbadges.me/badge/spotify/944684533108854854"
-            alt="spotify"></a>
-      </div>
-    </div>
-
-    <h2>About Me</h2>
-    <div class="card-bg">
-      <ul>
-        <li>I'm Brazillian</li>
-        <li>I'm Genderfluid</li>
-        <li>I like technology</li>
-        <li>I like gaming</li>
-        <li>I'm 13 years old</li>
-        <li>I'm a BFDI fan</li>
-      </ul>
-    </div>
-      </div>
+      <section class="card-bg home-category home-status">
+        <h2>What am I doing right now?</h2>
+        <div class="status-badges">
+          <img class="status-badge" src="https://api.statusbadges.me/badge/status/944684533108854854" alt="status">
+          <img class="status-badge" src="https://api.statusbadges.me/badge/vscode/944684533108854854Ks" alt="vscode">
+          <a href="https://api.statusbadges.me/openspotify/944684533108854854" target="_blank" rel="noopener"
+            style="display: flex;"><img class="status-badge" src="https://api.statusbadges.me/badge/spotify/944684533108854854"
+              alt="spotify"></a>
+        </div>
+      </section>
     </div>
   </div>
 </body>
@@ -106,7 +109,7 @@
 
     
 
-    document.querySelectorAll('.social-bg .social-item').forEach((el) => {
+    document.querySelectorAll('.home-social-links .social-item').forEach((el) => {
       const href = el.getAttribute('href') || '';
       const excluded = /(github\.com|x\.com|twitter\.com|bsky\.app)/i;
       if (excluded.test(href)) return; // let default behaviour for excluded platforms
