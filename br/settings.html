@@ -39,14 +39,6 @@
             <h3>Visuais</h3>
 
             <div class="setting-item">
-              <span>Modo Escuro</span>
-              <label class="switch">
-                <input type="checkbox" class="custom-checkbox" data-setting-key="darkEnabled" data-default-on="true">
-                <span class="slider"></span>
-              </label>
-            </div>
-
-            <div class="setting-item">
               <span>Mostrar Rótulos da Rede Social</span>
               <label class="switch">
                 <input type="checkbox" class="custom-checkbox" data-setting-key="socialLabelsEnabled"
@@ -77,43 +69,6 @@
                 <input type="checkbox" class="custom-checkbox" data-setting-key="fontBold" data-default-on="false">
                 <span class="slider"></span>
               </label>
-            </div>
-
-            <div class="gradient-settings" style="display:none; flex-direction:column; gap:8px; margin-bottom:12px;">
-              <div class="setting-item">
-                <span>Cores Customizadas do Gradiente</span>
-                <label class="switch">
-                  <input type="checkbox" class="custom-checkbox" data-setting-key="gradientCustomizeColors" data-default-on="false">
-                  <span class="slider"></span>
-                </label>
-              </div>
-              
-              <div class="gradient-color-pickers" style="display:none; flex-wrap:wrap; gap:8px;">
-                <div class="setting-item" style="width:100%;">
-                  <span>Cor 1</span>
-                  <input type="color" class="custom-color" data-setting-key="gradientColor1" value="#0f172a">
-                </div>
-                <div class="setting-item" style="width:100%;">
-                  <span>Cor 2</span>
-                  <input type="color" class="custom-color" data-setting-key="gradientColor2" value="#4f46e5">
-                </div>
-                <div class="setting-item" style="width:100%;">
-                  <span>Cor 3</span>
-                  <input type="color" class="custom-color" data-setting-key="gradientColor3" value="#ec4899">
-                </div>
-                <div class="setting-item" style="width:100%;">
-                  <span>Cor 4</span>
-                  <input type="color" class="custom-color" data-setting-key="gradientColor4" value="#22d3ee">
-                </div>
-              </div>
-
-              <div class="setting-item">
-                <span>Parar Movimento do Gradiente</span>
-                <label class="switch">
-                  <input type="checkbox" class="custom-checkbox" data-setting-key="gradientStopMotion" data-default-on="false">
-                  <span class="slider"></span>
-                </label>
-              </div>
             </div>
 
             <div class="setting-item">
@@ -151,10 +106,12 @@
               <span>Papel de Parede</span>
               <select class="custom-select" data-setting-key="wallpaper">
                 <option value="pattern" selected>Padrão Escuro</option>
-                <option value="background.jpg">Imagem de Fundo</option>
+                <option value="background.jpg">Céu</option>
                 <option value="setup.jpg">Setup do Windows 95</option>
                 <option value="water.jpg">Água do Windows 7</option>
-                <option value="gradient">Gradiente</option>
+                <option value="Flowers.jpg">Flores do Windows 8</option>
+                <option value="Metro.jpg">Metrô do Windows 8</option>
+                <option value="Glacier.jpg">Geleira do Windows 8</option>
                 <option value="custom" hidden>Personalizado</option>
                 <option value="no-bg">Nenhum</option>
               </select>

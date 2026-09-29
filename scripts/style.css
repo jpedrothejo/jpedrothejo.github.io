@@ -1411,7 +1411,7 @@ input:checked+.slider:before {
   background-color: var(--accent-color-button-bg);
   color: #ffffff;
   border: 1px solid rgba(255, 255, 255, 0.28);
-  border-radius: 999px;
+  border-radius: 6.25px;
   padding: 8px 12px 8px 14px;
   padding-right: 44px;
   font-family: inherit;
