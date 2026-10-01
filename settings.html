@@ -62,6 +62,25 @@
                 <span class="slider"></span>
               </label>
             </div>
+
+            <div class="setting-item" id="custom-font-setting">
+              <span>Custom Font</span>
+              <div class="control-group">
+                <input id="custom-font-input-en" type="file" accept=".woff2,.woff,.ttf,.otf,font/woff2,font/woff,font/ttf,font/otf" class="custom-file" data-setting-key="customFontData">
+                <label for="custom-font-input-en" class="custom-file-button">Select Font</label>
+                <span class="custom-file-label"></span>
+                <span class="custom-font-error" role="alert" hidden>Font could not be saved. Choose a smaller file.</span>
+              </div>
+            </div>
+
+            <div class="setting-item" id="custom-wallpaper-setting">
+              <span>Custom Wallpaper</span>
+              <div class="control-group">
+                <input id="custom-wallpaper-input" type="file" accept="image/*" class="custom-file" data-setting-key="customWallpaper">
+                <label for="custom-wallpaper-input" class="custom-file-button">Select File</label>
+                <span class="custom-file-label" id="custom-wallpaper-filename"></span>
+              </div>
+            </div>
             
             <div class="setting-item">
               <span>Bold Font</span>
@@ -90,7 +109,7 @@
                 <option value="inter">Inter</option>
                 <option value="plusjakarta" selected>Plus Jakarta</option>
                 <option value="arial">Arial</option>
-                <option value="custom" hidden>Custom Font</option>
+                <option value="custom">Custom Font</option>
               </select>
             </div>
 
@@ -122,7 +141,7 @@
                 <option value="Flowers.jpg">Windows 8 Flowers</option>
                 <option value="Metro.jpg">Windows 8 Metro</option>
                 <option value="Glacier.jpg">Windows 8 Glacier</option>
-                <option value="custom" hidden>Custom</option>
+                <option value="custom">Custom</option>
                 <option value="no-bg">None</option>
               </select>
             </div>
@@ -211,24 +230,6 @@
                 <output>2.5px</output>
               </label>
 
-              <div class="setting-item" id="custom-font-setting">
-                <span>Custom Font</span>
-                <div class="control-group">
-                  <input id="custom-font-input-en" type="file" accept=".woff2,.woff,.ttf,.otf,font/woff2,font/woff,font/ttf,font/otf" class="custom-file" data-setting-key="customFontData">
-                  <label for="custom-font-input-en" class="custom-file-button">Select Font</label>
-                  <span class="custom-file-label"></span>
-                  <span class="custom-font-error" role="alert" hidden>Font could not be saved. Choose a smaller file.</span>
-                </div>
-              </div>
-
-              <div class="setting-item" id="custom-wallpaper-setting">
-                <span>Custom Wallpaper</span>
-                <div class="control-group">
-                 <input id="custom-wallpaper-input" type="file" accept="image/*" class="custom-file" data-setting-key="customWallpaper">
-                  <label for="custom-wallpaper-input" class="custom-file-button">Select File</label>
-                  <span class="custom-file-label" id="custom-wallpaper-filename"></span>
-               </div>
-              </div>
             </div>
           </div>
         </div>

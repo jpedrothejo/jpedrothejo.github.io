@@ -118,6 +118,7 @@ function applyReducedAnimation() {
 
 function applyFont() {
   let fontFamily = localStorage.getItem('fontFamily') || 'plusjakarta';
+  const selectedFontFamily = fontFamily;
   const boldEnabled = isEnabled('fontBold', false);
   const customFontData = localStorage.getItem('customFontData') || '';
   const hasCustomFont = /^data:[^;]+;base64,/.test(customFontData);
@@ -125,10 +126,9 @@ function applyFont() {
   if (fontFamily === 'googlesansbold') fontFamily = 'googlesansrounded';
   if (fontFamily === 'custom' && !hasCustomFont) {
     fontFamily = 'plusjakarta';
-    localStorage.setItem('fontFamily', fontFamily);
   }
-  const customFontOption = document.querySelector('[data-setting-key="fontFamily"] option[value="custom"]');
-  if (customFontOption) customFontOption.hidden = !hasCustomFont;
+  const customFontSetting = document.getElementById('custom-font-setting');
+  if (customFontSetting) customFontSetting.style.display = selectedFontFamily === 'custom' ? 'flex' : 'none';
   const boldSetting = document.querySelector('[data-setting-key="fontBold"]')?.closest('.setting-item');
   if (boldSetting) boldSetting.style.display = fontFamily === 'adwaita' ? 'none' : '';
   const customFontStyle = document.getElementById('custom-font-face');
@@ -288,8 +288,8 @@ function applyWallpaper(animate = false) {
   const hasCustomWallpaper = /^data:image\/[^;]+;base64,/.test(customWallpaper);
   const wallpaper = savedWallpaper === 'custom' && !hasCustomWallpaper ? 'pattern' : savedWallpaper;
   const root = document.documentElement;
-  const customWallpaperOption = document.querySelector('[data-setting-key="wallpaper"] option[value="custom"]');
-  if (customWallpaperOption) customWallpaperOption.hidden = !hasCustomWallpaper;
+  const customWallpaperSetting = document.getElementById('custom-wallpaper-setting');
+  if (customWallpaperSetting) customWallpaperSetting.style.display = savedWallpaper === 'custom' ? 'flex' : 'none';
   const applyWallpaperSettings = () => {
     root.classList.toggle('gradient-wallpaper', wallpaper === 'gradient');
     root.classList.toggle('gradient-static', wallpaper === 'gradient' && isEnabled('gradientStopMotion', false));
@@ -788,15 +788,7 @@ function initializeInputs() {
           }
           if (error) error.hidden = true;
           if (filenameLabel) filenameLabel.textContent = file.name;
-          const fontOption = document.querySelector('[data-setting-key="fontFamily"] option[value="custom"]');
-          if (fontOption) fontOption.hidden = false;
-          const fontSelect = document.querySelector('[data-setting-key="fontFamily"]');
-          if (fontSelect) {
-            fontSelect.value = 'custom';
-            fontSelect.dispatchEvent(new Event('change', { bubbles: true }));
-          } else {
-            applyFont();
-          }
+          applyAllSettings();
         };
         reader.readAsDataURL(file);
       });
@@ -816,15 +808,6 @@ function initializeInputs() {
           localStorage.setItem(key, file.name);
         }
         if (filenameLabel) filenameLabel.textContent = file.name;
-        if (key === 'customWallpaper' && typeof dataUrl === 'string' && dataUrl.startsWith('data:image/')) {
-          const wallpaperOption = document.querySelector('[data-setting-key="wallpaper"] option[value="custom"]');
-          if (wallpaperOption) wallpaperOption.hidden = false;
-          const wallpaperSelect = document.querySelector('[data-setting-key="wallpaper"]');
-          if (wallpaperSelect) {
-            wallpaperSelect.value = 'custom';
-            localStorage.setItem('wallpaper', 'custom');
-          }
-        }
         applyAllSettings(false, true);
       };
       reader.readAsDataURL(file);

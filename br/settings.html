@@ -62,6 +62,25 @@
                 <span class="slider"></span>
               </label>
             </div>
+
+            <div class="setting-item" id="custom-font-setting">
+              <span>Fonte Personalizada</span>
+              <div class="control-group">
+                <input id="custom-font-input-br" type="file" accept=".woff2,.woff,.ttf,.otf,font/woff2,font/woff,font/ttf,font/otf" class="custom-file" data-setting-key="customFontData">
+                <label for="custom-font-input-br" class="custom-file-button">Selecionar Fonte</label>
+                <span class="custom-file-label"></span>
+                <span class="custom-font-error" role="alert" hidden>Não foi possível salvar a fonte. Escolha um arquivo menor.</span>
+              </div>
+            </div>
+
+            <div class="setting-item" id="custom-wallpaper-setting">
+              <span>Papel de Parede Customizado</span>
+              <div class="control-group">
+                <input id="custom-wallpaper-input-br" type="file" accept="image/*" class="custom-file" data-setting-key="customWallpaper">
+                <label for="custom-wallpaper-input-br" class="custom-file-button">Selecionar Arquivo</label>
+                <span class="custom-file-label" id="custom-wallpaper-filename"></span>
+              </div>
+            </div>
             
             <div class="setting-item">
               <span>Fonte Negrita</span>
@@ -80,7 +99,7 @@
                 <option value="inter">Inter</option>
                 <option value="plusjakarta" selected>Plus Jakarta</option>
                 <option value="arial">Arial</option>
-                <option value="custom" hidden>Fonte personalizada</option>
+                <option value="custom">Fonte personalizada</option>
               </select>
             </div>
 
@@ -112,7 +131,7 @@
                 <option value="Flowers.jpg">Flores do Windows 8</option>
                 <option value="Metro.jpg">Metrô do Windows 8</option>
                 <option value="Glacier.jpg">Geleira do Windows 8</option>
-                <option value="custom" hidden>Personalizado</option>
+                <option value="custom">Personalizado</option>
                 <option value="no-bg">Nenhum</option>
               </select>
             </div>
@@ -199,23 +218,6 @@
                 <input class="experimental-range" type="range" min="0" max="20" step="0.5" value="2.5" data-setting-key="wallpaperBlurLevel" data-unit="px" aria-label="Nível de desfoque do papel de parede">
                 <output>2.5px</output>
               </label>
-              <div class="setting-item" id="custom-font-setting">
-                <span>Fonte Personalizada</span>
-                <div class="control-group">
-                  <input id="custom-font-input-br" type="file" accept=".woff2,.woff,.ttf,.otf,font/woff2,font/woff,font/ttf,font/otf" class="custom-file" data-setting-key="customFontData">
-                  <label for="custom-font-input-br" class="custom-file-button">Selecionar Fonte</label>
-                  <span class="custom-file-label"></span>
-                  <span class="custom-font-error" role="alert" hidden>Não foi possível salvar a fonte. Escolha um arquivo menor.</span>
-                </div>
-              </div>
-              <div class="setting-item" id="custom-wallpaper-setting">
-                <span>Papel de Parede Customizado</span>
-                <div class="control-group">
-                  <input id="custom-wallpaper-input-br" type="file" accept="image/*" class="custom-file" data-setting-key="customWallpaper">
-                  <label for="custom-wallpaper-input-br" class="custom-file-button">Selecionar Arquivo</label>
-                  <span class="custom-file-label" id="custom-wallpaper-filename"></span>
-                </div>
-              </div>
             </div>
           </div>
         </div>
