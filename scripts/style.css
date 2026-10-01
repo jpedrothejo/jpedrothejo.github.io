@@ -52,11 +52,28 @@
 
 .settings {
   display: grid;
-  grid-template-columns: repeat(3, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 20px;
   width: 100%;
   align-items: start;
   text-align: left;
+}
+
+.main.settings-main {
+  width: fit-content;
+  max-width: 95vw;
+  align-items: center;
+}
+
+.main.settings-main > .settings {
+  width: fit-content;
+  max-width: 100%;
+  grid-template-columns: repeat(2, minmax(220px, max-content));
+  justify-content: center;
+}
+
+.main.settings-main.experimental-settings-unlocked > .settings {
+  grid-template-columns: repeat(3, minmax(220px, max-content));
 }
 
 .settings-section + .settings-section {
@@ -113,40 +130,8 @@
   flex-basis: 100%;
 }
 
-.experimental-access-dialog {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.experimental-access-dialog h2,
-.experimental-access-dialog p {
-  margin: 0;
-}
-
-.experimental-password-label {
-  font-size: 0.9rem;
-}
-
-.experimental-password-input {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 10px 12px;
-  border: 1px solid var(--accent-color-glow);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.06);
-  color: #fff;
-  font: inherit;
-}
-
-.experimental-password-error {
-  color: #ffb4a9;
-}
-
-.experimental-access-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
+.experimental-locked {
+  opacity: 0.62;
 }
 
 .setting-item input[type="text"],
@@ -228,6 +213,200 @@
 .setting-item > .custom-file-label,
 .setting-item > .switch { flex: 0 0 auto; }
 
+.setting-item > .custom-select {
+  width: min(58%, 190px);
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.setting-item > .control-group {
+  flex: 0 0 64%;
+  width: 64%;
+  min-width: 0;
+  margin-left: auto;
+  justify-content: flex-end;
+}
+
+.setting-item > .control-group .custom-file-button {
+  flex: 0 0 auto;
+  max-width: 100%;
+}
+
+.setting-item > .control-group .custom-file-label:empty {
+  display: none;
+}
+
+.setting-item > .control-group .custom-file-label:not(:empty) {
+  order: -1;
+  flex: 1 1 auto;
+  min-width: 0;
+  margin-left: 0;
+  text-align: right;
+}
+
+.experimental-range {
+  width: min(34%, 108px);
+  min-width: 70px;
+  accent-color: var(--accent-color-link);
+}
+
+.experimental-settings output {
+  width: 38px;
+  text-align: right;
+  color: var(--accent-color-link);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.custom-color {
+  width: 40px;
+  height: 30px;
+  padding: 3px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 6px;
+  background: var(--accent-color-button-bg);
+  cursor: pointer;
+}
+
+.settings-reset-card {
+  align-self: center;
+  width: fit-content;
+  min-width: 0;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.settings-reset-card .custom-file-button {
+  margin: 0;
+}
+
+.easter-egg-toast {
+  position: fixed;
+  z-index: 1200;
+  top: 16px;
+  left: 50%;
+  max-width: calc(100vw - 32px);
+  padding: 10px 16px;
+  transform: translateX(-50%);
+  border: 1px solid var(--accent-color-link);
+  border-radius: 10px;
+  background: var(--accent-color-button-bg);
+  color: #fff;
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), 0 0 18px var(--accent-color-glow);
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  animation: easter-toast-enter 0.34s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes easter-toast-enter {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -10px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+}
+
+.mode-indicator {
+  position: fixed;
+  right: 12px;
+  bottom: 10px;
+  z-index: 1100;
+  padding: 5px 9px;
+  border: 1px solid var(--accent-color-link);
+  border-radius: 6px;
+  background: var(--accent-color-button-bg-opaque);
+  color: #fff;
+  font: inherit;
+  font-size: 11px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25), 0 0 12px var(--accent-color-glow);
+  backdrop-filter: blur(10px) saturate(150%);
+  -webkit-backdrop-filter: blur(10px) saturate(150%);
+  cursor: default;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.mode-indicator.easter-egg-control {
+  cursor: pointer;
+}
+
+.mode-indicator.easter-egg-control:hover,
+.mode-indicator.easter-egg-control:focus-visible {
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3), 0 0 16px var(--accent-color-glow);
+  transform: translateY(-2px);
+}
+
+.mode-indicator.easter-egg-control:focus-visible {
+  outline: 2px solid var(--accent-color-link);
+  outline-offset: 2px;
+}
+
+html.easter-egg-active {
+  background-image: none !important;
+}
+
+html.easter-egg-active body::after {
+  display: none;
+}
+
+html.easter-egg-active body::before {
+  background-size: 100% 100% !important;
+  background-position: center;
+}
+
+html.easter-egg-active.pattern-wallpaper .main,
+html.easter-egg-active.pattern-wallpaper .card-bg {
+  background: rgba(5, 20, 43, var(--main-opacity)) !important;
+  border-color: rgba(74, 153, 245, 0.38);
+}
+
+html.easter-egg-active.pattern-wallpaper .card-bg {
+  background: rgba(5, 20, 43, var(--card-opacity)) !important;
+}
+
+html.easter-egg-active body::before {
+  background-size: 100% 100% !important;
+  background-position: center;
+}
+
+html.easter-egg-active.pattern-wallpaper .main,
+html.easter-egg-active.pattern-wallpaper .card-bg {
+  background: rgba(5, 20, 43, var(--main-opacity)) !important;
+  border-color: rgba(74, 153, 245, 0.38);
+}
+
+html.easter-egg-active.pattern-wallpaper .card-bg {
+  background: rgba(5, 20, 43, var(--card-opacity)) !important;
+}
+
+html.mode-indicator-visible body {
+  padding-bottom: 40px;
+}
+
+.local-time {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin: 3px 0 0;
+  color: var(--accent-color-link);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.clock-icon {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 .control-group {
   margin-left: auto;
   display: flex;
@@ -302,6 +481,10 @@ html {
   overflow-x: hidden;
   --wallpaper-image: none;
   --wallpaper-blur: none;
+  --main-opacity: 78%;
+  --card-opacity: 78%;
+  --main-blur: 0px;
+  --main-saturation: 100%;
   --accent-color-primary: #5d94c233;
   --accent-color-primary-opaque: #5d94c280;
   --accent-color-hover: #569cd633;
@@ -756,6 +939,7 @@ button {
   border: 4px solid #f4f6fb;
   border-radius: 50%;
   box-sizing: border-box;
+  cursor: pointer;
 }
 
 .profile-copy {
@@ -767,7 +951,10 @@ button {
 }
 
 .profile-copy .pfp-name {
+  flex-direction: column;
+  align-items: flex-start;
   justify-content: flex-start;
+  gap: 3px;
   text-align: left;
 }
 
@@ -1177,7 +1364,7 @@ html.topbar-transitioning .minimize-btn {
 
 .main {
   background-color: #00000039;
-  overflow: hidden;
+  overflow: visible;
   border-radius: 6.25px;
   margin: 80px auto 20px auto;
   width: min(1100px, 95vw);
@@ -1213,33 +1400,6 @@ html.no-bg {
 
 html.no-bg body::before {
   background-image: none !important;
-}
-
-.light-mode {
-  background-color: #ffffff !important;
-  color: #2E3440;
-}
-
-.light-mode .topnav a,
-.light-mode .pfp-name,
-.light-mode h1,
-.light-mode h2,
-.light-mode h3,
-.light-mode h4,
-.light-mode h5,
-.light-mode h6,
-.light-mode li,
-.light-mode .setting-item {
-  color: #2E3440;
-}
-
-.light-mode a {
-  color: #5E81AC;
-}
-
-.light-mode button {
-  background-color: #E5E9F0;
-  color: #2E3440;
 }
 
 .adwaita-font body {
@@ -1518,19 +1678,34 @@ html.accent-nord {
   border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
+.main {
+  background: color-mix(in srgb, var(--accent-color-primary) var(--main-opacity), transparent) !important;
+  backdrop-filter: blur(var(--main-blur)) saturate(var(--main-saturation));
+  -webkit-backdrop-filter: blur(var(--main-blur)) saturate(var(--main-saturation));
+}
+
+.card-bg {
+  background: color-mix(in srgb, var(--accent-color-primary) var(--card-opacity), transparent) !important;
+}
+
 html.pattern-wallpaper .main,
 html.pattern-wallpaper .topnav,
 html.pattern-wallpaper .social-bg,
-html.pattern-wallpaper .card-bg,
 html.pattern-wallpaper .settings-section,
 html.pattern-wallpaper .device-card {
   background: rgba(9, 9, 11, 0.78) !important;
 }
 
-html.blur-disabled .main,
+html.pattern-wallpaper .main {
+  background: rgba(9, 9, 11, var(--main-opacity)) !important;
+}
+
+html.pattern-wallpaper .card-bg {
+  background: rgba(9, 9, 11, var(--card-opacity)) !important;
+}
+
 html.blur-disabled .topnav,
 html.blur-disabled .social-bg,
-html.blur-disabled .card-bg,
 html.blur-disabled .popup-empty {
   background: var(--accent-color-primary-opaque) !important;
 }
@@ -1551,6 +1726,7 @@ html.blur-disabled .popup-empty {
 }
 
 .topnav a {
+  font-weight: 500;
   border-radius: 8px;
 }
 
@@ -1617,6 +1793,19 @@ html.blur-disabled .popup-empty {
   .settings {
     grid-template-columns: 1fr;
     gap: 16px;
+  }
+
+  .main.settings-main {
+    width: min(100%, calc(100vw - 12px));
+  }
+
+  .main.settings-main > .settings {
+    width: 100%;
+    grid-template-columns: 1fr;
+  }
+
+  .main.settings-main.experimental-settings-unlocked > .settings {
+    grid-template-columns: 1fr;
   }
 
   .topnav {

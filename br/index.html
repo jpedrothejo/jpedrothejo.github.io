@@ -30,6 +30,10 @@
       <div class="profile-copy">
         <div class="pfp-name">
           <h3>jpedro // jpedrothejo // joão</h3>
+          <p class="local-time">
+            <svg class="clock-icon" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.25"></circle><path d="M8 4.5v3.75l2.5 1.5"></path></svg>
+            <span id="current-time">agora são</span>
+          </p>
         </div>
         <div class="card-bg profile-typeit">
           <script src="https://unpkg.com/typeit@8.7.1/dist/index.umd.js"></script>
@@ -40,6 +44,8 @@
               "siga minhas redes sociais em baixo!",
               "oi",
               "olhe os projetos na <a href='/projects.html'>página de projetos</a>!",
+              "clique na minha foto de perfil 7 vezes",
+              "abra o popup do J7 Prime 7 vezes",
             ];
             const randomMessage = messages[Math.floor(Math.random() * messages.length)];
             new TypeIt("#welcome", {

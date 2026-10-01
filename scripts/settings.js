@@ -70,9 +70,14 @@ function applyLanguage() {
 
 function applyBlur() {
   const blurEnabled = isEnabled('blurEnabled');
+  const storedMainBlur = Number(localStorage.getItem('mainBlurLevel') ?? 10);
+  const mainBlur = Number.isFinite(storedMainBlur) ? Math.min(20, Math.max(0, storedMainBlur)) : 10;
   const blurValue = blurEnabled ? 'blur(10px) saturate(180%)' : 'none';
 
-  document.querySelectorAll('.main, .topnav, .social-bg, .popup-overlay, .popup-empty')
+  document.documentElement.style.setProperty('--main-blur', `${mainBlur}px`);
+  document.documentElement.style.setProperty('--main-saturation', blurEnabled ? '180%' : '100%');
+
+  document.querySelectorAll('.topnav, .social-bg, .popup-overlay, .popup-empty')
     .forEach(el => {
       el.style.backdropFilter = blurValue;
       el.style.webkitBackdropFilter = blurValue;
@@ -83,9 +88,18 @@ function applyBlur() {
 
 
 function applyBackgroundBlur() {
-  const blurEnabled = isEnabled('backgroundBlur', false);
-  const blurValue = blurEnabled ? 'blur(2.5px)' : 'none';
+  const blurEnabled = isEnabled('backgroundBlur', true);
+  const storedBlur = Number(localStorage.getItem('wallpaperBlurLevel') ?? 2.5);
+  const blurLevel = Number.isFinite(storedBlur) ? Math.min(20, Math.max(0, storedBlur)) : 2.5;
+  const blurValue = blurEnabled && blurLevel > 0 ? `blur(${blurLevel}px)` : 'none';
   document.documentElement.style.setProperty('--wallpaper-blur', blurValue);
+}
+
+function applySurfaceOpacity() {
+  const mainOpacity = Math.min(100, Math.max(0, Number(localStorage.getItem('mainOpacity') ?? 78)));
+  const cardOpacity = Math.min(100, Math.max(0, Number(localStorage.getItem('cardOpacity') ?? 78)));
+  document.documentElement.style.setProperty('--main-opacity', `${mainOpacity}%`);
+  document.documentElement.style.setProperty('--card-opacity', `${cardOpacity}%`);
 }
 
 function toggleClass(id, className, invert = false, defaultOn = true) {
@@ -96,10 +110,6 @@ function toggleClass(id, className, invert = false, defaultOn = true) {
 
 function applyBg() {
   toggleClass('bgEnabled', 'no-bg', true);
-}
-
-function applyDark() {
-  toggleClass('darkEnabled', 'light-mode', true, true);
 }
 
 function applyReducedAnimation() {
@@ -145,6 +155,15 @@ function applyFont() {
   document.documentElement.classList.toggle('custom-font-bold', fontFamily === 'custom' && hasCustomFont && boldEnabled);
 }
 
+function setExperimentalSettingsAccess(unlocked) {
+  document.querySelectorAll('.experimental-settings-section').forEach(section => {
+    section.hidden = !unlocked;
+  });
+  document.querySelectorAll('.settings-main').forEach(main => {
+    main.classList.toggle('experimental-settings-unlocked', unlocked);
+  });
+}
+
 function setExperimentalSettingsVisibility(visible, animate = true) {
   document.querySelectorAll('.experimental-settings').forEach(settings => {
     if (!visible) {
@@ -164,81 +183,61 @@ function setExperimentalSettingsVisibility(visible, animate = true) {
   });
 }
 
-function requestExperimentalAccess() {
-  return new Promise(resolve => {
-    const overlay = document.createElement('div');
-    overlay.className = 'device-modal-overlay';
-    overlay.setAttribute('role', 'presentation');
+function showExperimentalUnlockToast(message) {
+  let toast = document.querySelector('.easter-egg-toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.className = 'easter-egg-toast';
+    toast.setAttribute('aria-live', 'polite');
+    document.body.appendChild(toast);
+  }
+  toast.textContent = message;
+  toast.hidden = false;
+  window.clearTimeout(window.easterEggToastTimeout);
+  window.easterEggToastTimeout = window.setTimeout(() => { toast.hidden = true; }, 2200);
+}
 
-    const modal = document.createElement('form');
-    modal.className = 'device-modal experimental-access-dialog';
-    modal.setAttribute('role', 'dialog');
-    modal.setAttribute('aria-modal', 'true');
-    modal.setAttribute('aria-labelledby', 'experimentalAccessTitle');
-    modal.innerHTML = `
-      <h2 id="experimentalAccessTitle">Experimental Features</h2>
-      <p>These settings are experimental and may cause issues.</p>
-      <label class="experimental-password-label" for="experimentalAccessPassword">Password</label>
-      <input class="custom-text experimental-password-input" id="experimentalAccessPassword" type="password" autocomplete="current-password" required>
-      <p class="experimental-password-error" role="alert" hidden>That password was not accepted.</p>
-      <div class="experimental-access-actions">
-        <button class="language-choice-btn" type="button" data-action="cancel">Cancel</button>
-        <button class="language-choice-btn" type="submit">Enable</button>
-      </div>
-    `;
-    overlay.appendChild(modal);
-    document.body.appendChild(overlay);
-    document.body.classList.add('device-modal-open');
+function setupJ7PrimePopupUnlock() {
+  if (localStorage.getItem('experimentalFeaturesUnlocked') === '1') return;
 
-    let settled = false;
-    let removeTimeout;
-    const onKeyDown = event => {
-      if (event.key === 'Escape') finish(false);
-    };
-    const finish = granted => {
-      if (settled) return;
-      settled = true;
-      document.removeEventListener('keydown', onKeyDown);
-      window.clearTimeout(removeTimeout);
-      overlay.classList.remove('show');
-      const remove = () => {
-        window.clearTimeout(removeTimeout);
-        overlay.remove();
-        if (!document.querySelector('.device-modal-overlay.show')) {
-          document.body.classList.remove('device-modal-open');
-        }
-        resolve(granted);
-      };
-      overlay.addEventListener('transitionend', event => {
-        if (event.target === overlay && event.propertyName === 'opacity') remove();
-      }, { once: true });
-      removeTimeout = window.setTimeout(remove, 300);
-    };
+  document.addEventListener('click', event => {
+    const trigger = event.target instanceof Element
+      ? event.target.closest('.device-card-trigger[data-device-title]')
+      : null;
+    if (!trigger || !/j7 prime/i.test(trigger.dataset.deviceTitle || '')
+      || localStorage.getItem('experimentalFeaturesUnlocked') === '1') return;
 
-    overlay.addEventListener('click', event => {
-      if (event.target === overlay) finish(false);
+    const popupOpens = Number(sessionStorage.getItem('j7PrimePopupOpens') || 0) + 1;
+    sessionStorage.setItem('j7PrimePopupOpens', String(popupOpens));
+    if (popupOpens < 3) return;
+
+    const portuguese = document.documentElement.lang === 'pt-BR';
+    if (popupOpens < 7) {
+      const remaining = 7 - popupOpens;
+      showExperimentalUnlockToast(portuguese
+        ? `Faltam ${remaining} popups para ativar o modo experimental.`
+        : `${remaining} more popup opens to enable Experimental Mode.`);
+      return;
+    }
+
+    localStorage.setItem('experimentalFeaturesUnlocked', '1');
+    localStorage.setItem('experimentalFeaturesEnabled', '1');
+    sessionStorage.removeItem('j7PrimePopupOpens');
+    setExperimentalSettingsAccess(true);
+    document.querySelectorAll('[data-setting-key="experimentalFeaturesEnabled"]').forEach(checkbox => {
+      checkbox.checked = true;
+      checkbox.disabled = false;
+      checkbox.closest('.setting-item')?.classList.remove('experimental-locked');
     });
-    modal.querySelector('[data-action="cancel"]').addEventListener('click', () => finish(false));
-    modal.addEventListener('submit', event => {
-      event.preventDefault();
-      const passwordInput = modal.querySelector('#experimentalAccessPassword');
-      const error = modal.querySelector('.experimental-password-error');
-      if (passwordInput.value === 'jpedro') {
-        finish(true);
-        return;
-      }
-      error.hidden = false;
-      passwordInput.value = '';
-      passwordInput.focus();
-    });
-    document.addEventListener('keydown', onKeyDown);
-
-    requestAnimationFrame(() => {
-      overlay.classList.add('show');
-      modal.querySelector('#experimentalAccessPassword').focus();
-    });
+    setExperimentalSettingsVisibility(true);
+    applyAllSettings();
+    showExperimentalUnlockToast(portuguese
+      ? 'Modo experimental ativado!'
+      : 'Experimental Mode enabled!');
   });
 }
+
+setupJ7PrimePopupUnlock();
 
 function applySocialLabels() {
   toggleClass('socialLabelsEnabled', 'show-social-labels', false);
@@ -403,6 +402,13 @@ function initializeCheckboxes() {
     checkbox.checked = getSettingBooleanState(key, defaultOnForCheckbox);
 
     if (key === 'experimentalFeaturesEnabled') {
+      const unlocked = localStorage.getItem('experimentalFeaturesUnlocked') === '1';
+      setExperimentalSettingsAccess(unlocked || checkbox.checked);
+      checkbox.disabled = !unlocked && !checkbox.checked;
+      checkbox.closest('.setting-item')?.classList.toggle('experimental-locked', checkbox.disabled);
+      checkbox.title = document.documentElement.lang === 'pt-BR'
+        ? 'Abra o popup do J7 Prime 7 vezes para desbloquear o Modo Experimental.'
+        : 'Open the J7 Prime popup 7 times to unlock Experimental Mode.';
       setExperimentalSettingsVisibility(checkbox.checked, false);
     }
 
@@ -412,24 +418,22 @@ function initializeCheckboxes() {
       });
     }
 
-    checkbox.addEventListener('change', async (event) => {
+    checkbox.addEventListener('change', event => {
       const isChecked = event.target.checked;
-      if (key === 'experimentalFeaturesEnabled' && isChecked) {
+      if (key === 'experimentalFeaturesEnabled' && isChecked
+        && localStorage.getItem('experimentalFeaturesUnlocked') !== '1') {
+        event.target.checked = false;
         event.target.disabled = true;
-        const accessGranted = await requestExperimentalAccess();
-        event.target.disabled = false;
-        if (!accessGranted) {
-          event.target.checked = false;
-          localStorage.setItem(key, '0');
-          setExperimentalSettingsVisibility(false);
-          return;
-        }
+        event.target.closest('.setting-item')?.classList.add('experimental-locked');
+        return;
       }
 
       localStorage.setItem(key, isChecked ? '1' : '0');
       applyAllSettings(key === 'topbarMinimized');
       if (key === 'experimentalFeaturesEnabled') {
         setExperimentalSettingsVisibility(isChecked);
+        event.target.disabled = localStorage.getItem('experimentalFeaturesUnlocked') !== '1';
+        event.target.closest('.setting-item')?.classList.toggle('experimental-locked', event.target.disabled);
       }
       if (key === 'gradientCustomizeColors') {
         document.querySelectorAll('.gradient-color-pickers').forEach(el => {
@@ -463,6 +467,173 @@ function initializeColorPickers() {
   });
 }
 
+function initializeRangeInputs() {
+  document.querySelectorAll('.experimental-range[data-setting-key]').forEach(input => {
+    const key = input.dataset.settingKey;
+    const value = localStorage.getItem(key) ?? input.value;
+    input.value = value;
+    const settingItem = input.closest('.setting-item');
+    const output = settingItem?.querySelector('output');
+    const rangeLabel = settingItem?.querySelector('[data-range-label]');
+    const updateValueText = () => {
+      const valueText = `${input.value}${input.dataset.unit || ''}`;
+      if (output) {
+        output.value = valueText;
+        output.textContent = valueText;
+      }
+      if (rangeLabel) rangeLabel.textContent = `${input.dataset.label} (${valueText})`;
+    };
+    updateValueText();
+    input.addEventListener('input', () => {
+      localStorage.setItem(key, input.value);
+      updateValueText();
+      applyAllSettings();
+    });
+  });
+}
+
+function resetSettingsToDefaults() {
+  const settingKeys = [
+    'socialLabelsEnabled', 'showFigcaptions', 'topbarMinimized', 'fontBold', 'fontFamily',
+    'language', 'topbarPosition', 'wallpaper', 'accentColor', 'blurEnabled', 'backgroundBlur',
+    'reducedAnimation', 'potatoEnabled', 'experimentalFeaturesEnabled', 'experimentalFeaturesUnlocked', 'customAccentColor',
+    'customFontData', 'customWallpaper', 'mainOpacity', 'cardOpacity', 'mainBlurLevel', 'wallpaperBlurLevel', 'cardBlurLevel',
+    'gradientCustomizeColors', 'gradientStopMotion', 'gradientColor1', 'gradientColor2', 'gradientColor3', 'gradientColor4'
+  ];
+  settingKeys.forEach(key => localStorage.removeItem(key));
+  sessionStorage.removeItem('j7PrimePopupOpens');
+  localStorage.setItem('language', getPreferredLanguage());
+  localStorage.setItem('languagePromptShown', '1');
+  window.location.reload();
+}
+
+function setEasterEggText(enabled) {
+  document.documentElement.classList.toggle('easter-egg-active', enabled);
+  if (!enabled) return;
+
+  const eggAccent = {
+    '--accent-color-primary': 'rgba(48, 126, 220, 0.2)',
+    '--accent-color-primary-opaque': 'rgba(48, 126, 220, 0.72)',
+    '--accent-color-hover': 'rgba(74, 153, 245, 0.28)',
+    '--accent-color-hover-opaque': 'rgba(74, 153, 245, 0.85)',
+    '--accent-color-button-bg': 'rgba(45, 125, 220, 0.72)',
+    '--accent-color-button-bg-opaque': 'rgba(45, 125, 220, 0.92)',
+    '--accent-color-glow': 'rgba(61, 145, 255, 0.42)',
+    '--accent-color-link': '#a4d4ff'
+  };
+  Object.entries(eggAccent).forEach(([property, value]) => {
+    document.documentElement.style.setProperty(property, value);
+  });
+
+  const replaceText = root => {
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+      acceptNode(node) {
+        if (!node.nodeValue.trim() || node.nodeValue.trim() === 'Teardrop' || node.parentElement?.closest('script, style, .easter-egg-control, .easter-egg-toast')) {
+          return NodeFilter.FILTER_REJECT;
+        }
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+    const nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.forEach(node => { node.nodeValue = node.nodeValue.replace(/\S(?:.*\S)?/, 'Teardrop'); });
+  };
+  replaceText(document.body);
+  document.querySelectorAll('img').forEach(image => {
+    image.removeAttribute('srcset');
+    image.src = '/images/profile pic 2.jpg';
+    image.alt = 'Teardrop';
+  });
+  document.documentElement.style.setProperty('--wallpaper-image', 'url("/images/profile pic 2.jpg")');
+  document.title = 'Teardrop';
+
+  if (!window.easterEggObserver) {
+    window.easterEggObserver = new MutationObserver(() => {
+      replaceText(document.body);
+      document.querySelectorAll('img:not([data-easter-egg-image])').forEach(image => {
+        image.dataset.easterEggImage = 'true';
+        image.removeAttribute('srcset');
+        image.src = '/images/profile pic 2.jpg';
+        image.alt = 'Teardrop';
+      });
+    });
+    window.easterEggObserver.observe(document.body, { childList: true, subtree: true, characterData: true });
+  }
+}
+
+function updateModeIndicator() {
+  let indicator = document.querySelector('.mode-indicator');
+  if (!indicator) {
+    indicator = document.createElement('button');
+    indicator.className = 'mode-indicator';
+    indicator.type = 'button';
+    indicator.addEventListener('click', () => {
+      if (localStorage.getItem('easterEggEnabled') !== '1') return;
+      localStorage.removeItem('easterEggEnabled');
+      sessionStorage.removeItem('easterEggClicks');
+      window.location.reload();
+    });
+    document.body.appendChild(indicator);
+  }
+  const easterEggEnabled = localStorage.getItem('easterEggEnabled') === '1';
+  const experimentalEnabled = isEnabled('experimentalFeaturesEnabled', false);
+  const portuguese = document.documentElement.lang === 'pt-BR';
+  indicator.textContent = easterEggEnabled
+    ? (portuguese ? 'Voltar ao normal' : 'Revert back to normal')
+    : (portuguese ? 'Modo Experimental' : 'Experimental Mode');
+  indicator.hidden = !easterEggEnabled && !experimentalEnabled;
+  indicator.classList.toggle('easter-egg-control', easterEggEnabled);
+  document.documentElement.classList.toggle('mode-indicator-visible', !indicator.hidden);
+}
+
+function setupProfileEasterEgg() {
+  document.querySelectorAll('.profile-avatar img').forEach(image => {
+    image.addEventListener('click', () => {
+      if (localStorage.getItem('easterEggEnabled') === '1') return;
+      const clicks = Number(sessionStorage.getItem('easterEggClicks') || 0) + 1;
+      sessionStorage.setItem('easterEggClicks', String(clicks));
+      if (clicks >= 3) {
+        let toast = document.querySelector('.easter-egg-toast');
+        if (!toast) {
+          toast = document.createElement('div');
+          toast.className = 'easter-egg-toast';
+          toast.setAttribute('aria-live', 'polite');
+          document.body.appendChild(toast);
+        }
+        const portuguese = document.documentElement.lang === 'pt-BR';
+        toast.textContent = clicks >= 7
+          ? (portuguese ? 'Easter egg desbloqueado!' : 'Easter egg unlocked!')
+          : (portuguese ? `Faltam ${7 - clicks} cliques para o easter egg` : `${7 - clicks} clicks left for the easter egg`);
+        toast.hidden = false;
+        window.clearTimeout(window.easterEggToastTimeout);
+        window.easterEggToastTimeout = window.setTimeout(() => { toast.hidden = true; }, 2200);
+      }
+      if (clicks >= 7) {
+        localStorage.setItem('easterEggEnabled', '1');
+        setEasterEggText(true);
+        updateModeIndicator();
+      }
+    });
+  });
+}
+
+function initializeLocalTime() {
+  const clock = document.getElementById('current-time');
+  if (!clock) return;
+  const update = () => {
+    if (localStorage.getItem('easterEggEnabled') === '1') {
+      clock.textContent = 'Teardrop';
+      return;
+    }
+    const time = new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit' }).format(new Date());
+    clock.textContent = document.documentElement.lang === 'pt-BR'
+      ? `agora são ${time} para o jpedro rn`
+      : `it is ${time} for jpedro rn`;
+  };
+  update();
+  window.setInterval(update, 30000);
+}
+
 function initializeSelects() {
   document.querySelectorAll('.custom-select[data-setting-key]').forEach(select => {
     const key = select.dataset.settingKey;
@@ -491,8 +662,8 @@ function applyAllSettings(animateTopbar = false, animateWallpaper = false) {
   applyLanguage();
   applyBlur();
   applyBackgroundBlur();
+  applySurfaceOpacity();
   applyBg();
-  applyDark();
   applyReducedAnimation();
   applyFont();
   applyAccentColor();
@@ -501,10 +672,10 @@ function applyAllSettings(animateTopbar = false, animateWallpaper = false) {
   applyWallpaper(animateWallpaper);
   applyTopbarPosition();
   applyTopbarMinimized(animateTopbar);
+  updateModeIndicator();
 }
 
 applyBg();
-applyDark();
 applyFont();
 applyAccentColor();
 applySocialLabels();
@@ -515,18 +686,26 @@ if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', applyAllSettings);
   document.addEventListener('DOMContentLoaded', initializeCheckboxes);
   document.addEventListener('DOMContentLoaded', initializeColorPickers);
+  document.addEventListener('DOMContentLoaded', initializeRangeInputs);
   document.addEventListener('DOMContentLoaded', initializeSelects);
   document.addEventListener('DOMContentLoaded', initializeInputs);
   document.addEventListener('DOMContentLoaded', setupMinimizeButton);
   document.addEventListener('DOMContentLoaded', showLanguagePromptIfFirstTime);
+  document.addEventListener('DOMContentLoaded', setupProfileEasterEgg);
+  document.addEventListener('DOMContentLoaded', initializeLocalTime);
+  document.addEventListener('DOMContentLoaded', () => setEasterEggText(localStorage.getItem('easterEggEnabled') === '1'));
 } else {
   applyAllSettings();
   initializeCheckboxes();
   initializeColorPickers();
+  initializeRangeInputs();
   initializeSelects();
   initializeInputs();
   setupMinimizeButton();
   showLanguagePromptIfFirstTime();
+  setupProfileEasterEgg();
+  initializeLocalTime();
+  setEasterEggText(localStorage.getItem('easterEggEnabled') === '1');
 }
 
 function triggerPotatoMode(potatoToggle) {

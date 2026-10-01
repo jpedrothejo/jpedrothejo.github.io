@@ -47,7 +47,10 @@
       updateBadge(root, 'presence', 'Discord', text[status], status);
 
       const activities = Array.isArray(presence.activities) ? presence.activities : [];
-      const coding = activities.find(activity => /visual studio code|vscode|^code$/i.test(activity.name || ''));
+      const coding = activities.find(activity => {
+        const activityText = [activity.name, activity.details, activity.state].filter(Boolean).join(' ');
+        return /\b(?:visual studio code|vscode|vscodium|code(?:\.exe)?|cursor)\b/i.test(activityText);
+      });
       const codingDetails = coding
         ? [coding.details, coding.state].filter(Boolean).join(' - ') || coding.name
         : text.noCoding;
@@ -75,7 +78,10 @@
       refreshBadges(root, language);
       window.setInterval(() => {
         if (document.visibilityState === 'visible') refreshBadges(root, language);
-      }, 60000);
+      }, 30000);
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') refreshBadges(root, language);
+      });
     });
   }
 

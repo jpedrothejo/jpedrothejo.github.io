@@ -32,7 +32,7 @@
     <a class="minimize-btn" id="minimizeBtn" title="Minimize">−</a>
   </div>
   <center>
-    <div class="main">
+    <div class="main settings-main">
       <h1>Configurações</h1>
         <div class="settings" style="text-align: left;">
           <div class="settings-section">
@@ -140,7 +140,7 @@
             </div>
 
             <div class="setting-item">
-              <span>Desfocar Papel de Parede</span>
+              <span>Ativar desfoque do papel de parede</span>
               <label class="switch">
                 <input type="checkbox" class="custom-checkbox" data-setting-key="backgroundBlur" data-default-on="true">
                 <span class="slider"></span>
@@ -164,11 +164,11 @@
             </div>
           </div>
 
-          <div class="settings-section">
-            <h3>Configurações Experimentais</h3>
+          <div class="settings-section experimental-settings-section" id="experimentalSettingsSection" hidden>
+            <h3>Modo Experimental</h3>
 
             <div class="setting-item" id="experimental-toggle-item">
-              <span>Recursos Experimentais</span>
+              <span>Ativar recursos experimentais</span>
               <label class="switch">
                 <input type="checkbox" class="custom-checkbox" data-setting-key="experimentalFeaturesEnabled" data-default-on="false">
                 <span class="slider"></span>
@@ -180,6 +180,25 @@
                 <span>Cor de Acento Customizada</span>
                 <input type="color" class="custom-color" data-setting-key="customAccentColor" value="#5d94c2">
               </div>
+              <label class="setting-item">
+                <span>Opacidade do conteúdo</span>
+                <input class="experimental-range" type="range" min="0" max="100" value="78" data-setting-key="mainOpacity" data-unit="%" aria-label="Opacidade do conteúdo">
+                <output>78%</output>
+              </label>
+              <label class="setting-item">
+                <span>Opacidade dos cartões</span>
+                <input class="experimental-range" type="range" min="0" max="100" value="78" data-setting-key="cardOpacity" data-unit="%" aria-label="Opacidade dos cartões">
+                <output>78%</output>
+              </label>
+              <label class="setting-item">
+                <span data-range-label>Desfoque principal (10px)</span>
+                <input class="experimental-range" type="range" min="0" max="20" step="0.5" value="10" data-setting-key="mainBlurLevel" data-unit="px" data-label="Desfoque principal" aria-label="Nível de desfoque principal">
+              </label>
+              <label class="setting-item">
+                <span>Desfoque do papel de parede</span>
+                <input class="experimental-range" type="range" min="0" max="20" step="0.5" value="2.5" data-setting-key="wallpaperBlurLevel" data-unit="px" aria-label="Nível de desfoque do papel de parede">
+                <output>2.5px</output>
+              </label>
               <div class="setting-item" id="custom-font-setting">
                 <span>Fonte Personalizada</span>
                 <div class="control-group">
@@ -199,6 +218,9 @@
               </div>
             </div>
           </div>
+        </div>
+        <div class="card-bg settings-reset-card">
+          <button class="custom-file-button" type="button" onclick="resetSettingsToDefaults()">Restaurar configurações padrão</button>
         </div>
     </div>
   </center>
