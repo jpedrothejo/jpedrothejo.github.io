@@ -11,10 +11,10 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://jpedrothejo.github.io/">
   <meta property="og:image" content="https://jpedrothejo.github.io/images/site%20icon.ico">
-  <link href="/scripts/style.css" rel="stylesheet" type="text/css" media="all">
-  <link rel="icon" href="/images/site icon.ico">
-  <script src="/scripts/settings.js"></script>
-  <script src="/scripts/status-badges.js" defer></script>
+  <link href="./scripts/style.css" rel="stylesheet" type="text/css" media="all">
+  <link rel="icon" href="./images/site%20icon.ico">
+  <script src="./scripts/settings.js"></script>
+  <script src="./scripts/status-badges.js" defer></script>
 </head>
 
 <body>
@@ -49,10 +49,10 @@
               "''You're not a good person. You know that, Right?''",
               "welcome to my website!",
               "check my socials below!",
+              "open the J7 Prime popup 7 times",
               "hi",
               "check my projects at the <a href='/projects.html'>projects page</a>!",
               "click my pfp 7 times",
-              "open the J7 Prime popup 7 times",
             ];
             const randomMessage = messages[Math.floor(Math.random() * messages.length)];
             new TypeIt("#welcome", {
@@ -67,7 +67,7 @@
     </div>
 
     <div class="home-categories">
-      <section class="card-bg home-category home-about">
+      <section class="card-bg home-category home-about" data-widget="about">
         <h2>About Me</h2>
         <ul>
           <li>I'm Brazillian</li>
@@ -79,7 +79,7 @@
         </ul>
       </section>
 
-      <section class="card-bg home-category home-socials">
+      <section class="card-bg home-category home-socials" data-widget="socials">
         <h2 class="social-title">My Socials</h2>
         <div class="home-social-links"><a href="#" class="social-item" data-social-links='[{"url":"https://www.youtube.com/@jpedrothejo","label":"Main Channel"},{"url":"https://www.youtube.com/@jpedrothevlogs","label":"Alt. Channel"},{"url":"https://www.youtube.com/@jpedrothegames","label":"Gaming Channel"}]'><img src="icons/youtube.png" class="icon-img"><span
           class="social-label">YouTube</span></a>
@@ -98,7 +98,7 @@
         </div>
       </section>
 
-      <section class="card-bg home-category home-status">
+      <section class="card-bg home-category home-status" data-widget="status">
         <h2>Status</h2>
         <div class="status-badges" data-presence-badges>
           <span class="status-badge" data-badge="presence" data-status="loading">
@@ -109,6 +109,11 @@
           <span class="status-badge coding-status-badge" data-badge="coding" data-status="loading">
             <span class="status-badge-dot" aria-hidden="true"></span>
             <span class="status-badge-label">Coding</span>
+            <span class="status-badge-value" aria-live="polite">Loading</span>
+          </span>
+          <span class="status-badge playing-status-badge" data-badge="playing" data-status="loading">
+            <span class="status-badge-dot" aria-hidden="true"></span>
+            <span class="status-badge-label">Playing</span>
             <span class="status-badge-value" aria-live="polite">Loading</span>
           </span>
         </div>

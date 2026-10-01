@@ -10,6 +10,8 @@
       unavailable: 'Unavailable',
       coding: 'Coding',
       noCoding: 'Not coding',
+      playing: 'Playing',
+      notPlaying: 'Not playing',
       loading: 'Loading'
     },
     pt: {
@@ -20,6 +22,8 @@
       unavailable: 'Indisponível',
       coding: 'Programando',
       noCoding: 'Não está programando',
+      playing: 'Jogando',
+      notPlaying: 'Não está jogando',
       loading: 'Carregando'
     }
   };
@@ -35,6 +39,14 @@
     if (valueElement.closest('a')) valueElement.closest('a').title = value;
   }
 
+  function isCodingActivity(activity) {
+    if (!activity || typeof activity !== 'object') return false;
+    const activityText = [activity.name, activity.details, activity.state, activity.platform].filter(Boolean).join(' ');
+    return /\b(?:visual\s+studio\s+code|vscode|vscodium|code(?:\s*[- ]\s*(?:insiders|oss|exe))?|cursor|zed|windsurf|intellij|pycharm|webstorm|phpstorm|clion|goland|android\s+studio|neovim|nvim|vim|helix|replit|github\s+copilot)\b/i.test(activityText)
+      || /\b(?:coding|programming|developing|building|working on)\b/i.test(activityText)
+      && /\b(?:code|editor|project|workspace|app|application)\b/i.test(activityText);
+  }
+
   async function refreshBadges(root, language) {
     const text = copy[language];
     try {
@@ -47,14 +59,27 @@
       updateBadge(root, 'presence', 'Discord', text[status], status);
 
       const activities = Array.isArray(presence.activities) ? presence.activities : [];
-      const coding = activities.find(activity => {
-        const activityText = [activity.name, activity.details, activity.state].filter(Boolean).join(' ');
-        return /\b(?:visual studio code|vscode|vscodium|code(?:\.exe)?|cursor)\b/i.test(activityText);
-      });
+      const coding = activities.find(isCodingActivity);
       const codingDetails = coding
         ? [coding.details, coding.state].filter(Boolean).join(' - ') || coding.name
         : text.noCoding;
       updateBadge(root, 'coding', text.coding, codingDetails, coding ? 'active' : 'offline');
+
+      const game = activities.find(activity => {
+        if (!activity || typeof activity !== 'object') return false;
+        if (activity.type === 4 || activity.type === 2) return false;
+        if (isCodingActivity(activity)) return false;
+
+        const name = (activity.name || '').trim();
+        if (!name || /^(custom status|spotify|youtube|twitch|discord|browser|chrome|firefox|edge)$/i.test(name)) return false;
+
+        const activityText = [activity.name, activity.details, activity.state].filter(Boolean).join(' ');
+        return activity.type === 0 && !/\b(?:coding|programming|developing|working on|editor|ide|visual studio code|vscode|cursor)\b/i.test(activityText);
+      }) || null;
+      const gameDetails = game
+        ? [game.details, game.state].filter(Boolean).join(' - ') || game.name
+        : text.notPlaying;
+      updateBadge(root, 'playing', text.playing, gameDetails, game ? 'active' : 'offline');
 
       const spotify = activities.find(activity => activity.type === 2 || /spotify/i.test(activity.name || ''));
       const spotifyBadge = root.querySelector('[data-badge="spotify"]');
@@ -66,6 +91,7 @@
     } catch (error) {
       updateBadge(root, 'presence', 'Discord', text.unavailable, 'unavailable');
       updateBadge(root, 'coding', text.coding, text.unavailable, 'unavailable');
+      updateBadge(root, 'playing', text.playing, text.unavailable, 'unavailable');
       console.warn('Could not load Discord presence badges', error);
     }
   }

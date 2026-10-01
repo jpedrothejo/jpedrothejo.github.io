@@ -102,6 +102,14 @@ function applySurfaceOpacity() {
   document.documentElement.style.setProperty('--card-opacity', `${cardOpacity}%`);
 }
 
+function applyExperimentalBoldness() {
+  const enabled = isEnabled('experimentalFeaturesEnabled', false);
+  const rawValue = Number(localStorage.getItem('experimentalBoldness') ?? 700);
+  const clampedValue = Number.isFinite(rawValue) ? Math.min(900, Math.max(400, rawValue)) : 700;
+  document.documentElement.style.setProperty('--experimental-boldness', `${clampedValue}`);
+  document.documentElement.classList.toggle('experimental-features-enabled', enabled);
+}
+
 function toggleClass(id, className, invert = false, defaultOn = true) {
   const enabled = isEnabled(id, defaultOn);
   const shouldApply = invert ? !enabled : enabled;
@@ -155,7 +163,7 @@ function applyFont() {
   document.documentElement.classList.toggle('custom-font-bold', fontFamily === 'custom' && hasCustomFont && boldEnabled);
 }
 
-function setExperimentalSettingsAccess(unlocked) {
+function setExperimentalSettingsAccess(unlocked = localStorage.getItem('experimentalFeaturesUnlocked') === '1') {
   document.querySelectorAll('.experimental-settings-section').forEach(section => {
     section.hidden = !unlocked;
   });
@@ -197,6 +205,74 @@ function showExperimentalUnlockToast(message) {
   window.easterEggToastTimeout = window.setTimeout(() => { toast.hidden = true; }, 2200);
 }
 
+function showExperimentalUnlockDialog() {
+  if (document.getElementById('experimental-unlock-overlay')) return;
+
+  const portuguese = document.documentElement.lang === 'pt-BR';
+  const overlay = document.createElement('div');
+  overlay.id = 'experimental-unlock-overlay';
+  overlay.className = 'experimental-unlock-overlay';
+  overlay.innerHTML = `
+    <form class="experimental-unlock-dialog" role="dialog" aria-modal="true" aria-labelledby="experimental-unlock-title">
+      <h2 id="experimental-unlock-title">${portuguese ? 'Ativar modo experimental?' : 'Enable Experimental Mode?'}</h2>
+      <p>${portuguese ? 'Tem certeza de que deseja ativar os recursos experimentais?' : 'Are you sure you want to enable Experimental Mode?'}</p>
+      <label for="experimental-unlock-password">${portuguese ? 'Senha' : 'Password'}</label>
+      <input id="experimental-unlock-password" type="password" autocomplete="off" required>
+      <small>${portuguese ? 'Dica: primeiro nome online na página inicial' : 'Hint: first online name on home page'}</small>
+      <p class="experimental-unlock-error" aria-live="polite"></p>
+      <div class="experimental-unlock-actions">
+        <button type="button" class="custom-file-button" data-cancel-unlock>${portuguese ? 'Cancelar' : 'Cancel'}</button>
+        <button type="submit" class="custom-file-button">${portuguese ? 'Ativar' : 'Enable'}</button>
+      </div>
+    </form>
+  `;
+  document.body.appendChild(overlay);
+
+  const form = overlay.querySelector('form');
+  const passwordInput = overlay.querySelector('input');
+  const error = overlay.querySelector('.experimental-unlock-error');
+  let closing = false;
+  const close = () => {
+    if (closing) return;
+    closing = true;
+    if (document.documentElement.classList.contains('reduced-motion')
+      || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      overlay.remove();
+      return;
+    }
+    overlay.classList.add('is-closing');
+    window.setTimeout(() => overlay.remove(), 180);
+  };
+
+  overlay.querySelector('[data-cancel-unlock]').addEventListener('click', close);
+  overlay.addEventListener('click', event => {
+    if (event.target === overlay) close();
+  });
+  form.addEventListener('submit', event => {
+    event.preventDefault();
+    if (passwordInput.value !== 'jpedro') {
+      error.textContent = portuguese ? 'Senha incorreta.' : 'Incorrect password.';
+      passwordInput.select();
+      return;
+    }
+
+    localStorage.setItem('experimentalFeaturesUnlocked', '1');
+    localStorage.setItem('experimentalFeaturesEnabled', '1');
+    setExperimentalSettingsAccess(true);
+    document.querySelectorAll('[data-setting-key="experimentalFeaturesEnabled"]').forEach(checkbox => {
+      checkbox.checked = true;
+      checkbox.disabled = false;
+      checkbox.closest('.setting-item')?.classList.remove('experimental-locked');
+    });
+    setExperimentalSettingsVisibility(true);
+    applyAllSettings();
+    close();
+    showExperimentalUnlockToast(portuguese ? 'Modo experimental ativado!' : 'Experimental Mode enabled!');
+  });
+
+  passwordInput.focus();
+}
+
 function setupJ7PrimePopupUnlock() {
   if (localStorage.getItem('experimentalFeaturesUnlocked') === '1') return;
 
@@ -220,20 +296,7 @@ function setupJ7PrimePopupUnlock() {
       return;
     }
 
-    localStorage.setItem('experimentalFeaturesUnlocked', '1');
-    localStorage.setItem('experimentalFeaturesEnabled', '1');
-    sessionStorage.removeItem('j7PrimePopupOpens');
-    setExperimentalSettingsAccess(true);
-    document.querySelectorAll('[data-setting-key="experimentalFeaturesEnabled"]').forEach(checkbox => {
-      checkbox.checked = true;
-      checkbox.disabled = false;
-      checkbox.closest('.setting-item')?.classList.remove('experimental-locked');
-    });
-    setExperimentalSettingsVisibility(true);
-    applyAllSettings();
-    showExperimentalUnlockToast(portuguese
-      ? 'Modo experimental ativado!'
-      : 'Experimental Mode enabled!');
+    showExperimentalUnlockDialog();
   });
 }
 
@@ -283,10 +346,10 @@ function applyAccentColor() {
 }
 
 function applyWallpaper(animate = false) {
-  const savedWallpaper = localStorage.getItem('wallpaper') || 'pattern';
+  const savedWallpaper = localStorage.getItem('wallpaper') || 'Metro.jpg';
   const customWallpaper = localStorage.getItem('customWallpaper') || '';
   const hasCustomWallpaper = /^data:image\/[^;]+;base64,/.test(customWallpaper);
-  const wallpaper = savedWallpaper === 'custom' && !hasCustomWallpaper ? 'pattern' : savedWallpaper;
+  const wallpaper = savedWallpaper === 'custom' && !hasCustomWallpaper ? 'Metro.jpg' : savedWallpaper;
   const root = document.documentElement;
   const customWallpaperSetting = document.getElementById('custom-wallpaper-setting');
   if (customWallpaperSetting) customWallpaperSetting.style.display = savedWallpaper === 'custom' ? 'flex' : 'none';
@@ -394,6 +457,180 @@ function setupMinimizeButton() {
   }
 }
 
+function getDefaultHomeWidgetLayout() {
+  return {
+    about: { enabled: true, order: 0 },
+    socials: { enabled: true, order: 1 },
+    status: { enabled: true, order: 2 }
+  };
+}
+
+function getHomeWidgetLayout() {
+  const fallback = getDefaultHomeWidgetLayout();
+  const saved = localStorage.getItem('homeWidgetLayout');
+  if (!saved) return fallback;
+
+  try {
+    const parsed = JSON.parse(saved);
+    if (!parsed || typeof parsed !== 'object') return fallback;
+    return {
+      about: { enabled: parsed.about?.enabled ?? true, order: Number(parsed.about?.order ?? 0) },
+      socials: { enabled: parsed.socials?.enabled ?? true, order: Number(parsed.socials?.order ?? 1) },
+      status: { enabled: parsed.status?.enabled ?? true, order: Number(parsed.status?.order ?? 2) }
+    };
+  } catch (error) {
+    return fallback;
+  }
+}
+
+function saveHomeWidgetLayout(layout) {
+  localStorage.setItem('homeWidgetLayout', JSON.stringify(layout));
+}
+
+function applyHomeWidgetLayout() {
+  const widgets = Array.from(document.querySelectorAll('.home-category[data-widget]'));
+  if (!widgets.length) return;
+
+  const layout = getHomeWidgetLayout();
+  widgets.forEach(widget => {
+    const key = widget.dataset.widget;
+    const state = layout[key] || { enabled: true, order: 0 };
+    widget.hidden = !state.enabled;
+    widget.style.display = state.enabled ? '' : 'none';
+    widget.style.order = String(state.order ?? 0);
+  });
+}
+
+function openHomeWidgetEditor() {
+  const overlayId = 'home-widget-layout-overlay';
+  let overlay = document.getElementById(overlayId);
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = overlayId;
+    overlay.className = 'widget-layout-overlay';
+    document.body.appendChild(overlay);
+  }
+
+  const layout = getHomeWidgetLayout();
+  const widgetOrder = ['about', 'socials', 'status'];
+  const widgetNames = {
+    about: 'About Me',
+    socials: 'My Socials',
+    status: 'Status'
+  };
+
+  const previewMarkup = widgetOrder.map(key => {
+    const state = layout[key];
+    if (!state?.enabled) return '';
+    return `<div class="widget-layout-preview-card" data-slot="${key}">${widgetNames[key]}</div>`;
+  }).join('');
+
+  const listMarkup = widgetOrder.map((key, index) => {
+    const state = layout[key] || { enabled: true, order: index };
+    return `
+      <div class="widget-layout-item" data-widget="${key}" draggable="true">
+        <div class="widget-layout-name">
+          <input type="checkbox" data-widget-toggle="${key}" ${state.enabled ? 'checked' : ''}>
+          <span>${widgetNames[key]}</span>
+        </div>
+        <div class="widget-layout-actions">
+          <button type="button" data-move="up" data-widget="${key}" aria-label="Move ${widgetNames[key]} up">↑</button>
+          <button type="button" data-move="down" data-widget="${key}" aria-label="Move ${widgetNames[key]} down">↓</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  overlay.innerHTML = `
+    <div class="widget-layout-popup" role="dialog" aria-modal="true" aria-label="Customize home widgets">
+      <div class="widget-layout-header">
+        <h3>Customize Home Widgets</h3>
+        <button type="button" class="custom-file-button" data-close-widget-layout>Close</button>
+      </div>
+      <div class="widget-layout-preview">
+        ${previewMarkup || '<div class="widget-layout-preview-card" data-slot="about">No widgets enabled</div>'}
+      </div>
+      <div class="widget-layout-list">
+        ${listMarkup}
+      </div>
+      <div class="widget-layout-footer">
+        <button type="button" class="custom-file-button" data-close-widget-layout>Cancel</button>
+        <button type="button" class="custom-file-button" data-apply-widget-layout>Apply</button>
+      </div>
+    </div>
+  `;
+
+  const closeButtons = overlay.querySelectorAll('[data-close-widget-layout]');
+  closeButtons.forEach(button => button.addEventListener('click', () => overlay.remove()));
+
+  overlay.querySelectorAll('[data-apply-widget-layout]').forEach(button => {
+    button.addEventListener('click', () => {
+      const nextLayout = { ...getDefaultHomeWidgetLayout() };
+      const items = Array.from(overlay.querySelectorAll('.widget-layout-item'));
+      items.forEach(item => {
+        const key = item.dataset.widget;
+        const checkbox = item.querySelector('[data-widget-toggle]');
+        nextLayout[key] = {
+          enabled: checkbox.checked,
+          order: items.indexOf(item)
+        };
+      });
+      saveHomeWidgetLayout(nextLayout);
+      applyHomeWidgetLayout();
+      overlay.remove();
+    });
+  });
+
+  overlay.querySelectorAll('[data-move]').forEach(button => {
+    button.addEventListener('click', () => {
+      const key = button.dataset.widget;
+      const items = Array.from(overlay.querySelectorAll('.widget-layout-item'));
+      const index = items.findIndex(item => item.dataset.widget === key);
+      const nextIndex = button.dataset.move === 'up' ? index - 1 : index + 1;
+      if (nextIndex < 0 || nextIndex >= items.length) return;
+      const [item] = items.splice(index, 1);
+      items.splice(nextIndex, 0, item);
+      const parent = item.parentElement;
+      items.forEach(newItem => parent.appendChild(newItem));
+      const updatedLayout = { ...getDefaultHomeWidgetLayout() };
+      items.forEach((listItem, orderIndex) => {
+        const widgetKey = listItem.dataset.widget;
+        const checkbox = listItem.querySelector('[data-widget-toggle]');
+        updatedLayout[widgetKey] = {
+          enabled: checkbox.checked,
+          order: orderIndex
+        };
+      });
+      saveHomeWidgetLayout(updatedLayout);
+      openHomeWidgetEditor();
+    });
+  });
+
+  overlay.querySelectorAll('[data-widget-toggle]').forEach(input => {
+    input.addEventListener('change', () => {
+      const item = input.closest('.widget-layout-item');
+      if (!item) return;
+      const key = item.dataset.widget;
+      const layout = getHomeWidgetLayout();
+      layout[key].enabled = input.checked;
+      saveHomeWidgetLayout(layout);
+      openHomeWidgetEditor();
+    });
+  });
+
+  overlay.addEventListener('click', event => {
+    if (event.target === overlay) overlay.remove();
+  });
+}
+
+function initializeHomeWidgetEditor() {
+  const button = document.getElementById('open-home-widget-editor');
+  if (button) {
+    button.addEventListener('click', openHomeWidgetEditor);
+  }
+  applyHomeWidgetLayout();
+}
+
 function initializeCheckboxes() {
   document.querySelectorAll('.custom-checkbox[data-setting-key]').forEach(checkbox => {
     const key = checkbox.dataset.settingKey;
@@ -402,13 +639,10 @@ function initializeCheckboxes() {
     checkbox.checked = getSettingBooleanState(key, defaultOnForCheckbox);
 
     if (key === 'experimentalFeaturesEnabled') {
-      const unlocked = localStorage.getItem('experimentalFeaturesUnlocked') === '1';
-      setExperimentalSettingsAccess(unlocked || checkbox.checked);
-      checkbox.disabled = !unlocked && !checkbox.checked;
-      checkbox.closest('.setting-item')?.classList.toggle('experimental-locked', checkbox.disabled);
-      checkbox.title = document.documentElement.lang === 'pt-BR'
-        ? 'Abra o popup do J7 Prime 7 vezes para desbloquear o Modo Experimental.'
-        : 'Open the J7 Prime popup 7 times to unlock Experimental Mode.';
+      setExperimentalSettingsAccess(localStorage.getItem('experimentalFeaturesUnlocked') === '1');
+      checkbox.disabled = false;
+      checkbox.closest('.setting-item')?.classList.remove('experimental-locked');
+      checkbox.title = '';
       setExperimentalSettingsVisibility(checkbox.checked, false);
     }
 
@@ -420,20 +654,12 @@ function initializeCheckboxes() {
 
     checkbox.addEventListener('change', event => {
       const isChecked = event.target.checked;
-      if (key === 'experimentalFeaturesEnabled' && isChecked
-        && localStorage.getItem('experimentalFeaturesUnlocked') !== '1') {
-        event.target.checked = false;
-        event.target.disabled = true;
-        event.target.closest('.setting-item')?.classList.add('experimental-locked');
-        return;
-      }
-
       localStorage.setItem(key, isChecked ? '1' : '0');
       applyAllSettings(key === 'topbarMinimized');
       if (key === 'experimentalFeaturesEnabled') {
         setExperimentalSettingsVisibility(isChecked);
-        event.target.disabled = localStorage.getItem('experimentalFeaturesUnlocked') !== '1';
-        event.target.closest('.setting-item')?.classList.toggle('experimental-locked', event.target.disabled);
+        event.target.disabled = false;
+        event.target.closest('.setting-item')?.classList.remove('experimental-locked');
       }
       if (key === 'gradientCustomizeColors') {
         document.querySelectorAll('.gradient-color-pickers').forEach(el => {
@@ -495,13 +721,14 @@ function initializeRangeInputs() {
 function resetSettingsToDefaults() {
   const settingKeys = [
     'socialLabelsEnabled', 'showFigcaptions', 'topbarMinimized', 'fontBold', 'fontFamily',
-    'language', 'topbarPosition', 'wallpaper', 'accentColor', 'blurEnabled', 'backgroundBlur',
+    'language', 'topbarPosition', 'wallpaper', 'accentColor', 'timeFormat', 'blurEnabled', 'backgroundBlur',
     'reducedAnimation', 'potatoEnabled', 'experimentalFeaturesEnabled', 'experimentalFeaturesUnlocked', 'customAccentColor',
     'customFontData', 'customWallpaper', 'mainOpacity', 'cardOpacity', 'mainBlurLevel', 'wallpaperBlurLevel', 'cardBlurLevel',
     'gradientCustomizeColors', 'gradientStopMotion', 'gradientColor1', 'gradientColor2', 'gradientColor3', 'gradientColor4'
   ];
   settingKeys.forEach(key => localStorage.removeItem(key));
   sessionStorage.removeItem('j7PrimePopupOpens');
+  localStorage.setItem('experimentalBoldness', '700');
   localStorage.setItem('language', getPreferredLanguage());
   localStorage.setItem('languagePromptShown', '1');
   window.location.reload();
@@ -617,21 +844,28 @@ function setupProfileEasterEgg() {
   });
 }
 
-function initializeLocalTime() {
+function updateLocalTime() {
   const clock = document.getElementById('current-time');
   if (!clock) return;
-  const update = () => {
-    if (localStorage.getItem('easterEggEnabled') === '1') {
-      clock.textContent = 'Teardrop';
-      return;
-    }
-    const time = new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit' }).format(new Date());
-    clock.textContent = document.documentElement.lang === 'pt-BR'
-      ? `agora são ${time} para o jpedro rn`
-      : `it is ${time} for jpedro rn`;
-  };
-  update();
-  window.setInterval(update, 30000);
+  if (localStorage.getItem('easterEggEnabled') === '1') {
+    clock.textContent = 'Teardrop';
+    return;
+  }
+
+  const timeOptions = { hour: 'numeric', minute: '2-digit' };
+  const timeFormat = localStorage.getItem('timeFormat') || 'system';
+  if (timeFormat === '12') timeOptions.hour12 = true;
+  if (timeFormat === '24') timeOptions.hour12 = false;
+  const time = new Intl.DateTimeFormat(undefined, timeOptions).format(new Date());
+  clock.textContent = document.documentElement.lang === 'pt-BR'
+    ? `agora são ${time} para o jpedro rn`
+    : `it is ${time} for jpedro rn`;
+}
+
+function initializeLocalTime() {
+  if (!document.getElementById('current-time')) return;
+  updateLocalTime();
+  window.setInterval(updateLocalTime, 30000);
 }
 
 function initializeSelects() {
@@ -660,9 +894,12 @@ function initializeSelects() {
 
 function applyAllSettings(animateTopbar = false, animateWallpaper = false) {
   applyLanguage();
+  updateLocalTime();
   applyBlur();
   applyBackgroundBlur();
   applySurfaceOpacity();
+  applyExperimentalBoldness();
+  applyHomeWidgetLayout();
   applyBg();
   applyReducedAnimation();
   applyFont();
@@ -685,6 +922,7 @@ applyTopbarPosition();
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', applyAllSettings);
   document.addEventListener('DOMContentLoaded', initializeCheckboxes);
+  document.addEventListener('DOMContentLoaded', initializeHomeWidgetEditor);
   document.addEventListener('DOMContentLoaded', initializeColorPickers);
   document.addEventListener('DOMContentLoaded', initializeRangeInputs);
   document.addEventListener('DOMContentLoaded', initializeSelects);
@@ -697,6 +935,7 @@ if (document.readyState === 'loading') {
 } else {
   applyAllSettings();
   initializeCheckboxes();
+  initializeHomeWidgetEditor();
   initializeColorPickers();
   initializeRangeInputs();
   initializeSelects();

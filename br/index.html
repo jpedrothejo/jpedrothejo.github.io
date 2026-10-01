@@ -12,10 +12,10 @@
   <meta property="og:url" content="https://jpedrothejo.github.io/br/">
   <meta property="og:locale" content="pt_BR">
   <meta property="og:image" content="https://jpedrothejo.github.io/images/site%20icon.ico">
-  <link href="/scripts/style.css" rel="stylesheet" type="text/css" media="all">
-  <link rel="icon" href="/images/site icon.ico">
-  <script src="/scripts/settings.js"></script>
-  <script src="/scripts/status-badges.js" defer></script>
+  <link href="../scripts/style.css" rel="stylesheet" type="text/css" media="all">
+  <link rel="icon" href="../images/site%20icon.ico">
+  <script src="../scripts/settings.js"></script>
+  <script src="../scripts/status-badges.js" defer></script>
 </head>
 
 <body>
@@ -67,7 +67,7 @@
     </div>
 
     <div class="home-categories">
-      <section class="card-bg home-category home-about">
+      <section class="card-bg home-category home-about" data-widget="about">
         <h2>Sobre mim</h2>
         <ul>
           <li>Eu sou brasileiro</li>
@@ -79,7 +79,7 @@
         </ul>
       </section>
 
-      <section class="card-bg home-category home-socials">
+      <section class="card-bg home-category home-socials" data-widget="socials">
         <h2 class="social-title">Minhas Redes Sociais</h2>
         <div class="home-social-links">
           <a href="#" class="social-item" data-social-links='[{"url":"https://www.youtube.com/@jpedrothejo","label":"Canal principal"},{"url":"https://www.youtube.com/@jpedrothevlogs","label":"Canal alternativo"},{"url":"https://www.youtube.com/@jpedrothegames","label":"Canal de jogos"}]'><img src="/icons/youtube.png" class="icon-img"><span class="social-label">YouTube</span></a>
@@ -92,7 +92,7 @@
         </div>
       </section>
 
-      <section class="card-bg home-category home-status">
+      <section class="card-bg home-category home-status" data-widget="status">
         <h2>O que estou fazendo agora?</h2>
         <div class="status-badges" data-presence-badges>
           <span class="status-badge" data-badge="presence" data-status="loading">
@@ -103,6 +103,11 @@
           <span class="status-badge coding-status-badge" data-badge="coding" data-status="loading">
             <span class="status-badge-dot" aria-hidden="true"></span>
             <span class="status-badge-label">Programando</span>
+            <span class="status-badge-value" aria-live="polite">Carregando</span>
+          </span>
+          <span class="status-badge playing-status-badge" data-badge="playing" data-status="loading">
+            <span class="status-badge-dot" aria-hidden="true"></span>
+            <span class="status-badge-label">Jogando</span>
             <span class="status-badge-value" aria-live="polite">Carregando</span>
           </span>
           <a class="status-badge status-badge-link" data-badge="spotify" href="https://api.statusbadges.me/openspotify/944684533108854854" target="_blank" rel="noopener" hidden>

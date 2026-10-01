@@ -134,12 +134,12 @@
             <div class="setting-item">
               <span>Wallpaper</span>
               <select class="custom-select" data-setting-key="wallpaper">
-                <option value="pattern" selected>Dark Pattern (Default)</option>
+                <option value="pattern">Dark Pattern</option>
                 <option value="background.jpg">Sky</option>
                 <option value="setup.jpg">Windows 95 Setup</option>
                 <option value="water.jpg">Windows 7 Water</option>
                 <option value="Flowers.jpg">Windows 8 Flowers</option>
-                <option value="Metro.jpg">Windows 8 Metro</option>
+                <option value="Metro.jpg" selected>Windows 8 Metro (Default)</option>
                 <option value="Glacier.jpg">Windows 8 Glacier</option>
                 <option value="custom">Custom</option>
                 <option value="no-bg">None</option>
@@ -153,6 +153,15 @@
                 <option value="navy">Navy Blue</option>
                 <option value="nord" selected>Nord</option>
                 <option value="custom" hidden>Custom</option>
+              </select>
+            </div>
+
+            <div class="setting-item">
+              <span>Clock Format</span>
+              <select class="custom-select" data-setting-key="timeFormat" aria-label="Clock format">
+                <option value="system" selected>Use browser default</option>
+                <option value="12">12-hour</option>
+                <option value="24">24-hour</option>
               </select>
             </div>
           </div>
@@ -204,10 +213,15 @@
               </label>
             </div>
 
-            <div class="experimental-settings" id="experimentalSettings" hidden>
+            <div class="experimental-settings" id="experimentalSettings">
               <div class="setting-item" id="custom-accent-setting">
                 <span>Custom Accent Color</span>
                 <input type="color" class="custom-color" data-setting-key="customAccentColor" value="#5d94c2">
+              </div>
+
+              <div class="setting-item">
+                <span>Home Widget Layout</span>
+                <button type="button" class="custom-file-button" id="open-home-widget-editor">Customize Widgets</button>
               </div>
 
               <label class="setting-item">
@@ -221,8 +235,14 @@
                 <output>78%</output>
               </label>
               <label class="setting-item">
-                <span data-range-label>Main Blur (10px)</span>
-                <input class="experimental-range" type="range" min="0" max="20" step="0.5" value="10" data-setting-key="mainBlurLevel" data-unit="px" data-label="Main Blur" aria-label="Main blur level">
+                <span>Boldness Intensity</span>
+                <input class="experimental-range" type="range" min="400" max="900" step="25" value="700" data-setting-key="experimentalBoldness" data-unit="" aria-label="Boldness intensity">
+                <output>700</output>
+              </label>
+              <label class="setting-item">
+                <span>Main Blur</span>
+                <input class="experimental-range" type="range" min="0" max="20" step="0.5" value="10" data-setting-key="mainBlurLevel" data-unit="px" aria-label="Main blur level">
+                <output>10px</output>
               </label>
               <label class="setting-item">
                 <span>Wallpaper Blur</span>
