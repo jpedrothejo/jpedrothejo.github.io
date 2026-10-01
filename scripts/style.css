@@ -1133,6 +1133,21 @@ button {
   grid-row: 2;
 }
 
+.home-category[data-layout-position="primary"] {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+}
+
+.home-category[data-layout-position="upper"] {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.home-category[data-layout-position="lower"] {
+  grid-column: 2;
+  grid-row: 2;
+}
+
 .home-category ul {
   display: flex;
   flex-direction: column;
@@ -1185,6 +1200,12 @@ button {
   padding: 20px;
   background: rgba(10, 12, 18, 0.7);
   z-index: 2000;
+  animation: experimental-unlock-backdrop-in 0.2s ease-out both;
+}
+
+.widget-layout-overlay.is-closing {
+  pointer-events: none;
+  animation: experimental-unlock-backdrop-out 0.18s ease-in both;
 }
 
 .widget-layout-popup {
@@ -1196,6 +1217,11 @@ button {
   background: rgba(17, 19, 26, 0.9);
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
   padding: 18px;
+  animation: experimental-unlock-dialog-in 0.24s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.widget-layout-overlay.is-closing .widget-layout-popup {
+  animation: experimental-unlock-dialog-out 0.18s ease-in both;
 }
 
 .widget-layout-header {
@@ -1231,19 +1257,33 @@ button {
   text-align: center;
 }
 
-.widget-layout-preview-card[data-slot="about"] {
+.widget-layout-preview-card[data-layout-position="primary"] {
   grid-column: 1;
   grid-row: 1 / span 2;
 }
 
-.widget-layout-preview-card[data-slot="socials"] {
+.widget-layout-preview-card[data-layout-position="upper"] {
   grid-column: 2;
   grid-row: 1;
 }
 
-.widget-layout-preview-card[data-slot="status"] {
+.widget-layout-preview-card[data-layout-position="lower"] {
   grid-column: 2;
   grid-row: 2;
+}
+
+.widget-layout-preview-empty {
+  grid-column: 1 / -1;
+  min-height: 92px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(236, 239, 244, 0.72);
+  font-size: 0.8rem;
+}
+
+.widget-layout-preview-empty[hidden] {
+  display: none;
 }
 
 .widget-layout-list {
@@ -1262,10 +1302,17 @@ button {
   border-radius: 10px;
   background: rgba(255, 255, 255, 0.02);
   cursor: grab;
+  user-select: none;
 }
 
-.widget-layout-item.dragging {
+.widget-layout-item.dragging,
+.widget-layout-preview-card.dragging {
   opacity: 0.6;
+}
+
+.widget-layout-preview-card {
+  cursor: grab;
+  user-select: none;
 }
 
 .widget-layout-name {
@@ -1512,6 +1559,11 @@ html.topbar-transitioning .minimize-btn {
   .home-about,
   .home-socials,
   .home-status {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  .home-category[data-layout-position] {
     grid-column: 1;
     grid-row: auto;
   }

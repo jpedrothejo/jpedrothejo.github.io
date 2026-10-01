@@ -492,18 +492,30 @@ function applyHomeWidgetLayout() {
   if (!widgets.length) return;
 
   const layout = getHomeWidgetLayout();
-  widgets.forEach(widget => {
+  const orderedWidgets = widgets.sort((first, second) => {
+    return (layout[first.dataset.widget]?.order ?? 0) - (layout[second.dataset.widget]?.order ?? 0);
+  });
+  let enabledIndex = 0;
+  orderedWidgets.forEach(widget => {
     const key = widget.dataset.widget;
     const state = layout[key] || { enabled: true, order: 0 };
     widget.hidden = !state.enabled;
     widget.style.display = state.enabled ? '' : 'none';
     widget.style.order = String(state.order ?? 0);
+    if (state.enabled) {
+      widget.dataset.layoutPosition = ['primary', 'upper', 'lower'][enabledIndex] || 'lower';
+      enabledIndex += 1;
+    }
   });
 }
 
 function openHomeWidgetEditor() {
   const overlayId = 'home-widget-layout-overlay';
   let overlay = document.getElementById(overlayId);
+  if (overlay?.classList.contains('is-closing')) {
+    overlay.remove();
+    overlay = null;
+  }
   if (!overlay) {
     overlay = document.createElement('div');
     overlay.id = overlayId;
@@ -512,18 +524,14 @@ function openHomeWidgetEditor() {
   }
 
   const layout = getHomeWidgetLayout();
-  const widgetOrder = ['about', 'socials', 'status'];
+  const widgetOrder = ['about', 'socials', 'status'].sort((first, second) => {
+    return (layout[first]?.order ?? 0) - (layout[second]?.order ?? 0);
+  });
   const widgetNames = {
     about: 'About Me',
     socials: 'My Socials',
     status: 'Status'
   };
-
-  const previewMarkup = widgetOrder.map(key => {
-    const state = layout[key];
-    if (!state?.enabled) return '';
-    return `<div class="widget-layout-preview-card" data-slot="${key}">${widgetNames[key]}</div>`;
-  }).join('');
 
   const listMarkup = widgetOrder.map((key, index) => {
     const state = layout[key] || { enabled: true, order: index };
@@ -548,7 +556,7 @@ function openHomeWidgetEditor() {
         <button type="button" class="custom-file-button" data-close-widget-layout>Close</button>
       </div>
       <div class="widget-layout-preview">
-        ${previewMarkup || '<div class="widget-layout-preview-card" data-slot="about">No widgets enabled</div>'}
+        <div class="widget-layout-preview-empty" hidden>No widgets enabled</div>
       </div>
       <div class="widget-layout-list">
         ${listMarkup}
@@ -560,66 +568,134 @@ function openHomeWidgetEditor() {
     </div>
   `;
 
+  const preview = overlay.querySelector('.widget-layout-preview');
+  const list = overlay.querySelector('.widget-layout-list');
+  const getOrderedItems = () => Array.from(list.querySelectorAll('.widget-layout-item'));
+  const getDraftLayout = () => {
+    const nextLayout = { ...getDefaultHomeWidgetLayout() };
+    getOrderedItems().forEach((item, order) => {
+      const key = item.dataset.widget;
+      nextLayout[key] = {
+        enabled: item.querySelector('[data-widget-toggle]').checked,
+        order
+      };
+    });
+    return nextLayout;
+  };
+  const renderPreview = () => {
+    const draft = getDraftLayout();
+    const enabledKeys = getOrderedItems()
+      .map(item => item.dataset.widget)
+      .filter(key => draft[key].enabled);
+    preview.querySelectorAll('.widget-layout-preview-card').forEach(card => card.remove());
+    preview.querySelector('.widget-layout-preview-empty').hidden = enabledKeys.length > 0;
+    enabledKeys.forEach((key, index) => {
+      const card = document.createElement('div');
+      card.className = 'widget-layout-preview-card';
+      card.dataset.widget = key;
+      card.dataset.layoutPosition = ['primary', 'upper', 'lower'][index] || 'lower';
+      card.draggable = true;
+      card.textContent = widgetNames[key];
+      preview.appendChild(card);
+    });
+  };
+  const updatePositions = () => renderPreview();
+  const moveItem = (key, targetKey, before) => {
+    if (key === targetKey) return;
+    const items = getOrderedItems();
+    const dragged = items.find(item => item.dataset.widget === key);
+    const target = items.find(item => item.dataset.widget === targetKey);
+    if (!dragged || !target) return;
+    list.insertBefore(dragged, before ? target : target.nextSibling);
+    updatePositions();
+  };
+  let draggedWidget = null;
+  const closeEditor = () => {
+    if (overlay.classList.contains('is-closing')) return;
+    if (document.documentElement.classList.contains('reduced-motion')
+      || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      overlay.remove();
+      return;
+    }
+    overlay.classList.add('is-closing');
+    window.setTimeout(() => {
+      if (overlay.classList.contains('is-closing')) overlay.remove();
+    }, 180);
+  };
+
+  renderPreview();
+
   const closeButtons = overlay.querySelectorAll('[data-close-widget-layout]');
-  closeButtons.forEach(button => button.addEventListener('click', () => overlay.remove()));
+  closeButtons.forEach(button => button.addEventListener('click', closeEditor));
 
   overlay.querySelectorAll('[data-apply-widget-layout]').forEach(button => {
     button.addEventListener('click', () => {
-      const nextLayout = { ...getDefaultHomeWidgetLayout() };
-      const items = Array.from(overlay.querySelectorAll('.widget-layout-item'));
-      items.forEach(item => {
-        const key = item.dataset.widget;
-        const checkbox = item.querySelector('[data-widget-toggle]');
-        nextLayout[key] = {
-          enabled: checkbox.checked,
-          order: items.indexOf(item)
-        };
-      });
-      saveHomeWidgetLayout(nextLayout);
+      saveHomeWidgetLayout(getDraftLayout());
       applyHomeWidgetLayout();
-      overlay.remove();
+      closeEditor();
     });
   });
 
   overlay.querySelectorAll('[data-move]').forEach(button => {
     button.addEventListener('click', () => {
       const key = button.dataset.widget;
-      const items = Array.from(overlay.querySelectorAll('.widget-layout-item'));
+      const items = getOrderedItems();
       const index = items.findIndex(item => item.dataset.widget === key);
       const nextIndex = button.dataset.move === 'up' ? index - 1 : index + 1;
       if (nextIndex < 0 || nextIndex >= items.length) return;
       const [item] = items.splice(index, 1);
       items.splice(nextIndex, 0, item);
-      const parent = item.parentElement;
-      items.forEach(newItem => parent.appendChild(newItem));
-      const updatedLayout = { ...getDefaultHomeWidgetLayout() };
-      items.forEach((listItem, orderIndex) => {
-        const widgetKey = listItem.dataset.widget;
-        const checkbox = listItem.querySelector('[data-widget-toggle]');
-        updatedLayout[widgetKey] = {
-          enabled: checkbox.checked,
-          order: orderIndex
-        };
-      });
-      saveHomeWidgetLayout(updatedLayout);
-      openHomeWidgetEditor();
+      items.forEach(newItem => list.appendChild(newItem));
+      updatePositions();
     });
   });
 
   overlay.querySelectorAll('[data-widget-toggle]').forEach(input => {
     input.addEventListener('change', () => {
-      const item = input.closest('.widget-layout-item');
+      renderPreview();
+    });
+  });
+
+  [list, preview].forEach(container => {
+    const itemSelector = container === list ? '.widget-layout-item' : '.widget-layout-preview-card';
+    container.addEventListener('dragstart', event => {
+      const item = event.target.closest(itemSelector);
       if (!item) return;
-      const key = item.dataset.widget;
-      const layout = getHomeWidgetLayout();
-      layout[key].enabled = input.checked;
-      saveHomeWidgetLayout(layout);
-      openHomeWidgetEditor();
+      draggedWidget = item.dataset.widget;
+      item.classList.add('dragging');
+      event.dataTransfer.effectAllowed = 'move';
+      event.dataTransfer.setData('text/plain', draggedWidget);
+    });
+    container.addEventListener('dragover', event => {
+      if (draggedWidget) event.preventDefault();
+    });
+    container.addEventListener('drop', event => {
+      const target = event.target.closest(itemSelector);
+      const key = event.dataTransfer.getData('text/plain') || draggedWidget;
+      if (!target || !key) return;
+      event.preventDefault();
+      if (container === preview) {
+        const items = getOrderedItems();
+        const first = items.findIndex(item => item.dataset.widget === key);
+        const second = items.findIndex(item => item.dataset.widget === target.dataset.widget);
+        if (first >= 0 && second >= 0 && first !== second) {
+          [items[first], items[second]] = [items[second], items[first]];
+          items.forEach(item => list.appendChild(item));
+          updatePositions();
+        }
+      } else {
+        const bounds = target.getBoundingClientRect();
+        moveItem(key, target.dataset.widget, event.clientY < bounds.top + bounds.height / 2);
+      }
+    });
+    container.addEventListener('dragend', () => {
+      container.querySelectorAll('.dragging').forEach(item => item.classList.remove('dragging'));
+      draggedWidget = null;
     });
   });
 
   overlay.addEventListener('click', event => {
-    if (event.target === overlay) overlay.remove();
+    if (event.target === overlay) closeEditor();
   });
 }
 
