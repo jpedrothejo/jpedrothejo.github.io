@@ -259,13 +259,187 @@
 }
 
 .custom-color {
-  width: 40px;
-  height: 30px;
-  padding: 3px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 116px;
+  height: 34px;
+  box-sizing: border-box;
+  padding: 4px 8px;
   border: 1px solid rgba(255, 255, 255, 0.28);
   border-radius: 6px;
   background: var(--accent-color-button-bg);
+  color: #eceff4;
+  font: inherit;
   cursor: pointer;
+}
+
+.custom-color:hover,
+.custom-color:focus-visible {
+  background: var(--accent-color-hover);
+  outline: 2px solid var(--accent-color-link);
+  outline-offset: 2px;
+}
+
+.custom-color-swatch {
+  flex: 0 0 22px;
+  width: 22px;
+  height: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 4px;
+}
+
+.custom-color-value {
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.custom-color-picker-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 3200;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  box-sizing: border-box;
+  background: rgba(5, 6, 10, 0.58);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.24s ease, visibility 0s linear 0.24s;
+}
+
+.custom-color-picker-overlay.is-open {
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0s;
+}
+
+.custom-color-picker {
+  position: relative;
+  width: min(360px, 100%);
+  box-sizing: border-box;
+  padding: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--accent-color-primary) 82%, #11151d);
+  color: #eceff4;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.42);
+  opacity: 0;
+  transform: translateY(12px) scale(0.97);
+  transition: opacity 0.24s ease, transform 0.24s ease;
+}
+
+.custom-color-picker-overlay.is-open .custom-color-picker {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.custom-color-picker-header {
+  display: flex;
+  align-items: center;
+  min-height: 34px;
+  margin-bottom: 16px;
+  padding-right: 36px;
+}
+
+.custom-color-picker-header h2 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.custom-color-picker-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--accent-color-button-bg);
+  color: #f8fafc;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.custom-color-picker-close:hover,
+.custom-color-picker-close:focus-visible {
+  background: var(--accent-color-hover);
+}
+
+.custom-color-picker-preview-row {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr);
+  align-items: end;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.custom-color-picker-preview {
+  width: 48px;
+  height: 48px;
+  box-sizing: border-box;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 8px;
+}
+
+.custom-color-picker-hex-label,
+.custom-color-picker-channel {
+  display: grid;
+  align-items: center;
+  gap: 8px;
+  color: rgba(236, 239, 244, 0.78);
+  font-size: 12px;
+}
+
+.custom-color-picker-hex-label {
+  grid-template-columns: auto minmax(0, 1fr);
+}
+
+.custom-color-picker-hex {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 7px 9px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.2);
+  color: #fff;
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+}
+
+.custom-color-picker-hex[aria-invalid="true"] {
+  border-color: #e56b73;
+}
+
+.custom-color-picker-channel {
+  grid-template-columns: 90px minmax(0, 1fr) 34px;
+  margin-top: 14px;
+}
+
+.custom-color-picker-channel input {
+  width: 100%;
+  margin: 0;
+  accent-color: var(--accent-color-link);
+}
+
+.custom-color-picker-channel output {
+  color: #fff;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.custom-color-picker-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 18px;
 }
 
 .settings-reset-card {
@@ -682,48 +856,22 @@ html.gradient-static body::before {
 @keyframes page-enter {
   from {
     opacity: 0;
-    transform: translateY(10px) scale(0.98) perspective(1px);
   }
 
   to {
     opacity: 1;
-    transform: translateY(0) scale(1) perspective(1px);
   }
 }
 
-@keyframes topnav-enter {
+@keyframes nav-item-enter {
   from {
     opacity: 0;
-    transform: translateX(-50%) translateY(-12px) scale(0.96) perspective(1px);
+    transform: translateY(-8px);
   }
 
   to {
     opacity: 1;
-    transform: translateX(-50%) translateY(0) scale(1) perspective(1px);
-  }
-}
-
-@keyframes topnav-left-enter {
-  from {
-    opacity: 0;
-    transform: translateY(-50%) translateX(-12px) scale(0.96) perspective(1px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(-50%) translateX(0) scale(1) perspective(1px);
-  }
-}
-
-@keyframes topnav-right-enter {
-  from {
-    opacity: 0;
-    transform: translateY(-50%) translateX(12px) scale(0.96) perspective(1px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(-50%) translateX(0) scale(1) perspective(1px);
+    transform: translateY(0);
   }
 }
 
@@ -848,6 +996,9 @@ html.gradient-static body::before {
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
   gap: 8px;
   padding: 0;
   margin: 0;
@@ -888,6 +1039,7 @@ html.gradient-static body::before {
 }
 
 .status-badge-value {
+  flex: 1 1 auto;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1194,34 +1346,43 @@ button {
 .widget-layout-overlay {
   position: fixed;
   inset: 0;
+  background: color-mix(in srgb, var(--accent-color-glow) 30%, rgba(5, 6, 10, 0.78));
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
-  background: rgba(10, 12, 18, 0.7);
   z-index: 2000;
-  animation: experimental-unlock-backdrop-in 0.2s ease-out both;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.24s ease, visibility 0s linear 0.24s;
+}
+
+.widget-layout-overlay.show {
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0s;
 }
 
 .widget-layout-overlay.is-closing {
   pointer-events: none;
-  animation: experimental-unlock-backdrop-out 0.18s ease-in both;
 }
 
 .widget-layout-popup {
+  position: relative;
   width: min(720px, 92vw);
   max-height: min(82vh, 760px);
   overflow: auto;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 18px;
-  background: rgba(17, 19, 26, 0.9);
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
   padding: 18px;
-  animation: experimental-unlock-dialog-in 0.24s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  opacity: 0;
+  transform: translateY(12px) scale(0.97);
+  transition: opacity 0.24s ease, transform 0.24s ease;
 }
 
-.widget-layout-overlay.is-closing .widget-layout-popup {
-  animation: experimental-unlock-dialog-out 0.18s ease-in both;
+.widget-layout-overlay.show .widget-layout-popup {
+  opacity: 1;
+  transform: translateY(0) scale(1);
 }
 
 .widget-layout-header {
@@ -1230,6 +1391,7 @@ button {
   justify-content: space-between;
   gap: 12px;
   margin-bottom: 12px;
+  padding-right: 36px;
 }
 
 .widget-layout-preview {
@@ -1366,7 +1528,10 @@ button {
               transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
               visibility 0s linear 0.2s;
               border-radius: 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
-  animation: topnav-enter 0.45s ease both;
+}
+
+.topnav > a:not(.minimize-btn) {
+  animation: nav-item-enter 0.45s ease both;
 }
 
 html.topbar-transitioning .topnav,
@@ -1382,7 +1547,6 @@ html.topbar-transitioning .minimize-btn {
   right: auto;
   transform: translateX(-50%) perspective(1px);
   flex-direction: row;
-  animation-name: topnav-enter;
 }
 
 .topbar-bottom .topnav {
@@ -1392,7 +1556,6 @@ html.topbar-transitioning .minimize-btn {
   right: auto;
   transform: translateX(-50%) perspective(1px);
   flex-direction: row;
-  animation-name: topnav-enter;
 }
 
 .topbar-left .topnav {
@@ -1402,7 +1565,6 @@ html.topbar-transitioning .minimize-btn {
   right: auto;
   transform: translateY(-50%) perspective(1px);
   flex-direction: column;
-  animation-name: topnav-left-enter;
 }
 
 .topbar-right .topnav {
@@ -1412,7 +1574,6 @@ html.topbar-transitioning .minimize-btn {
   left: auto;
   transform: translateY(-50%) perspective(1px);
   flex-direction: column;
-  animation-name: topnav-right-enter;
 }
 
 .topbar-top .main {
@@ -1676,11 +1837,11 @@ html.topbar-transitioning .minimize-btn {
   gap: 10px;
   align-items: stretch;
   text-align: center;
-  animation: page-enter 0.45s ease 0.08s both;
 }
 
 .main>* {
   margin: 0;
+  animation: page-enter 0.45s ease 0.08s both;
 }
 
 .main.projects-main {

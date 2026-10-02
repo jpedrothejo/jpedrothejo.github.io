@@ -61,7 +61,9 @@
       const activities = Array.isArray(presence.activities) ? presence.activities : [];
       const coding = activities.find(isCodingActivity);
       const codingDetails = coding
-        ? [coding.details, coding.state].filter(Boolean).join(' - ') || coding.name
+        ? [coding.details, coding.state]
+          .filter(value => typeof value === 'string' && value.trim() && !/^workspace\s*:/i.test(value.trim()))
+          .join(' - ') || coding.name
         : text.noCoding;
       updateBadge(root, 'coding', text.coding, codingDetails, coding ? 'active' : 'offline');
 

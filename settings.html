@@ -216,12 +216,15 @@
             <div class="experimental-settings" id="experimentalSettings">
               <div class="setting-item" id="custom-accent-setting">
                 <span>Custom Accent Color</span>
-                <input type="color" class="custom-color" data-setting-key="customAccentColor" value="#5d94c2">
+                <button type="button" class="custom-color" data-setting-key="customAccentColor" aria-haspopup="dialog" aria-expanded="false" aria-label="Choose custom accent color">
+                  <span class="custom-color-swatch" aria-hidden="true"></span>
+                  <span class="custom-color-value">#5D94C2</span>
+                </button>
               </div>
 
               <div class="setting-item">
                 <span>Home Widget Layout</span>
-                <button type="button" class="custom-file-button" id="open-home-widget-editor">Customize Widgets</button>
+                <button type="button" class="custom-file-button" id="open-home-widget-editor">Customize</button>
               </div>
 
               <label class="setting-item">

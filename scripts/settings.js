@@ -532,6 +532,7 @@ function openHomeWidgetEditor() {
     socials: 'My Socials',
     status: 'Status'
   };
+  const closeLabel = document.documentElement.lang === 'pt-BR' ? 'Fechar' : 'Close';
 
   const listMarkup = widgetOrder.map((key, index) => {
     const state = layout[key] || { enabled: true, order: index };
@@ -551,19 +552,21 @@ function openHomeWidgetEditor() {
 
   overlay.innerHTML = `
     <div class="widget-layout-popup" role="dialog" aria-modal="true" aria-label="Customize home widgets">
-      <div class="widget-layout-header">
-        <h3>Customize Home Widgets</h3>
-        <button type="button" class="custom-file-button" data-close-widget-layout>Close</button>
-      </div>
-      <div class="widget-layout-preview">
-        <div class="widget-layout-preview-empty" hidden>No widgets enabled</div>
-      </div>
-      <div class="widget-layout-list">
-        ${listMarkup}
-      </div>
-      <div class="widget-layout-footer">
-        <button type="button" class="custom-file-button" data-close-widget-layout>Cancel</button>
-        <button type="button" class="custom-file-button" data-apply-widget-layout>Apply</button>
+      <div class="widget-layout-content">
+        <div class="widget-layout-header">
+          <h3>Customize Home Widgets</h3>
+          <button type="button" class="device-modal-close" data-close-widget-layout aria-label="${closeLabel}">×</button>
+        </div>
+        <div class="widget-layout-preview">
+          <div class="widget-layout-preview-empty" hidden>No widgets enabled</div>
+        </div>
+        <div class="widget-layout-list">
+          ${listMarkup}
+        </div>
+        <div class="widget-layout-footer">
+          <button type="button" class="custom-file-button" data-close-widget-layout>Cancel</button>
+          <button type="button" class="custom-file-button" data-apply-widget-layout>Apply</button>
+        </div>
       </div>
     </div>
   `;
@@ -618,9 +621,10 @@ function openHomeWidgetEditor() {
       return;
     }
     overlay.classList.add('is-closing');
+    overlay.classList.remove('show');
     window.setTimeout(() => {
       if (overlay.classList.contains('is-closing')) overlay.remove();
-    }, 180);
+    }, 240);
   };
 
   renderPreview();
@@ -697,6 +701,9 @@ function openHomeWidgetEditor() {
   overlay.addEventListener('click', event => {
     if (event.target === overlay) closeEditor();
   });
+
+  void overlay.offsetWidth;
+  requestAnimationFrame(() => overlay.classList.add('show'));
 }
 
 function initializeHomeWidgetEditor() {
@@ -746,26 +753,211 @@ function initializeCheckboxes() {
   });
 }
 
-function initializeColorPickers() {
-  document.querySelectorAll('.custom-color[data-setting-key]').forEach(input => {
-    const key = input.dataset.settingKey;
-    const savedValue = localStorage.getItem(key);
+function hexToHsl(hex) {
+  const match = /^#([0-9a-f]{6})$/i.exec(hex);
+  if (!match) return { hue: 209, saturation: 46, lightness: 56 };
+  const [red, green, blue] = match[1].match(/.{2}/g).map(channel => parseInt(channel, 16) / 255);
+  const maximum = Math.max(red, green, blue);
+  const minimum = Math.min(red, green, blue);
+  const delta = maximum - minimum;
+  const lightness = (maximum + minimum) / 2;
+  let hue = 0;
+  let saturation = 0;
 
-    if (savedValue) {
-      input.value = savedValue;
+  if (delta !== 0) {
+    saturation = delta / (1 - Math.abs(2 * lightness - 1));
+    if (maximum === red) hue = ((green - blue) / delta) % 6;
+    else if (maximum === green) hue = (blue - red) / delta + 2;
+    else hue = (red - green) / delta + 4;
+    hue *= 60;
+    if (hue < 0) hue += 360;
+  }
+
+  return {
+    hue: Math.round(hue),
+    saturation: Math.round(saturation * 100),
+    lightness: Math.round(lightness * 100)
+  };
+}
+
+function hslToHex(hue, saturation, lightness) {
+  const normalizedHue = ((Number(hue) % 360) + 360) % 360 / 60;
+  const normalizedSaturation = Number(saturation) / 100;
+  const normalizedLightness = Number(lightness) / 100;
+  const chroma = (1 - Math.abs(2 * normalizedLightness - 1)) * normalizedSaturation;
+  const secondary = chroma * (1 - Math.abs(normalizedHue % 2 - 1));
+  const channels = normalizedHue < 1 ? [chroma, secondary, 0]
+    : normalizedHue < 2 ? [secondary, chroma, 0]
+      : normalizedHue < 3 ? [0, chroma, secondary]
+        : normalizedHue < 4 ? [0, secondary, chroma]
+          : normalizedHue < 5 ? [secondary, 0, chroma]
+            : [chroma, 0, secondary];
+  const offset = normalizedLightness - chroma / 2;
+  return `#${channels.map(channel => Math.round((channel + offset) * 255).toString(16).padStart(2, '0')).join('')}`;
+}
+
+function openCustomColorPicker(trigger, key) {
+  document.querySelectorAll('.custom-color-picker-overlay').forEach(existing => {
+    existing.customColorTrigger?.setAttribute('aria-expanded', 'false');
+    existing.remove();
+  });
+
+  const portuguese = document.documentElement.lang.toLowerCase().startsWith('pt');
+  const labels = portuguese
+    ? { title: 'Cor de acento personalizada', hue: 'Matiz', saturation: 'Saturação', lightness: 'Luminosidade', hex: 'Código hexadecimal', close: 'Fechar seletor', done: 'Concluído' }
+    : { title: 'Custom accent color', hue: 'Hue', saturation: 'Saturation', lightness: 'Lightness', hex: 'Hex color', close: 'Close color picker', done: 'Done' };
+  const storedColor = localStorage.getItem(key) || '#5d94c2';
+  const initialColor = /^#[0-9a-f]{6}$/i.test(storedColor) ? storedColor : '#5d94c2';
+  const initialHsl = hexToHsl(initialColor);
+  const overlay = document.createElement('div');
+  overlay.className = 'custom-color-picker-overlay';
+  overlay.customColorTrigger = trigger;
+  overlay.innerHTML = `
+    <section class="custom-color-picker" role="dialog" aria-modal="true" aria-labelledby="customColorPickerTitle">
+      <header class="custom-color-picker-header">
+        <h2 id="customColorPickerTitle">${labels.title}</h2>
+        <button type="button" class="custom-color-picker-close" data-close-color-picker aria-label="${labels.close}">×</button>
+      </header>
+      <div class="custom-color-picker-preview-row">
+        <span class="custom-color-picker-preview" data-color-preview style="background-color: ${initialColor}"></span>
+        <label class="custom-color-picker-hex-label">${labels.hex}
+          <input class="custom-color-picker-hex" data-color-hex type="text" value="${initialColor.toUpperCase()}" maxlength="7" spellcheck="false" autocomplete="off" aria-label="${labels.hex}">
+        </label>
+      </div>
+      <label class="custom-color-picker-channel">${labels.hue}
+        <input type="range" min="0" max="360" value="${initialHsl.hue}" data-color-channel="hue" aria-label="${labels.hue}">
+        <output>${initialHsl.hue}</output>
+      </label>
+      <label class="custom-color-picker-channel">${labels.saturation}
+        <input type="range" min="0" max="100" value="${initialHsl.saturation}" data-color-channel="saturation" aria-label="${labels.saturation}">
+        <output>${initialHsl.saturation}%</output>
+      </label>
+      <label class="custom-color-picker-channel">${labels.lightness}
+        <input type="range" min="0" max="100" value="${initialHsl.lightness}" data-color-channel="lightness" aria-label="${labels.lightness}">
+        <output>${initialHsl.lightness}%</output>
+      </label>
+      <footer class="custom-color-picker-footer">
+        <button type="button" class="custom-file-button" data-close-color-picker>${labels.done}</button>
+      </footer>
+    </section>
+  `;
+  document.body.appendChild(overlay);
+  trigger.setAttribute('aria-expanded', 'true');
+
+  const hexInput = overlay.querySelector('[data-color-hex]');
+  const preview = overlay.querySelector('[data-color-preview]');
+  const channelInputs = Array.from(overlay.querySelectorAll('[data-color-channel]'));
+  let isClosing = false;
+
+  const applyColor = color => {
+    const normalizedColor = color.toLowerCase();
+    preview.style.backgroundColor = normalizedColor;
+    hexInput.value = normalizedColor.toUpperCase();
+    trigger.querySelector('.custom-color-swatch').style.backgroundColor = normalizedColor;
+    trigger.querySelector('.custom-color-value').textContent = normalizedColor.toUpperCase();
+    localStorage.setItem(key, normalizedColor);
+    if (key === 'customAccentColor') {
+      localStorage.setItem('accentColor', 'custom');
+      const accentSelect = document.querySelector('[data-setting-key="accentColor"]');
+      const customOption = accentSelect?.querySelector('option[value="custom"]');
+      if (customOption) customOption.hidden = false;
+      if (accentSelect) accentSelect.value = 'custom';
     }
+    applyAllSettings();
+  };
 
-    input.addEventListener('input', (event) => {
-      localStorage.setItem(key, event.target.value);
-      if (key === 'customAccentColor') {
-        localStorage.setItem('accentColor', 'custom');
-        const accentSelect = document.querySelector('[data-setting-key="accentColor"]');
-        const customOption = accentSelect?.querySelector('option[value="custom"]');
-        if (customOption) customOption.hidden = false;
-        if (accentSelect) accentSelect.value = 'custom';
-      }
-      applyAllSettings();
+  const setChannels = color => {
+    const hsl = hexToHsl(color);
+    channelInputs.forEach(input => {
+      input.value = hsl[input.dataset.colorChannel];
+      input.nextElementSibling.textContent = input.dataset.colorChannel === 'hue'
+        ? String(hsl.hue)
+        : `${hsl[input.dataset.colorChannel]}%`;
     });
+  };
+
+  channelInputs.forEach(input => {
+    input.addEventListener('input', () => {
+      input.nextElementSibling.textContent = input.dataset.colorChannel === 'hue'
+        ? input.value
+        : `${input.value}%`;
+      const color = hslToHex(
+        overlay.querySelector('[data-color-channel="hue"]').value,
+        overlay.querySelector('[data-color-channel="saturation"]').value,
+        overlay.querySelector('[data-color-channel="lightness"]').value
+      );
+      hexInput.setAttribute('aria-invalid', 'false');
+      applyColor(color);
+    });
+  });
+
+  hexInput.addEventListener('input', () => {
+    const color = hexInput.value.trim();
+    const isValid = /^#[0-9a-f]{6}$/i.test(color);
+    hexInput.setAttribute('aria-invalid', String(!isValid));
+    if (!isValid) return;
+    setChannels(color);
+    applyColor(color);
+  });
+
+  const closePicker = () => {
+    if (isClosing) return;
+    isClosing = true;
+    trigger.setAttribute('aria-expanded', 'false');
+    document.removeEventListener('keydown', handleKeydown);
+    if (document.documentElement.classList.contains('reduced-motion')
+      || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      overlay.remove();
+      trigger.focus();
+      return;
+    }
+    overlay.classList.remove('is-open');
+    window.setTimeout(() => {
+      overlay.remove();
+      trigger.focus();
+    }, 240);
+  };
+
+  const handleKeydown = event => {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      closePicker();
+      return;
+    }
+    if (event.key !== 'Tab') return;
+    const focusable = Array.from(overlay.querySelectorAll('button, input'));
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  };
+
+  overlay.querySelectorAll('[data-close-color-picker]').forEach(button => {
+    button.addEventListener('click', closePicker);
+  });
+  overlay.addEventListener('click', event => {
+    if (event.target === overlay) closePicker();
+  });
+  document.addEventListener('keydown', handleKeydown);
+  void overlay.offsetWidth;
+  requestAnimationFrame(() => overlay.classList.add('is-open'));
+  hexInput.focus();
+  hexInput.select();
+}
+
+function initializeColorPickers() {
+  document.querySelectorAll('.custom-color[data-setting-key]').forEach(button => {
+    const key = button.dataset.settingKey;
+    const savedValue = localStorage.getItem(key);
+    const color = /^#[0-9a-f]{6}$/i.test(savedValue || '') ? savedValue : '#5d94c2';
+    button.querySelector('.custom-color-swatch').style.backgroundColor = color;
+    button.querySelector('.custom-color-value').textContent = color.toUpperCase();
+    button.addEventListener('click', () => openCustomColorPicker(button, key));
   });
 }
 
