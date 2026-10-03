@@ -573,7 +573,9 @@ html.experimental-features-enabled .slider:before {
 
 @media (prefers-reduced-motion: reduce) {
   .experimental-unlock-overlay,
-  .experimental-unlock-dialog {
+  .experimental-unlock-dialog,
+  html.holiday-halloween body::after,
+  html.holiday-christmas body::after {
     animation: none;
   }
 }
@@ -1260,7 +1262,6 @@ button {
 .home-categories {
   display: grid;
   grid-template-columns: minmax(220px, 1.1fr) minmax(0, 0.9fr);
-  grid-template-rows: auto auto;
   gap: 16px;
   width: min(760px, calc(95vw - 48px));
   margin: 8px auto 0;
@@ -1287,54 +1288,36 @@ button {
   text-align: center;
 }
 
-.home-about {
-  grid-column: 1;
-  grid-row: 1 / span 2;
+.home-category[data-widget-size="big"]:not(.home-profile) {
+  grid-row: span 2;
 }
 
-.home-socials {
-  grid-column: 2;
-  grid-row: 1;
-}
-
-.home-status {
-  grid-column: 2;
-  grid-row: 2;
-}
-
-.home-category[data-layout-position="primary"] {
-  grid-column: 1;
-  grid-row: 1 / span 2;
-}
-
-.home-category[data-layout-position="upper"] {
-  grid-column: 2;
-  grid-row: 1;
-}
-
-.home-category[data-layout-position="lower"] {
-  grid-column: 2;
-  grid-row: 2;
-}
-
-.home-category[data-layout-position="wide"] {
+.home-profile {
   grid-column: 1 / -1;
-  grid-row: auto;
 }
 
-.home-category[data-layout-position="compact-first"] {
-  grid-column: 1;
-  grid-row: 1;
+.home-profile[data-widget-size="small"] {
+  grid-column: auto;
 }
 
-.home-category[data-layout-position="compact-second"] {
-  grid-column: 2;
-  grid-row: 1;
+.home-about[data-widget-direction="horizontal"] {
+  display: grid;
+  grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.3fr);
+  align-items: center;
+  column-gap: 16px;
 }
 
-.home-category[data-layout-position="compact-third"] {
-  grid-column: 1;
-  grid-row: 2;
+.home-about[data-widget-direction="horizontal"] h2 {
+  margin: 0;
+  text-align: left;
+}
+
+.home-about[data-widget-direction="horizontal"] ul {
+  align-items: flex-start;
+}
+
+.home-about[data-widget-direction="horizontal"] li {
+  text-align: left;
 }
 
 .home-category ul {
@@ -1479,58 +1462,54 @@ button {
 
 .widget-layout-scale-options {
   display: inline-flex;
-  gap: 4px;
+  gap: 2px;
   padding: 3px;
   border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
   background: rgba(255, 255, 255, 0.04);
+  overflow: hidden;
 }
 
 .widget-layout-scale-choice {
+  min-width: 76px;
   padding: 5px 10px;
   border: 0;
+  border-radius: 5px;
   background: transparent;
   color: inherit;
   font: inherit;
   cursor: pointer;
+  transition: background-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
+}
+
+.widget-layout-scale-choice:hover:not([aria-pressed="true"]) {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.widget-layout-scale-choice:active {
+  transform: scale(0.97);
+}
+
+.widget-layout-scale-choice:focus-visible {
+  outline: 2px solid var(--accent-color-link);
+  outline-offset: -2px;
 }
 
 .widget-layout-scale-choice[aria-pressed="true"] {
   background: var(--accent-color-button-bg);
+  color: #ffffff;
 }
 
-.widget-layout-preview-card[data-layout-position="primary"] {
-  grid-column: 1;
-  grid-row: 1 / span 2;
-}
-
-.widget-layout-preview-card[data-layout-position="upper"] {
-  grid-column: 2;
-  grid-row: 1;
-}
-
-.widget-layout-preview-card[data-layout-position="lower"] {
-  grid-column: 2;
-  grid-row: 2;
-}
-
-.widget-layout-preview-card[data-layout-position="wide"] {
+.widget-layout-preview-card[data-widget="profile"] {
   grid-column: 1 / -1;
-  grid-row: auto;
 }
 
-.widget-layout-preview-card[data-layout-position="compact-first"] {
-  grid-column: 1;
-  grid-row: 1;
+.widget-layout-preview-card[data-widget="profile"][data-widget-size="small"] {
+  grid-column: auto;
 }
 
-.widget-layout-preview-card[data-layout-position="compact-second"] {
-  grid-column: 2;
-  grid-row: 1;
-}
-
-.widget-layout-preview-card[data-layout-position="compact-third"] {
-  grid-column: 1;
-  grid-row: 2;
+.widget-layout-preview-card[data-widget-size="big"]:not([data-widget="profile"]) {
+  grid-row: span 2;
 }
 
 .widget-layout-preview-empty {
@@ -1847,13 +1826,13 @@ html.topbar-transitioning .minimize-btn {
 
   .home-about,
   .home-socials,
-  .home-status {
+  .home-status,
+  .home-profile {
     grid-column: 1;
     grid-row: auto;
   }
 
-  .home-category[data-layout-position] {
-    grid-column: 1;
+  .home-category[data-widget-size="big"]:not(.home-profile) {
     grid-row: auto;
   }
 
@@ -2257,6 +2236,72 @@ html.accent-nord {
   --accent-color-button-bg-opaque: #434c5e80;
   --accent-color-glow: rgba(136, 192, 208, 0.26);
   --accent-color-link: #a8d5df;
+}
+
+html.holiday-halloween {
+  --accent-color-primary: rgba(112, 58, 25, 0.2) !important;
+  --accent-color-primary-opaque: rgba(170, 83, 31, 0.78) !important;
+  --accent-color-hover: rgba(151, 78, 31, 0.32) !important;
+  --accent-color-hover-opaque: rgba(196, 102, 42, 0.9) !important;
+  --accent-color-button-bg: rgba(160, 77, 27, 0.64) !important;
+  --accent-color-button-bg-opaque: rgba(160, 77, 27, 0.86) !important;
+  --accent-color-glow: rgba(242, 119, 45, 0.36) !important;
+  --accent-color-link: #ffc18b !important;
+  --navy-hover-bg: var(--accent-color-hover) !important;
+}
+
+html.holiday-christmas {
+  --accent-color-primary: rgba(30, 91, 68, 0.2) !important;
+  --accent-color-primary-opaque: rgba(30, 112, 78, 0.78) !important;
+  --accent-color-hover: rgba(148, 55, 56, 0.3) !important;
+  --accent-color-hover-opaque: rgba(177, 65, 66, 0.9) !important;
+  --accent-color-button-bg: rgba(33, 120, 79, 0.64) !important;
+  --accent-color-button-bg-opaque: rgba(33, 120, 79, 0.86) !important;
+  --accent-color-glow: rgba(193, 63, 66, 0.32) !important;
+  --accent-color-link: #a7e4c2 !important;
+  --navy-hover-bg: var(--accent-color-hover) !important;
+}
+
+html.holiday-halloween body::after {
+  background:
+    radial-gradient(ellipse 44% 22% at 12% 82%, rgba(133, 105, 153, 0.2), transparent 72%),
+    radial-gradient(ellipse 52% 24% at 88% 88%, rgba(90, 81, 119, 0.18), transparent 72%),
+    radial-gradient(ellipse 76% 52% at 50% 112%, var(--accent-color-glow), transparent 72%),
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.014) 0 1px, transparent 1px 5px);
+  background-size: 160% 130%, 160% 130%, auto, auto;
+  background-position: 0% 100%, 100% 85%, center, 0 0;
+  background-repeat: no-repeat, no-repeat, no-repeat, repeat;
+  animation: halloween-fog 28s ease-in-out infinite alternate;
+}
+
+html.holiday-christmas body::after {
+  background:
+    radial-gradient(circle, rgba(255, 255, 255, 0.72) 0 1px, transparent 1.8px),
+    radial-gradient(circle, rgba(220, 242, 255, 0.52) 0 1.4px, transparent 2.2px),
+    radial-gradient(ellipse 76% 52% at 50% 112%, var(--accent-color-glow), transparent 72%),
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.014) 0 1px, transparent 1px 5px);
+  background-size: 130px 150px, 210px 230px, auto, auto;
+  background-position: 0 0, 70px 40px, center, 0 0;
+  background-repeat: repeat, repeat, no-repeat, repeat;
+  animation: christmas-snow 18s linear infinite;
+}
+
+@keyframes halloween-fog {
+  from {
+    background-position: 0% 100%, 100% 85%, center, 0 0;
+  }
+  to {
+    background-position: 100% 76%, 0% 100%, center, 0 0;
+  }
+}
+
+@keyframes christmas-snow {
+  from {
+    background-position: 0 0, 70px 40px, center, 0 0;
+  }
+  to {
+    background-position: 0 600px, 70px 840px, center, 0 0;
+  }
 }
 
 .main,

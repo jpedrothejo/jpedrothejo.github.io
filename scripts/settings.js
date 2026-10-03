@@ -351,6 +351,25 @@ function applyAccentColor() {
   }
 }
 
+function getAutomaticTheme(date = new Date()) {
+  const month = date.getMonth();
+  const day = date.getDate();
+  if (month === 9 || (month === 10 && day === 1)) return 'halloween';
+  if (month === 11 && day <= 26) return 'christmas';
+  return 'default';
+}
+
+function applyTheme() {
+  const savedTheme = localStorage.getItem('theme') || 'auto';
+  const validThemes = ['auto', 'default', 'halloween', 'christmas'];
+  const theme = validThemes.includes(savedTheme) ? savedTheme : 'auto';
+  const activeTheme = theme === 'auto' ? getAutomaticTheme() : theme;
+  const root = document.documentElement;
+
+  root.classList.toggle('holiday-halloween', activeTheme === 'halloween');
+  root.classList.toggle('holiday-christmas', activeTheme === 'christmas');
+}
+
 function applyWallpaper(animate = false) {
   const savedWallpaper = localStorage.getItem('wallpaper') || 'Metro.jpg';
   const customWallpaper = localStorage.getItem('customWallpaper') || '';
@@ -465,10 +484,10 @@ function setupMinimizeButton() {
 
 function getDefaultHomeWidgetLayout() {
   return {
-    about: { enabled: true, order: 0, size: 'big' },
-    socials: { enabled: true, order: 1, size: 'small' },
-    status: { enabled: true, order: 2, size: 'small' },
-    profile: { direction: 'vertical', order: ['name', 'typeit'] }
+    about: { enabled: true, order: 1, size: 'big' },
+    socials: { enabled: true, order: 2, size: 'small' },
+    status: { enabled: true, order: 3, size: 'small' },
+    profile: { enabled: true, order: 0, size: 'big', direction: 'vertical', contentOrder: ['name', 'typeit'] }
   };
 }
 
@@ -481,9 +500,15 @@ function getHomeWidgetLayout() {
     const parsed = JSON.parse(saved);
     if (!parsed || typeof parsed !== 'object') return fallback;
     const hasProfileLayout = parsed.profile && typeof parsed.profile === 'object';
-    const savedProfileOrder = Array.isArray(parsed.profile?.order)
-      ? [...new Set(parsed.profile.order.filter(key => key === 'name' || key === 'typeit'))]
+    const profileContentOrder = Array.isArray(parsed.profile?.contentOrder)
+      ? parsed.profile.contentOrder
+      : parsed.profile?.order;
+    const savedProfileContentOrder = Array.isArray(profileContentOrder)
+      ? [...new Set(profileContentOrder.filter(key => key === 'name' || key === 'typeit'))]
       : [];
+    const parsedProfileOrder = Array.isArray(parsed.profile?.order)
+      ? fallback.profile.order
+      : Number(parsed.profile?.order ?? fallback.profile.order);
     return {
       about: {
         enabled: parsed.about?.enabled ?? true,
@@ -501,8 +526,11 @@ function getHomeWidgetLayout() {
         size: parsed.status?.size === 'small' || !hasProfileLayout ? 'small' : 'big'
       },
       profile: {
+        enabled: parsed.profile?.enabled ?? true,
+        order: Number.isFinite(parsedProfileOrder) ? parsedProfileOrder : fallback.profile.order,
+        size: parsed.profile?.size === 'small' ? 'small' : 'big',
         direction: parsed.profile?.direction === 'horizontal' ? 'horizontal' : 'vertical',
-        order: [...savedProfileOrder, ...fallback.profile.order.filter(key => !savedProfileOrder.includes(key))]
+        contentOrder: [...savedProfileContentOrder, ...fallback.profile.contentOrder.filter(key => !savedProfileContentOrder.includes(key))]
       }
     };
   } catch (error) {
@@ -512,32 +540,6 @@ function getHomeWidgetLayout() {
 
 function saveHomeWidgetLayout(layout) {
   localStorage.setItem('homeWidgetLayout', JSON.stringify(layout));
-}
-
-function getHomeWidgetPositions(widgetKeys, sizeForKey) {
-  const hasBigWidget = widgetKeys.some(key => sizeForKey(key) === 'big');
-  const positions = {};
-  let bigPlaced = false;
-  let smallIndex = 0;
-
-  widgetKeys.forEach(key => {
-    if (sizeForKey(key) === 'big') {
-      positions[key] = bigPlaced ? 'wide' : 'primary';
-      bigPlaced = true;
-      return;
-    }
-
-    if (hasBigWidget) {
-      positions[key] = ['upper', 'lower'][smallIndex] || 'wide';
-      smallIndex += 1;
-      return;
-    }
-
-    positions[key] = ['compact-first', 'compact-second', 'compact-third'][smallIndex] || 'wide';
-    smallIndex += 1;
-  });
-
-  return positions;
 }
 
 function animateWidgetPositions(elements, update) {
@@ -565,16 +567,13 @@ function animateWidgetPositions(elements, update) {
 function applyHomeWidgetLayout(animate = false) {
   const widgets = Array.from(document.querySelectorAll('.home-category[data-widget]'));
   const profileCopy = document.querySelector('.profile-copy');
+  const aboutWidget = document.querySelector('.home-about');
   if (!widgets.length && !profileCopy) return;
 
   const layout = getHomeWidgetLayout();
   const orderedWidgets = widgets.sort((first, second) => {
     return (layout[first.dataset.widget]?.order ?? 0) - (layout[second.dataset.widget]?.order ?? 0);
   });
-  const enabledKeys = orderedWidgets
-    .filter(widget => (layout[widget.dataset.widget]?.enabled ?? true))
-    .map(widget => widget.dataset.widget);
-  const positions = getHomeWidgetPositions(enabledKeys, key => layout[key]?.size || 'big');
   const profileWidgets = profileCopy
     ? [profileCopy.querySelector('.pfp-name'), profileCopy.querySelector('.profile-typeit')].filter(Boolean)
     : [];
@@ -586,18 +585,18 @@ function applyHomeWidgetLayout(animate = false) {
       widget.style.display = state.enabled ? '' : 'none';
       widget.style.order = String(state.order ?? 0);
       widget.dataset.widgetSize = state.size === 'small' ? 'small' : 'big';
-      if (state.enabled) widget.dataset.layoutPosition = positions[key] || 'wide';
     });
 
     if (profileCopy) {
       profileCopy.dataset.widgetDirection = layout.profile.direction;
-      layout.profile.order.forEach((key, index) => {
+      layout.profile.contentOrder.forEach((key, index) => {
         const profileWidget = profileCopy.querySelector(key === 'name' ? '.pfp-name' : '.profile-typeit');
         if (profileWidget) profileWidget.style.order = String(index);
       });
     }
+    if (aboutWidget) aboutWidget.dataset.widgetDirection = layout.profile.direction;
   };
-  if (animate) animateWidgetPositions([...widgets, ...profileWidgets], update);
+  if (animate) animateWidgetPositions([...widgets, ...profileWidgets, ...(aboutWidget ? [aboutWidget] : [])], update);
   else update();
 }
 
@@ -617,10 +616,11 @@ function openHomeWidgetEditor() {
 
   const layout = getHomeWidgetLayout();
   const portuguese = document.documentElement.lang === 'pt-BR';
-  const widgetOrder = ['about', 'socials', 'status'].sort((first, second) => {
+  const widgetOrder = ['profile', 'about', 'socials', 'status'].sort((first, second) => {
     return (layout[first]?.order ?? 0) - (layout[second]?.order ?? 0);
   });
   const widgetNames = {
+    profile: portuguese ? 'Perfil' : 'Profile',
     about: portuguese ? 'Sobre mim' : 'About Me',
     socials: portuguese ? 'Minhas redes' : 'My Socials',
     status: 'Status'
@@ -633,8 +633,9 @@ function openHomeWidgetEditor() {
   const scaleControlLabel = portuguese ? 'Tamanho do widget' : 'Widget size';
   const sizeLabels = portuguese ? { small: 'Pequeno', big: 'Grande' } : { small: 'Small', big: 'Big' };
   const profileDirectionLabel = portuguese ? 'Disposição' : 'Arrangement';
+  const profileSectionLabel = portuguese ? 'Ordem do conteúdo do perfil' : 'Profile content order';
   let profileDirection = layout.profile.direction;
-  let profileOrder = [...layout.profile.order];
+  let profileOrder = [...layout.profile.contentOrder];
   let selectedWidget = widgetOrder.find(key => layout[key]?.enabled) || null;
   const draftSizes = Object.fromEntries(widgetOrder.map(key => [
     key,
@@ -683,18 +684,18 @@ function openHomeWidgetEditor() {
             <button type="button" class="widget-layout-scale-choice" data-scale-choice="big" aria-pressed="true">${sizeLabels.big}</button>
           </div>
         </div>
+        <div class="widget-layout-direction">
+          <span>${profileDirectionLabel}</span>
+          <div class="widget-layout-scale-options" role="group" aria-label="${profileDirectionLabel}">
+            <button type="button" class="widget-layout-scale-choice" data-profile-direction="horizontal" aria-pressed="${profileDirection === 'horizontal'}">Horizontal</button>
+            <button type="button" class="widget-layout-scale-choice" data-profile-direction="vertical" aria-pressed="${profileDirection === 'vertical'}">Vertical</button>
+          </div>
+        </div>
         <div class="widget-layout-list">
           ${listMarkup}
         </div>
-        <section class="widget-layout-profile-settings" aria-label="${portuguese ? 'Widgets do perfil' : 'Profile widgets'}">
-          <h4>${portuguese ? 'Widgets do perfil' : 'Profile widgets'}</h4>
-          <div class="widget-layout-direction">
-            <span>${profileDirectionLabel}</span>
-            <div class="widget-layout-scale-options" role="group" aria-label="${profileDirectionLabel}">
-              <button type="button" class="widget-layout-scale-choice" data-profile-direction="horizontal" aria-pressed="${profileDirection === 'horizontal'}">${portuguese ? 'Horizontal' : 'Horizontal'}</button>
-              <button type="button" class="widget-layout-scale-choice" data-profile-direction="vertical" aria-pressed="${profileDirection === 'vertical'}">${portuguese ? 'Vertical' : 'Vertical'}</button>
-            </div>
-          </div>
+        <section class="widget-layout-profile-settings" aria-label="${profileSectionLabel}">
+          <h4>${profileSectionLabel}</h4>
           <div class="widget-layout-profile-list">${profileListMarkup}</div>
         </section>
         <div class="widget-layout-footer">
@@ -719,7 +720,7 @@ function openHomeWidgetEditor() {
           size: draftSizes[key] || 'big'
       };
     });
-    nextLayout.profile = { direction: profileDirection, order: [...profileOrder] };
+    nextLayout.profile = { ...nextLayout.profile, direction: profileDirection, contentOrder: [...profileOrder] };
     return nextLayout;
   };
   const scaleControl = overlay.querySelector('.widget-layout-scale');
@@ -734,7 +735,6 @@ function openHomeWidgetEditor() {
     const enabledKeys = getOrderedItems()
       .map(item => item.dataset.widget)
       .filter(key => draft[key].enabled);
-    const previewPositions = getHomeWidgetPositions(enabledKeys, key => draftSizes[key] || 'big');
     const existingCards = new Map(Array.from(preview.querySelectorAll('.widget-layout-preview-card'))
       .map(card => [card.dataset.widget, card]));
     const enabledSet = new Set(enabledKeys);
@@ -747,8 +747,8 @@ function openHomeWidgetEditor() {
       card.type = 'button';
       card.className = 'widget-layout-preview-card';
       card.dataset.widget = key;
-      card.dataset.layoutPosition = previewPositions[key] || 'wide';
       card.dataset.widgetSize = draftSizes[key] || 'big';
+      card.style.order = String(index);
       card.setAttribute('aria-pressed', String(key === selectedWidget));
       card.draggable = true;
       card.textContent = widgetNames[key];
@@ -1239,7 +1239,7 @@ function initializeRangeInputs() {
 function resetSettingsToDefaults() {
   const settingKeys = [
     'socialLabelsEnabled', 'showFigcaptions', 'topbarMinimized', 'fontBold', 'fontFamily',
-    'language', 'topbarPosition', 'wallpaper', 'accentColor', 'timeFormat', 'blurEnabled', 'backgroundBlur',
+    'language', 'topbarPosition', 'wallpaper', 'accentColor', 'timeFormat', 'theme', 'blurEnabled', 'backgroundBlur',
     'reducedAnimation', 'potatoEnabled', 'experimentalFeaturesEnabled', 'experimentalFeaturesUnlocked', 'customAccentColor',
     'customFontData', 'customWallpaper', 'homeWidgetLayout', 'mainOpacity', 'cardOpacity', 'mainBlurLevel', 'wallpaperBlurLevel', 'cardBlurLevel', 'experimentalRoundness',
     'gradientCustomizeColors', 'gradientStopMotion', 'gradientColor1', 'gradientColor2', 'gradientColor3', 'gradientColor4'
@@ -1423,6 +1423,7 @@ function applyAllSettings(animateTopbar = false, animateWallpaper = false) {
   applyReducedAnimation();
   applyFont();
   applyAccentColor();
+  applyTheme();
   applySocialLabels();
   applyFigcaptionVisibility();
   applyWallpaper(animateWallpaper);
@@ -1434,6 +1435,7 @@ function applyAllSettings(animateTopbar = false, animateWallpaper = false) {
 applyBg();
 applyFont();
 applyAccentColor();
+applyTheme();
 applySocialLabels();
 applyWallpaper();
 applyTopbarPosition();
