@@ -110,6 +110,12 @@ function applyExperimentalBoldness() {
   document.documentElement.classList.toggle('experimental-features-enabled', enabled);
 }
 
+function applyExperimentalRoundness() {
+  const storedValue = Number(localStorage.getItem('experimentalRoundness') ?? 8);
+  const roundness = Number.isFinite(storedValue) ? Math.min(24, Math.max(0, storedValue)) : 8;
+  document.documentElement.style.setProperty('--experimental-roundness', `${roundness}px`);
+}
+
 function toggleClass(id, className, invert = false, defaultOn = true) {
   const enabled = isEnabled(id, defaultOn);
   const shouldApply = invert ? !enabled : enabled;
@@ -459,9 +465,10 @@ function setupMinimizeButton() {
 
 function getDefaultHomeWidgetLayout() {
   return {
-    about: { enabled: true, order: 0 },
-    socials: { enabled: true, order: 1 },
-    status: { enabled: true, order: 2 }
+    about: { enabled: true, order: 0, size: 'big' },
+    socials: { enabled: true, order: 1, size: 'small' },
+    status: { enabled: true, order: 2, size: 'small' },
+    profile: { direction: 'vertical', order: ['name', 'typeit'] }
   };
 }
 
@@ -473,10 +480,30 @@ function getHomeWidgetLayout() {
   try {
     const parsed = JSON.parse(saved);
     if (!parsed || typeof parsed !== 'object') return fallback;
+    const hasProfileLayout = parsed.profile && typeof parsed.profile === 'object';
+    const savedProfileOrder = Array.isArray(parsed.profile?.order)
+      ? [...new Set(parsed.profile.order.filter(key => key === 'name' || key === 'typeit'))]
+      : [];
     return {
-      about: { enabled: parsed.about?.enabled ?? true, order: Number(parsed.about?.order ?? 0) },
-      socials: { enabled: parsed.socials?.enabled ?? true, order: Number(parsed.socials?.order ?? 1) },
-      status: { enabled: parsed.status?.enabled ?? true, order: Number(parsed.status?.order ?? 2) }
+      about: {
+        enabled: parsed.about?.enabled ?? true,
+        order: Number(parsed.about?.order ?? 0),
+        size: parsed.about?.size === 'small' ? 'small' : 'big'
+      },
+      socials: {
+        enabled: parsed.socials?.enabled ?? true,
+        order: Number(parsed.socials?.order ?? 1),
+        size: parsed.socials?.size === 'small' || !hasProfileLayout ? 'small' : 'big'
+      },
+      status: {
+        enabled: parsed.status?.enabled ?? true,
+        order: Number(parsed.status?.order ?? 2),
+        size: parsed.status?.size === 'small' || !hasProfileLayout ? 'small' : 'big'
+      },
+      profile: {
+        direction: parsed.profile?.direction === 'horizontal' ? 'horizontal' : 'vertical',
+        order: [...savedProfileOrder, ...fallback.profile.order.filter(key => !savedProfileOrder.includes(key))]
+      }
     };
   } catch (error) {
     return fallback;
@@ -487,26 +514,91 @@ function saveHomeWidgetLayout(layout) {
   localStorage.setItem('homeWidgetLayout', JSON.stringify(layout));
 }
 
-function applyHomeWidgetLayout() {
+function getHomeWidgetPositions(widgetKeys, sizeForKey) {
+  const hasBigWidget = widgetKeys.some(key => sizeForKey(key) === 'big');
+  const positions = {};
+  let bigPlaced = false;
+  let smallIndex = 0;
+
+  widgetKeys.forEach(key => {
+    if (sizeForKey(key) === 'big') {
+      positions[key] = bigPlaced ? 'wide' : 'primary';
+      bigPlaced = true;
+      return;
+    }
+
+    if (hasBigWidget) {
+      positions[key] = ['upper', 'lower'][smallIndex] || 'wide';
+      smallIndex += 1;
+      return;
+    }
+
+    positions[key] = ['compact-first', 'compact-second', 'compact-third'][smallIndex] || 'wide';
+    smallIndex += 1;
+  });
+
+  return positions;
+}
+
+function animateWidgetPositions(elements, update) {
+  const positions = new Map(elements.map(element => [element, element.getBoundingClientRect()]));
+  update();
+  if (document.documentElement.classList.contains('reduced-motion')
+    || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  requestAnimationFrame(() => {
+    positions.forEach((before, element) => {
+      if (!element.isConnected) return;
+      const after = element.getBoundingClientRect();
+      const x = before.left - after.left;
+      const y = before.top - after.top;
+      if (x || y) {
+        element.animate([
+          { transform: `translate(${x}px, ${y}px)` },
+          { transform: 'translate(0, 0)' }
+        ], { duration: 240, easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)' });
+      }
+    });
+  });
+}
+
+function applyHomeWidgetLayout(animate = false) {
   const widgets = Array.from(document.querySelectorAll('.home-category[data-widget]'));
-  if (!widgets.length) return;
+  const profileCopy = document.querySelector('.profile-copy');
+  if (!widgets.length && !profileCopy) return;
 
   const layout = getHomeWidgetLayout();
   const orderedWidgets = widgets.sort((first, second) => {
     return (layout[first.dataset.widget]?.order ?? 0) - (layout[second.dataset.widget]?.order ?? 0);
   });
-  let enabledIndex = 0;
-  orderedWidgets.forEach(widget => {
-    const key = widget.dataset.widget;
-    const state = layout[key] || { enabled: true, order: 0 };
-    widget.hidden = !state.enabled;
-    widget.style.display = state.enabled ? '' : 'none';
-    widget.style.order = String(state.order ?? 0);
-    if (state.enabled) {
-      widget.dataset.layoutPosition = ['primary', 'upper', 'lower'][enabledIndex] || 'lower';
-      enabledIndex += 1;
+  const enabledKeys = orderedWidgets
+    .filter(widget => (layout[widget.dataset.widget]?.enabled ?? true))
+    .map(widget => widget.dataset.widget);
+  const positions = getHomeWidgetPositions(enabledKeys, key => layout[key]?.size || 'big');
+  const profileWidgets = profileCopy
+    ? [profileCopy.querySelector('.pfp-name'), profileCopy.querySelector('.profile-typeit')].filter(Boolean)
+    : [];
+  const update = () => {
+    orderedWidgets.forEach(widget => {
+      const key = widget.dataset.widget;
+      const state = layout[key] || { enabled: true, order: 0, size: 'small' };
+      widget.hidden = !state.enabled;
+      widget.style.display = state.enabled ? '' : 'none';
+      widget.style.order = String(state.order ?? 0);
+      widget.dataset.widgetSize = state.size === 'small' ? 'small' : 'big';
+      if (state.enabled) widget.dataset.layoutPosition = positions[key] || 'wide';
+    });
+
+    if (profileCopy) {
+      profileCopy.dataset.widgetDirection = layout.profile.direction;
+      layout.profile.order.forEach((key, index) => {
+        const profileWidget = profileCopy.querySelector(key === 'name' ? '.pfp-name' : '.profile-typeit');
+        if (profileWidget) profileWidget.style.order = String(index);
+      });
     }
-  });
+  };
+  if (animate) animateWidgetPositions([...widgets, ...profileWidgets], update);
+  else update();
 }
 
 function openHomeWidgetEditor() {
@@ -524,15 +616,30 @@ function openHomeWidgetEditor() {
   }
 
   const layout = getHomeWidgetLayout();
+  const portuguese = document.documentElement.lang === 'pt-BR';
   const widgetOrder = ['about', 'socials', 'status'].sort((first, second) => {
     return (layout[first]?.order ?? 0) - (layout[second]?.order ?? 0);
   });
   const widgetNames = {
-    about: 'About Me',
-    socials: 'My Socials',
+    about: portuguese ? 'Sobre mim' : 'About Me',
+    socials: portuguese ? 'Minhas redes' : 'My Socials',
     status: 'Status'
   };
+  const profileWidgetNames = {
+    name: portuguese ? 'Nome e horário' : 'Username and time',
+    typeit: portuguese ? 'Mensagem TypeIt' : 'TypeIt message'
+  };
   const closeLabel = document.documentElement.lang === 'pt-BR' ? 'Fechar' : 'Close';
+  const scaleControlLabel = portuguese ? 'Tamanho do widget' : 'Widget size';
+  const sizeLabels = portuguese ? { small: 'Pequeno', big: 'Grande' } : { small: 'Small', big: 'Big' };
+  const profileDirectionLabel = portuguese ? 'Disposição' : 'Arrangement';
+  let profileDirection = layout.profile.direction;
+  let profileOrder = [...layout.profile.order];
+  let selectedWidget = widgetOrder.find(key => layout[key]?.enabled) || null;
+  const draftSizes = Object.fromEntries(widgetOrder.map(key => [
+    key,
+    layout[key]?.size === 'small' ? 'small' : 'big'
+  ]));
 
   const listMarkup = widgetOrder.map((key, index) => {
     const state = layout[key] || { enabled: true, order: index };
@@ -549,6 +656,15 @@ function openHomeWidgetEditor() {
       </div>
     `;
   }).join('');
+  const profileListMarkup = profileOrder.map(key => `
+    <div class="widget-layout-item widget-layout-profile-item" data-profile-widget="${key}" draggable="true">
+      <span>${profileWidgetNames[key]}</span>
+      <div class="widget-layout-actions">
+        <button type="button" data-profile-move="up" data-profile-widget="${key}" aria-label="Move ${profileWidgetNames[key]} up">↑</button>
+        <button type="button" data-profile-move="down" data-profile-widget="${key}" aria-label="Move ${profileWidgetNames[key]} down">↓</button>
+      </div>
+    </div>
+  `).join('');
 
   overlay.innerHTML = `
     <div class="widget-layout-popup" role="dialog" aria-modal="true" aria-label="Customize home widgets">
@@ -560,9 +676,27 @@ function openHomeWidgetEditor() {
         <div class="widget-layout-preview">
           <div class="widget-layout-preview-empty" hidden>No widgets enabled</div>
         </div>
+        <div class="widget-layout-scale" hidden>
+          <span>${scaleControlLabel}</span>
+          <div class="widget-layout-scale-options" role="group" aria-label="${scaleControlLabel}">
+            <button type="button" class="widget-layout-scale-choice" data-scale-choice="small" aria-pressed="false">${sizeLabels.small}</button>
+            <button type="button" class="widget-layout-scale-choice" data-scale-choice="big" aria-pressed="true">${sizeLabels.big}</button>
+          </div>
+        </div>
         <div class="widget-layout-list">
           ${listMarkup}
         </div>
+        <section class="widget-layout-profile-settings" aria-label="${portuguese ? 'Widgets do perfil' : 'Profile widgets'}">
+          <h4>${portuguese ? 'Widgets do perfil' : 'Profile widgets'}</h4>
+          <div class="widget-layout-direction">
+            <span>${profileDirectionLabel}</span>
+            <div class="widget-layout-scale-options" role="group" aria-label="${profileDirectionLabel}">
+              <button type="button" class="widget-layout-scale-choice" data-profile-direction="horizontal" aria-pressed="${profileDirection === 'horizontal'}">${portuguese ? 'Horizontal' : 'Horizontal'}</button>
+              <button type="button" class="widget-layout-scale-choice" data-profile-direction="vertical" aria-pressed="${profileDirection === 'vertical'}">${portuguese ? 'Vertical' : 'Vertical'}</button>
+            </div>
+          </div>
+          <div class="widget-layout-profile-list">${profileListMarkup}</div>
+        </section>
         <div class="widget-layout-footer">
           <button type="button" class="custom-file-button" data-close-widget-layout>Cancel</button>
           <button type="button" class="custom-file-button" data-apply-widget-layout>Apply</button>
@@ -573,6 +707,7 @@ function openHomeWidgetEditor() {
 
   const preview = overlay.querySelector('.widget-layout-preview');
   const list = overlay.querySelector('.widget-layout-list');
+  const profileList = overlay.querySelector('.widget-layout-profile-list');
   const getOrderedItems = () => Array.from(list.querySelectorAll('.widget-layout-item'));
   const getDraftLayout = () => {
     const nextLayout = { ...getDefaultHomeWidgetLayout() };
@@ -580,37 +715,80 @@ function openHomeWidgetEditor() {
       const key = item.dataset.widget;
       nextLayout[key] = {
         enabled: item.querySelector('[data-widget-toggle]').checked,
-        order
+          order,
+          size: draftSizes[key] || 'big'
       };
     });
+    nextLayout.profile = { direction: profileDirection, order: [...profileOrder] };
     return nextLayout;
+  };
+  const scaleControl = overlay.querySelector('.widget-layout-scale');
+  const updateScaleControl = () => {
+    scaleControl.hidden = !selectedWidget;
+    scaleControl.querySelectorAll('[data-scale-choice]').forEach(button => {
+      button.setAttribute('aria-pressed', String(draftSizes[selectedWidget] === button.dataset.scaleChoice));
+    });
   };
   const renderPreview = () => {
     const draft = getDraftLayout();
     const enabledKeys = getOrderedItems()
       .map(item => item.dataset.widget)
       .filter(key => draft[key].enabled);
-    preview.querySelectorAll('.widget-layout-preview-card').forEach(card => card.remove());
+    const previewPositions = getHomeWidgetPositions(enabledKeys, key => draftSizes[key] || 'big');
+    const existingCards = new Map(Array.from(preview.querySelectorAll('.widget-layout-preview-card'))
+      .map(card => [card.dataset.widget, card]));
+    const enabledSet = new Set(enabledKeys);
+    existingCards.forEach((card, key) => {
+      if (!enabledSet.has(key)) card.remove();
+    });
     preview.querySelector('.widget-layout-preview-empty').hidden = enabledKeys.length > 0;
     enabledKeys.forEach((key, index) => {
-      const card = document.createElement('div');
+      const card = existingCards.get(key) || document.createElement('button');
+      card.type = 'button';
       card.className = 'widget-layout-preview-card';
       card.dataset.widget = key;
-      card.dataset.layoutPosition = ['primary', 'upper', 'lower'][index] || 'lower';
+      card.dataset.layoutPosition = previewPositions[key] || 'wide';
+      card.dataset.widgetSize = draftSizes[key] || 'big';
+      card.setAttribute('aria-pressed', String(key === selectedWidget));
       card.draggable = true;
       card.textContent = widgetNames[key];
       preview.appendChild(card);
     });
+    updateScaleControl();
   };
   const updatePositions = () => renderPreview();
+  const animateEditorMovement = update => {
+    const movingItems = [
+      ...list.querySelectorAll('.widget-layout-item'),
+      ...profileList.querySelectorAll('.widget-layout-profile-item'),
+      ...preview.querySelectorAll('.widget-layout-preview-card')
+    ];
+    animateWidgetPositions(movingItems, update);
+  };
   const moveItem = (key, targetKey, before) => {
     if (key === targetKey) return;
     const items = getOrderedItems();
     const dragged = items.find(item => item.dataset.widget === key);
     const target = items.find(item => item.dataset.widget === targetKey);
     if (!dragged || !target) return;
-    list.insertBefore(dragged, before ? target : target.nextSibling);
-    updatePositions();
+    animateEditorMovement(() => {
+      list.insertBefore(dragged, before ? target : target.nextSibling);
+      updatePositions();
+    });
+  };
+  const moveProfileItem = (key, targetKey, before) => {
+    if (key === targetKey) return;
+    animateEditorMovement(() => {
+      const fromIndex = profileOrder.indexOf(key);
+      const targetIndex = profileOrder.indexOf(targetKey);
+      if (fromIndex < 0 || targetIndex < 0) return;
+      const [movedKey] = profileOrder.splice(fromIndex, 1);
+      const nextTargetIndex = profileOrder.indexOf(targetKey);
+      profileOrder.splice(nextTargetIndex + (before ? 0 : 1), 0, movedKey);
+      profileOrder.forEach(profileKey => {
+        profileList.appendChild(profileList.querySelector(`[data-profile-widget="${profileKey}"]`));
+      });
+    });
   };
   let draggedWidget = null;
   const closeEditor = () => {
@@ -635,7 +813,7 @@ function openHomeWidgetEditor() {
   overlay.querySelectorAll('[data-apply-widget-layout]').forEach(button => {
     button.addEventListener('click', () => {
       saveHomeWidgetLayout(getDraftLayout());
-      applyHomeWidgetLayout();
+      applyHomeWidgetLayout(true);
       closeEditor();
     });
   });
@@ -649,15 +827,85 @@ function openHomeWidgetEditor() {
       if (nextIndex < 0 || nextIndex >= items.length) return;
       const [item] = items.splice(index, 1);
       items.splice(nextIndex, 0, item);
-      items.forEach(newItem => list.appendChild(newItem));
-      updatePositions();
+      animateEditorMovement(() => {
+        items.forEach(newItem => list.appendChild(newItem));
+        updatePositions();
+      });
     });
   });
 
   overlay.querySelectorAll('[data-widget-toggle]').forEach(input => {
     input.addEventListener('change', () => {
+      if (selectedWidget && !getOrderedItems().find(item => item.dataset.widget === selectedWidget)
+        ?.querySelector('[data-widget-toggle]').checked) {
+        selectedWidget = getOrderedItems().find(item => item.querySelector('[data-widget-toggle]').checked)?.dataset.widget || null;
+      }
       renderPreview();
     });
+  });
+
+  preview.addEventListener('click', event => {
+    const card = event.target.closest('.widget-layout-preview-card');
+    if (!card) return;
+    selectedWidget = card.dataset.widget;
+    renderPreview();
+  });
+
+  scaleControl.querySelectorAll('[data-scale-choice]').forEach(button => {
+    button.addEventListener('click', () => {
+      if (!selectedWidget) return;
+      draftSizes[selectedWidget] = button.dataset.scaleChoice;
+      renderPreview();
+    });
+  });
+
+  overlay.querySelectorAll('[data-profile-direction]').forEach(button => {
+    button.addEventListener('click', () => {
+      profileDirection = button.dataset.profileDirection;
+      overlay.querySelectorAll('[data-profile-direction]').forEach(option => {
+        option.setAttribute('aria-pressed', String(option.dataset.profileDirection === profileDirection));
+      });
+    });
+  });
+
+  profileList.querySelectorAll('[data-profile-move]').forEach(button => {
+    button.addEventListener('click', () => {
+      const key = button.dataset.profileWidget;
+      const index = profileOrder.indexOf(key);
+      const nextIndex = button.dataset.profileMove === 'up' ? index - 1 : index + 1;
+      if (nextIndex < 0 || nextIndex >= profileOrder.length) return;
+      animateEditorMovement(() => {
+        [profileOrder[index], profileOrder[nextIndex]] = [profileOrder[nextIndex], profileOrder[index]];
+        profileOrder.forEach(profileKey => {
+          profileList.appendChild(profileList.querySelector(`[data-profile-widget="${profileKey}"]`));
+        });
+      });
+    });
+  });
+
+  let draggedProfileWidget = null;
+  profileList.addEventListener('dragstart', event => {
+    const item = event.target.closest('.widget-layout-profile-item');
+    if (!item) return;
+    draggedProfileWidget = item.dataset.profileWidget;
+    item.classList.add('dragging');
+    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.setData('text/plain', draggedProfileWidget);
+  });
+  profileList.addEventListener('dragover', event => {
+    if (draggedProfileWidget) event.preventDefault();
+  });
+  profileList.addEventListener('drop', event => {
+    const target = event.target.closest('.widget-layout-profile-item');
+    const key = event.dataTransfer.getData('text/plain') || draggedProfileWidget;
+    if (!target || !key) return;
+    event.preventDefault();
+    const bounds = target.getBoundingClientRect();
+    moveProfileItem(key, target.dataset.profileWidget, event.clientY < bounds.top + bounds.height / 2);
+  });
+  profileList.addEventListener('dragend', () => {
+    profileList.querySelectorAll('.dragging').forEach(item => item.classList.remove('dragging'));
+    draggedProfileWidget = null;
   });
 
   [list, preview].forEach(container => {
@@ -684,8 +932,10 @@ function openHomeWidgetEditor() {
         const second = items.findIndex(item => item.dataset.widget === target.dataset.widget);
         if (first >= 0 && second >= 0 && first !== second) {
           [items[first], items[second]] = [items[second], items[first]];
-          items.forEach(item => list.appendChild(item));
-          updatePositions();
+          animateEditorMovement(() => {
+            items.forEach(item => list.appendChild(item));
+            updatePositions();
+          });
         }
       } else {
         const bounds = target.getBoundingClientRect();
@@ -991,7 +1241,7 @@ function resetSettingsToDefaults() {
     'socialLabelsEnabled', 'showFigcaptions', 'topbarMinimized', 'fontBold', 'fontFamily',
     'language', 'topbarPosition', 'wallpaper', 'accentColor', 'timeFormat', 'blurEnabled', 'backgroundBlur',
     'reducedAnimation', 'potatoEnabled', 'experimentalFeaturesEnabled', 'experimentalFeaturesUnlocked', 'customAccentColor',
-    'customFontData', 'customWallpaper', 'mainOpacity', 'cardOpacity', 'mainBlurLevel', 'wallpaperBlurLevel', 'cardBlurLevel',
+    'customFontData', 'customWallpaper', 'homeWidgetLayout', 'mainOpacity', 'cardOpacity', 'mainBlurLevel', 'wallpaperBlurLevel', 'cardBlurLevel', 'experimentalRoundness',
     'gradientCustomizeColors', 'gradientStopMotion', 'gradientColor1', 'gradientColor2', 'gradientColor3', 'gradientColor4'
   ];
   settingKeys.forEach(key => localStorage.removeItem(key));
@@ -1167,6 +1417,7 @@ function applyAllSettings(animateTopbar = false, animateWallpaper = false) {
   applyBackgroundBlur();
   applySurfaceOpacity();
   applyExperimentalBoldness();
+  applyExperimentalRoundness();
   applyHomeWidgetLayout();
   applyBg();
   applyReducedAnimation();

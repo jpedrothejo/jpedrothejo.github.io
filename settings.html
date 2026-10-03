@@ -206,7 +206,7 @@
             <h3>Experimental</h3>
 
             <div class="setting-item" id="experimental-toggle-item">
-              <span>Enable Experimental Features</span>
+              <span>Experimental Features</span>
               <label class="switch">
                 <input type="checkbox" class="custom-checkbox" data-setting-key="experimentalFeaturesEnabled" data-default-on="false">
                 <span class="slider"></span>
@@ -226,6 +226,12 @@
                 <span>Home Widget Layout</span>
                 <button type="button" class="custom-file-button" id="open-home-widget-editor">Customize</button>
               </div>
+
+              <label class="setting-item">
+                <span>Roundness</span>
+                <input class="experimental-range" type="range" min="0" max="24" step="1" value="8" data-setting-key="experimentalRoundness" data-unit="px" aria-label="Interface roundness">
+                <output>8px</output>
+              </label>
 
               <label class="setting-item">
                 <span>Main Opacity</span>
