@@ -128,6 +128,10 @@ html.experimental-features-enabled *:not(:where(.settings button, .settings .swi
   border-radius: var(--experimental-roundness) !important;
 }
 
+html.font-bold-enabled *:not(:where(.settings button, .settings .switch, .settings .switch *, .settings-reset-card button, .widget-layout-popup button, .device-modal-close)) {
+  font-weight: var(--experimental-boldness);
+}
+
 html.experimental-features-enabled .profile-avatar,
 html.experimental-features-enabled .profile-avatar > img,
 html.experimental-features-enabled .status-badge-dot,
@@ -261,7 +265,7 @@ html.experimental-features-enabled .slider:before {
   accent-color: var(--accent-color-link);
 }
 
-.experimental-settings output {
+.experimental-range + output {
   width: 38px;
   text-align: right;
   color: var(--accent-color-link);
@@ -574,6 +578,8 @@ html.experimental-features-enabled .slider:before {
 @media (prefers-reduced-motion: reduce) {
   .experimental-unlock-overlay,
   .experimental-unlock-dialog,
+  .halloween-bat,
+  html.holiday-christmas::before,
   html.holiday-halloween body::after,
   html.holiday-christmas body::after {
     animation: none;
@@ -869,10 +875,12 @@ html.gradient-static body::before {
 @keyframes page-enter {
   from {
     opacity: 0;
+    transform: translateY(10px);
   }
 
   to {
     opacity: 1;
+    transform: none;
   }
 }
 
@@ -1320,6 +1328,38 @@ button {
   text-align: left;
 }
 
+.home-socials[data-widget-direction="horizontal"] {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  align-items: center;
+  column-gap: 16px;
+}
+
+.home-socials[data-widget-direction="horizontal"] .social-title {
+  margin: 0;
+  text-align: left;
+}
+
+.home-socials[data-widget-direction="horizontal"] .home-social-links {
+  justify-content: flex-end;
+}
+
+.home-status[data-widget-direction="horizontal"] {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  align-items: center;
+  column-gap: 16px;
+}
+
+.home-status[data-widget-direction="horizontal"] h2 {
+  margin: 0;
+  text-align: left;
+}
+
+.home-status[data-widget-direction="horizontal"] .status-badges {
+  justify-content: flex-end;
+}
+
 .home-category ul {
   display: flex;
   flex-direction: column;
@@ -1532,6 +1572,30 @@ button {
   gap: 10px;
 }
 
+.widget-layout-settings-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 16px;
+}
+
+.widget-layout-settings-grid > section {
+  min-width: 0;
+}
+
+@media (max-width: 600px) {
+  .widget-layout-settings-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.widget-layout-section-title {
+  margin: 0 0 10px;
+  font-size: 0.9rem;
+  line-height: 1.3;
+  font-weight: 600;
+}
+
 .widget-layout-item {
   display: flex;
   align-items: center;
@@ -1546,13 +1610,7 @@ button {
 }
 
 .widget-layout-profile-settings {
-  margin-top: 16px;
-  padding-top: 12px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.widget-layout-profile-settings h4 {
-  margin: 0 0 10px;
+  min-width: 0;
 }
 
 .widget-layout-direction {
@@ -1561,6 +1619,11 @@ button {
   justify-content: space-between;
   gap: 12px;
   margin-bottom: 10px;
+  font-size: 0.9rem;
+}
+
+.widget-layout-direction[hidden] {
+  display: none;
 }
 
 .widget-layout-profile-list {
@@ -1569,9 +1632,54 @@ button {
   gap: 8px;
 }
 
-.widget-layout-profile-item > span {
+.widget-layout-profile-content {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.widget-layout-profile-content > span {
   min-width: 0;
   overflow-wrap: anywhere;
+  font-size: 0.8rem;
+}
+
+.widget-layout-profile-toggles {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.widget-layout-profile-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.72rem;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.widget-layout-profile-toggle input {
+  margin: 0;
+  accent-color: var(--accent-color-link);
+}
+
+.widget-layout-control-label {
+  font-family: inherit;
+  font-weight: inherit;
+}
+
+html.font-bold-enabled .widget-layout-control-label {
+  font-weight: 700;
+}
+
+html.font-bold-enabled .widget-layout-profile-content > span,
+html.font-bold-enabled .widget-layout-profile-toggle {
+  font-weight: 700;
 }
 
 .widget-layout-item.dragging,
@@ -1952,7 +2060,15 @@ html.topbar-transitioning .minimize-btn {
 
 .main>* {
   margin: 0;
-  animation: page-enter 0.45s ease 0.08s both;
+  animation: page-enter 0.42s cubic-bezier(0.2, 0.8, 0.2, 1) 0.04s both;
+}
+
+.main > *:nth-child(2) {
+  animation-delay: 0.09s;
+}
+
+.main > *:nth-child(3) {
+  animation-delay: 0.14s;
 }
 
 .main.projects-main {
@@ -2286,12 +2402,75 @@ html.holiday-christmas body::after {
   animation: christmas-snow 18s linear infinite;
 }
 
+.halloween-bat-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.halloween-bat {
+  position: absolute;
+  display: block;
+  color: #17131d;
+  line-height: 1;
+  font-size: var(--bat-size);
+  opacity: 0.3;
+  filter: grayscale(1) brightness(0.45);
+  pointer-events: none;
+  transform-origin: center;
+  animation: halloween-bat-flight var(--bat-duration) ease-in-out var(--bat-delay) infinite alternate;
+}
+
+html.holiday-christmas::before {
+  content: "";
+  position: fixed;
+  z-index: 900;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 48px;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 13px 13px, #ff3028 0 5px, rgba(255, 48, 40, 0.88) 6px 9px, transparent 14px) 0 0 / 128px 48px repeat-x,
+    radial-gradient(circle at 38px 20px, #ffe47c 0 5px, rgba(255, 228, 124, 0.72) 6px 9px, transparent 14px) 0 0 / 128px 48px repeat-x,
+    radial-gradient(circle at 64px 24px, #61dc91 0 5px, rgba(97, 220, 145, 0.72) 6px 9px, transparent 14px) 0 0 / 128px 48px repeat-x,
+    radial-gradient(circle at 90px 20px, #75c9ff 0 5px, rgba(117, 201, 255, 0.72) 6px 9px, transparent 14px) 0 0 / 128px 48px repeat-x,
+    radial-gradient(circle at 115px 13px, #ff3028 0 5px, rgba(255, 48, 40, 0.88) 6px 9px, transparent 14px) 0 0 / 128px 48px repeat-x,
+    radial-gradient(ellipse 64px 22px at 50% 0%, transparent 94%, rgba(24, 75, 52, 0.96) 96% 100%, transparent 102%) 0 0 / 128px 48px repeat-x;
+  animation: christmas-lights 2.8s ease-in-out infinite alternate;
+}
+
+html.holiday-christmas .topnav {
+  background: rgba(9, 34, 28, 0.96) !important;
+  border-color: rgba(190, 232, 205, 0.3);
+}
+
 @keyframes halloween-fog {
   from {
     background-position: 0% 100%, 100% 85%, center, 0 0;
   }
   to {
     background-position: 100% 76%, 0% 100%, center, 0 0;
+  }
+}
+
+@keyframes halloween-bat-flight {
+  from {
+    transform: translate3d(0, 0, 0) rotate(-9deg);
+  }
+  to {
+    transform: translate3d(var(--bat-drift-x), var(--bat-drift-y), 0) rotate(9deg);
+  }
+}
+
+@keyframes christmas-lights {
+  from {
+    filter: brightness(0.88);
+  }
+  to {
+    filter: brightness(1.2);
   }
 }
 
@@ -2302,6 +2481,11 @@ html.holiday-christmas body::after {
   to {
     background-position: 0 600px, 70px 840px, center, 0 0;
   }
+}
+
+.reduced-motion .halloween-bat,
+html.reduced-motion.holiday-christmas::before {
+  animation: none;
 }
 
 .main,

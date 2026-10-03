@@ -91,6 +91,11 @@
             </div>
 
             <div class="setting-item">
+              <span>Layout dos widgets</span>
+              <button type="button" class="custom-file-button" id="open-home-widget-editor">Personalizar</button>
+            </div>
+
+            <div class="setting-item">
               <span>Fonte</span>
               <select class="custom-select" data-setting-key="fontFamily">
                 <option value="googlesansrounded">Google Sans</option>
@@ -142,7 +147,7 @@
                 <option value="default">Azul</option>
                 <option value="navy">Azul Marinho</option>
                 <option value="nord" selected>Nord</option>
-                <option value="custom" hidden>Personalizada</option>
+                <option value="custom">Personalizada</option>
               </select>
             </div>
 
@@ -164,6 +169,35 @@
                 <option value="christmas">Natal</option>
               </select>
             </div>
+
+            <div class="setting-item" id="custom-accent-setting" style="display:none;">
+              <span>Cor de Acento Customizada</span>
+              <button type="button" class="custom-color" data-setting-key="customAccentColor" aria-haspopup="dialog" aria-expanded="false" aria-label="Escolher cor de acento customizada">
+                <span class="custom-color-swatch" aria-hidden="true"></span>
+                <span class="custom-color-value">#5D94C2</span>
+              </button>
+            </div>
+
+            <label class="setting-item">
+              <span>Arredondamento</span>
+              <input class="experimental-range" type="range" min="0" max="24" step="1" value="8" data-setting-key="experimentalRoundness" data-unit="px" aria-label="Arredondamento da interface">
+              <output>8px</output>
+            </label>
+            <label class="setting-item">
+              <span>Opacidade do conteúdo</span>
+              <input class="experimental-range" type="range" min="0" max="100" value="78" data-setting-key="mainOpacity" data-unit="%" aria-label="Opacidade do conteúdo">
+              <output>78%</output>
+            </label>
+            <label class="setting-item">
+              <span>Opacidade dos cartões</span>
+              <input class="experimental-range" type="range" min="0" max="100" value="78" data-setting-key="cardOpacity" data-unit="%" aria-label="Opacidade dos cartões">
+              <output>78%</output>
+            </label>
+            <label class="setting-item" id="boldness-intensity-setting" style="display:none;">
+              <span>Intensidade da negritude</span>
+              <input class="experimental-range" type="range" min="400" max="900" step="25" value="700" data-setting-key="experimentalBoldness" data-unit="" aria-label="Intensidade da negritude">
+              <output>700</output>
+            </label>
           </div>
 
           <div class="settings-section">
@@ -177,6 +211,12 @@
               </label>
             </div>
 
+            <label class="setting-item" id="main-blur-setting" style="display:none;">
+              <span>Desfoque principal</span>
+              <input class="experimental-range" type="range" min="0" max="20" step="0.5" value="10" data-setting-key="mainBlurLevel" data-unit="px" aria-label="Nível de desfoque principal">
+              <output>10px</output>
+            </label>
+
             <div class="setting-item">
               <span>Ativar desfoque do papel de parede</span>
               <label class="switch">
@@ -184,6 +224,12 @@
                 <span class="slider"></span>
               </label>
             </div>
+
+            <label class="setting-item" id="wallpaper-blur-setting" style="display:none;">
+              <span>Desfoque do papel de parede</span>
+              <input class="experimental-range" type="range" min="0" max="20" step="0.5" value="2.5" data-setting-key="wallpaperBlurLevel" data-unit="px" aria-label="Nível de desfoque do papel de parede">
+              <output>2.5px</output>
+            </label>
             
             <div class="setting-item">
               <span>Reduzir Animações</span>
@@ -213,51 +259,6 @@
               </label>
             </div>
 
-            <div class="experimental-settings" id="experimentalSettings">
-              <div class="setting-item" id="custom-accent-setting">
-                <span>Cor de Acento Customizada</span>
-                <button type="button" class="custom-color" data-setting-key="customAccentColor" aria-haspopup="dialog" aria-expanded="false" aria-label="Escolher cor de acento customizada">
-                  <span class="custom-color-swatch" aria-hidden="true"></span>
-                  <span class="custom-color-value">#5D94C2</span>
-                </button>
-              </div>
-              <div class="setting-item">
-                <span>Layout dos widgets</span>
-                <button type="button" class="custom-file-button" id="open-home-widget-editor">Personalizar</button>
-              </div>
-
-              <label class="setting-item">
-                <span>Arredondamento</span>
-                <input class="experimental-range" type="range" min="0" max="24" step="1" value="8" data-setting-key="experimentalRoundness" data-unit="px" aria-label="Arredondamento da interface">
-                <output>8px</output>
-              </label>
-
-              <label class="setting-item">
-                <span>Opacidade do conteúdo</span>
-                <input class="experimental-range" type="range" min="0" max="100" value="78" data-setting-key="mainOpacity" data-unit="%" aria-label="Opacidade do conteúdo">
-                <output>78%</output>
-              </label>
-              <label class="setting-item">
-                <span>Opacidade dos cartões</span>
-                <input class="experimental-range" type="range" min="0" max="100" value="78" data-setting-key="cardOpacity" data-unit="%" aria-label="Opacidade dos cartões">
-                <output>78%</output>
-              </label>
-              <label class="setting-item">
-                <span>Intensidade da negritude</span>
-                <input class="experimental-range" type="range" min="400" max="900" step="25" value="700" data-setting-key="experimentalBoldness" data-unit="" aria-label="Intensidade da negritude">
-                <output>700</output>
-              </label>
-              <label class="setting-item">
-                <span>Desfoque principal</span>
-                <input class="experimental-range" type="range" min="0" max="20" step="0.5" value="10" data-setting-key="mainBlurLevel" data-unit="px" aria-label="Nível de desfoque principal">
-                <output>10px</output>
-              </label>
-              <label class="setting-item">
-                <span>Desfoque do papel de parede</span>
-                <input class="experimental-range" type="range" min="0" max="20" step="0.5" value="2.5" data-setting-key="wallpaperBlurLevel" data-unit="px" aria-label="Nível de desfoque do papel de parede">
-                <output>2.5px</output>
-              </label>
-            </div>
           </div>
         </div>
         <div class="card-bg settings-reset-card">

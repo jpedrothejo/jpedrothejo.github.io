@@ -70,6 +70,8 @@ function applyLanguage() {
 
 function applyBlur() {
   const blurEnabled = isEnabled('blurEnabled');
+  const mainBlurSetting = document.getElementById('main-blur-setting');
+  if (mainBlurSetting) mainBlurSetting.style.display = blurEnabled ? 'flex' : 'none';
   const storedMainBlur = Number(localStorage.getItem('mainBlurLevel') ?? 10);
   const mainBlur = Number.isFinite(storedMainBlur) ? Math.min(20, Math.max(0, storedMainBlur)) : 10;
   const blurValue = blurEnabled ? 'blur(10px) saturate(180%)' : 'none';
@@ -89,6 +91,8 @@ function applyBlur() {
 
 function applyBackgroundBlur() {
   const blurEnabled = isEnabled('backgroundBlur', true);
+  const wallpaperBlurSetting = document.getElementById('wallpaper-blur-setting');
+  if (wallpaperBlurSetting) wallpaperBlurSetting.style.display = blurEnabled ? 'flex' : 'none';
   const storedBlur = Number(localStorage.getItem('wallpaperBlurLevel') ?? 2.5);
   const blurLevel = Number.isFinite(storedBlur) ? Math.min(20, Math.max(0, storedBlur)) : 2.5;
   const blurValue = blurEnabled && blurLevel > 0 ? `blur(${blurLevel}px)` : 'none';
@@ -134,6 +138,9 @@ function applyFont() {
   let fontFamily = localStorage.getItem('fontFamily') || 'plusjakarta';
   const selectedFontFamily = fontFamily;
   const boldEnabled = isEnabled('fontBold', false);
+  document.documentElement.classList.toggle('font-bold-enabled', boldEnabled);
+  const boldnessSetting = document.getElementById('boldness-intensity-setting');
+  if (boldnessSetting) boldnessSetting.style.display = boldEnabled ? 'flex' : 'none';
   const customFontData = localStorage.getItem('customFontData') || '';
   const hasCustomFont = /^data:[^;]+;base64,/.test(customFontData);
   if (!localStorage.getItem('fontFamily')) localStorage.setItem('fontFamily', fontFamily);
@@ -155,18 +162,12 @@ function applyFont() {
     customFontStyle?.remove();
   }
   document.documentElement.classList.toggle('adwaita-font', fontFamily === 'adwaita');
-  document.documentElement.classList.toggle('sfpro-font', fontFamily === 'sfpro' && !boldEnabled);
-  document.documentElement.classList.toggle('sfpro-bold-font', fontFamily === 'sfpro' && boldEnabled);
-  document.documentElement.classList.toggle('google-font', fontFamily === 'googlesansrounded' && !boldEnabled);
-  document.documentElement.classList.toggle('google-bold-font', fontFamily === 'googlesansrounded' && boldEnabled);
-  document.documentElement.classList.toggle('inter-font', fontFamily === 'inter' && !boldEnabled);
-  document.documentElement.classList.toggle('inter-bold-font', fontFamily === 'inter' && boldEnabled);
-  document.documentElement.classList.toggle('plus-jakarta-font', fontFamily === 'plusjakarta' && !boldEnabled);
-  document.documentElement.classList.toggle('plus-jakarta-bold-font', fontFamily === 'plusjakarta' && boldEnabled);
-  document.documentElement.classList.toggle('arial-font', fontFamily === 'arial' && !boldEnabled);
-  document.documentElement.classList.toggle('arial-bold-font', fontFamily === 'arial' && boldEnabled);
+  document.documentElement.classList.toggle('sfpro-font', fontFamily === 'sfpro');
+  document.documentElement.classList.toggle('inter-font', fontFamily === 'inter');
+  document.documentElement.classList.toggle('google-font', fontFamily === 'googlesansrounded');
+  document.documentElement.classList.toggle('plus-jakarta-font', fontFamily === 'plusjakarta');
+  document.documentElement.classList.toggle('arial-font', fontFamily === 'arial');
   document.documentElement.classList.toggle('custom-font', fontFamily === 'custom' && hasCustomFont);
-  document.documentElement.classList.toggle('custom-font-bold', fontFamily === 'custom' && hasCustomFont && boldEnabled);
 }
 
 function setExperimentalSettingsAccess(unlocked = localStorage.getItem('experimentalFeaturesUnlocked') === '1') {
@@ -320,8 +321,8 @@ function applyFigcaptionVisibility() {
 function applyAccentColor() {
   const accent = localStorage.getItem('accentColor') || 'nord';
   const root = document.documentElement;
-  const customOption = document.querySelector('[data-setting-key="accentColor"] option[value="custom"]');
-  if (customOption) customOption.hidden = accent !== 'custom';
+  const customAccentSetting = document.getElementById('custom-accent-setting');
+  if (customAccentSetting) customAccentSetting.style.display = accent === 'custom' ? 'flex' : 'none';
 
   root.classList.remove('accent-navy', 'accent-nord', 'accent-custom');
   const customColor = localStorage.getItem('customAccentColor') || '#5d94c2';
@@ -359,6 +360,45 @@ function getAutomaticTheme(date = new Date()) {
   return 'default';
 }
 
+function updateHalloweenBatOverlay(activeTheme) {
+  const existingOverlay = document.getElementById('halloween-bat-overlay');
+  if (activeTheme !== 'halloween') {
+    existingOverlay?.remove();
+    return;
+  }
+  if (existingOverlay || !document.body) return;
+
+  const batPositions = [
+    { left: '7%', top: '16%', size: 27, duration: 17, delay: -4, driftX: '4vw', driftY: '3vh' },
+    { left: '19%', top: '39%', size: 22, duration: 22, delay: -12, driftX: '-3vw', driftY: '-2vh' },
+    { left: '33%', top: '11%', size: 31, duration: 19, delay: -7, driftX: '5vw', driftY: '4vh' },
+    { left: '47%', top: '50%', size: 20, duration: 24, delay: -15, driftX: '-5vw', driftY: '-3vh' },
+    { left: '61%', top: '27%', size: 25, duration: 16, delay: -9, driftX: '3vw', driftY: '-4vh' },
+    { left: '76%', top: '43%', size: 29, duration: 21, delay: -18, driftX: '-4vw', driftY: '2vh' },
+    { left: '90%', top: '13%', size: 23, duration: 18, delay: -6, driftX: '2vw', driftY: '3vh' }
+  ];
+  const overlay = document.createElement('div');
+  overlay.id = 'halloween-bat-overlay';
+  overlay.className = 'halloween-bat-overlay';
+  overlay.setAttribute('aria-hidden', 'true');
+
+  batPositions.forEach(position => {
+    const bat = document.createElement('span');
+    bat.className = 'halloween-bat';
+    bat.textContent = '\u{1F987}';
+    bat.style.left = position.left;
+    bat.style.top = position.top;
+    bat.style.setProperty('--bat-size', `${position.size}px`);
+    bat.style.setProperty('--bat-duration', `${position.duration}s`);
+    bat.style.setProperty('--bat-delay', `${position.delay}s`);
+    bat.style.setProperty('--bat-drift-x', position.driftX);
+    bat.style.setProperty('--bat-drift-y', position.driftY);
+    overlay.appendChild(bat);
+  });
+
+  document.body.appendChild(overlay);
+}
+
 function applyTheme() {
   const savedTheme = localStorage.getItem('theme') || 'auto';
   const validThemes = ['auto', 'default', 'halloween', 'christmas'];
@@ -368,6 +408,7 @@ function applyTheme() {
 
   root.classList.toggle('holiday-halloween', activeTheme === 'halloween');
   root.classList.toggle('holiday-christmas', activeTheme === 'christmas');
+  updateHalloweenBatOverlay(activeTheme);
 }
 
 function applyWallpaper(animate = false) {
@@ -484,10 +525,17 @@ function setupMinimizeButton() {
 
 function getDefaultHomeWidgetLayout() {
   return {
-    about: { enabled: true, order: 1, size: 'big' },
-    socials: { enabled: true, order: 2, size: 'small' },
-    status: { enabled: true, order: 3, size: 'small' },
-    profile: { enabled: true, order: 0, size: 'big', direction: 'vertical', contentOrder: ['name', 'typeit'] }
+    about: { enabled: true, order: 1, size: 'big', direction: 'horizontal' },
+    socials: { enabled: true, order: 2, size: 'small', direction: 'horizontal' },
+    status: { enabled: true, order: 3, size: 'small', direction: 'horizontal' },
+    profile: {
+      enabled: true,
+      order: 0,
+      size: 'big',
+      direction: 'horizontal',
+      contentOrder: ['name', 'typeit'],
+      contentEnabled: { username: true, time: true, typeit: true }
+    }
   };
 }
 
@@ -513,24 +561,32 @@ function getHomeWidgetLayout() {
       about: {
         enabled: parsed.about?.enabled ?? true,
         order: Number(parsed.about?.order ?? 0),
-        size: parsed.about?.size === 'small' ? 'small' : 'big'
+        size: parsed.about?.size === 'small' ? 'small' : 'big',
+        direction: parsed.about?.direction === 'vertical' ? 'vertical' : parsed.profile?.direction === 'vertical' ? 'vertical' : 'horizontal'
       },
       socials: {
         enabled: parsed.socials?.enabled ?? true,
         order: Number(parsed.socials?.order ?? 1),
-        size: parsed.socials?.size === 'small' || !hasProfileLayout ? 'small' : 'big'
+        size: parsed.socials?.size === 'small' || !hasProfileLayout ? 'small' : 'big',
+        direction: parsed.socials?.direction === 'vertical' ? 'vertical' : 'horizontal'
       },
       status: {
         enabled: parsed.status?.enabled ?? true,
         order: Number(parsed.status?.order ?? 2),
-        size: parsed.status?.size === 'small' || !hasProfileLayout ? 'small' : 'big'
+        size: parsed.status?.size === 'small' || !hasProfileLayout ? 'small' : 'big',
+        direction: parsed.status?.direction === 'vertical' ? 'vertical' : 'horizontal'
       },
       profile: {
         enabled: parsed.profile?.enabled ?? true,
         order: Number.isFinite(parsedProfileOrder) ? parsedProfileOrder : fallback.profile.order,
         size: parsed.profile?.size === 'small' ? 'small' : 'big',
-        direction: parsed.profile?.direction === 'horizontal' ? 'horizontal' : 'vertical',
-        contentOrder: [...savedProfileContentOrder, ...fallback.profile.contentOrder.filter(key => !savedProfileContentOrder.includes(key))]
+        direction: parsed.profile?.direction === 'vertical' ? 'vertical' : 'horizontal',
+        contentOrder: [...savedProfileContentOrder, ...fallback.profile.contentOrder.filter(key => !savedProfileContentOrder.includes(key))],
+        contentEnabled: {
+          username: parsed.profile?.contentEnabled?.username ?? true,
+          time: parsed.profile?.contentEnabled?.time ?? true,
+          typeit: parsed.profile?.contentEnabled?.typeit ?? true
+        }
       }
     };
   } catch (error) {
@@ -554,10 +610,12 @@ function animateWidgetPositions(elements, update) {
       const after = element.getBoundingClientRect();
       const x = before.left - after.left;
       const y = before.top - after.top;
-      if (x || y) {
+      const scaleX = after.width > 0 ? before.width / after.width : 1;
+      const scaleY = after.height > 0 ? before.height / after.height : 1;
+      if (x || y || scaleX !== 1 || scaleY !== 1) {
         element.animate([
-          { transform: `translate(${x}px, ${y}px)` },
-          { transform: 'translate(0, 0)' }
+          { transform: `translate(${x}px, ${y}px) scale(${scaleX}, ${scaleY})`, transformOrigin: 'top left' },
+          { transform: 'translate(0, 0) scale(1, 1)', transformOrigin: 'top left' }
         ], { duration: 240, easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)' });
       }
     });
@@ -567,7 +625,6 @@ function animateWidgetPositions(elements, update) {
 function applyHomeWidgetLayout(animate = false) {
   const widgets = Array.from(document.querySelectorAll('.home-category[data-widget]'));
   const profileCopy = document.querySelector('.profile-copy');
-  const aboutWidget = document.querySelector('.home-about');
   if (!widgets.length && !profileCopy) return;
 
   const layout = getHomeWidgetLayout();
@@ -577,6 +634,9 @@ function applyHomeWidgetLayout(animate = false) {
   const profileWidgets = profileCopy
     ? [profileCopy.querySelector('.pfp-name'), profileCopy.querySelector('.profile-typeit')].filter(Boolean)
     : [];
+  const profileUsername = profileCopy?.querySelector('.pfp-name h3');
+  const profileTime = profileCopy?.querySelector('.local-time');
+  const profileTypeit = profileCopy?.querySelector('.profile-typeit');
   const update = () => {
     orderedWidgets.forEach(widget => {
       const key = widget.dataset.widget;
@@ -585,18 +645,21 @@ function applyHomeWidgetLayout(animate = false) {
       widget.style.display = state.enabled ? '' : 'none';
       widget.style.order = String(state.order ?? 0);
       widget.dataset.widgetSize = state.size === 'small' ? 'small' : 'big';
+      widget.dataset.widgetDirection = state.direction === 'vertical' ? 'vertical' : 'horizontal';
     });
 
     if (profileCopy) {
       profileCopy.dataset.widgetDirection = layout.profile.direction;
+      if (profileUsername) profileUsername.hidden = !layout.profile.contentEnabled.username;
+      if (profileTime) profileTime.hidden = !layout.profile.contentEnabled.time;
+      if (profileTypeit) profileTypeit.hidden = !layout.profile.contentEnabled.typeit;
       layout.profile.contentOrder.forEach((key, index) => {
         const profileWidget = profileCopy.querySelector(key === 'name' ? '.pfp-name' : '.profile-typeit');
         if (profileWidget) profileWidget.style.order = String(index);
       });
     }
-    if (aboutWidget) aboutWidget.dataset.widgetDirection = layout.profile.direction;
   };
-  if (animate) animateWidgetPositions([...widgets, ...profileWidgets, ...(aboutWidget ? [aboutWidget] : [])], update);
+  if (animate) animateWidgetPositions([...widgets, ...profileWidgets], update);
   else update();
 }
 
@@ -629,14 +692,24 @@ function openHomeWidgetEditor() {
     name: portuguese ? 'Nome e horário' : 'Username and time',
     typeit: portuguese ? 'Mensagem TypeIt' : 'TypeIt message'
   };
+  const profileContentLabels = {
+    username: portuguese ? 'Nome de usuário' : 'Username',
+    time: portuguese ? 'Horário' : 'Time',
+    typeit: 'TypeIt'
+  };
   const closeLabel = document.documentElement.lang === 'pt-BR' ? 'Fechar' : 'Close';
+  const widgetsSectionLabel = 'Widgets';
   const scaleControlLabel = portuguese ? 'Tamanho do widget' : 'Widget size';
   const sizeLabels = portuguese ? { small: 'Pequeno', big: 'Grande' } : { small: 'Small', big: 'Big' };
   const profileDirectionLabel = portuguese ? 'Disposição' : 'Arrangement';
   const profileSectionLabel = portuguese ? 'Ordem do conteúdo do perfil' : 'Profile content order';
-  let profileDirection = layout.profile.direction;
   let profileOrder = [...layout.profile.contentOrder];
+  const profileContentEnabled = { ...layout.profile.contentEnabled };
   let selectedWidget = widgetOrder.find(key => layout[key]?.enabled) || null;
+  const widgetDirections = Object.fromEntries(widgetOrder.map(key => [
+    key,
+    layout[key]?.direction === 'vertical' ? 'vertical' : 'horizontal'
+  ]));
   const draftSizes = Object.fromEntries(widgetOrder.map(key => [
     key,
     layout[key]?.size === 'small' ? 'small' : 'big'
@@ -657,15 +730,27 @@ function openHomeWidgetEditor() {
       </div>
     `;
   }).join('');
-  const profileListMarkup = profileOrder.map(key => `
-    <div class="widget-layout-item widget-layout-profile-item" data-profile-widget="${key}" draggable="true">
-      <span>${profileWidgetNames[key]}</span>
-      <div class="widget-layout-actions">
-        <button type="button" data-profile-move="up" data-profile-widget="${key}" aria-label="Move ${profileWidgetNames[key]} up">↑</button>
-        <button type="button" data-profile-move="down" data-profile-widget="${key}" aria-label="Move ${profileWidgetNames[key]} down">↓</button>
+  const profileListMarkup = profileOrder.map(key => {
+    const contentKeys = key === 'name' ? ['username', 'time'] : ['typeit'];
+    const toggles = contentKeys.map(contentKey => `
+      <label class="widget-layout-profile-toggle">
+        <input type="checkbox" data-profile-content-toggle="${contentKey}" ${profileContentEnabled[contentKey] ? 'checked' : ''} aria-label="${profileContentLabels[contentKey]}">
+        <span>${profileContentLabels[contentKey]}</span>
+      </label>
+    `).join('');
+    return `
+      <div class="widget-layout-item widget-layout-profile-item" data-profile-widget="${key}" draggable="true">
+        <div class="widget-layout-profile-content">
+          <span>${profileWidgetNames[key]}</span>
+          <div class="widget-layout-profile-toggles">${toggles}</div>
+        </div>
+        <div class="widget-layout-actions">
+          <button type="button" data-profile-move="up" data-profile-widget="${key}" aria-label="Move ${profileWidgetNames[key]} up">↑</button>
+          <button type="button" data-profile-move="down" data-profile-widget="${key}" aria-label="Move ${profileWidgetNames[key]} down">↓</button>
+        </div>
       </div>
-    </div>
-  `).join('');
+    `;
+  }).join('');
 
   overlay.innerHTML = `
     <div class="widget-layout-popup" role="dialog" aria-modal="true" aria-label="Customize home widgets">
@@ -678,26 +763,29 @@ function openHomeWidgetEditor() {
           <div class="widget-layout-preview-empty" hidden>No widgets enabled</div>
         </div>
         <div class="widget-layout-scale" hidden>
-          <span>${scaleControlLabel}</span>
+          <span class="widget-layout-control-label">${scaleControlLabel}</span>
           <div class="widget-layout-scale-options" role="group" aria-label="${scaleControlLabel}">
             <button type="button" class="widget-layout-scale-choice" data-scale-choice="small" aria-pressed="false">${sizeLabels.small}</button>
             <button type="button" class="widget-layout-scale-choice" data-scale-choice="big" aria-pressed="true">${sizeLabels.big}</button>
           </div>
         </div>
-        <div class="widget-layout-direction">
-          <span>${profileDirectionLabel}</span>
+        <div class="widget-layout-direction" id="widget-arrangement-control">
+          <span class="widget-layout-control-label" data-widget-direction-label>${profileDirectionLabel}</span>
           <div class="widget-layout-scale-options" role="group" aria-label="${profileDirectionLabel}">
-            <button type="button" class="widget-layout-scale-choice" data-profile-direction="horizontal" aria-pressed="${profileDirection === 'horizontal'}">Horizontal</button>
-            <button type="button" class="widget-layout-scale-choice" data-profile-direction="vertical" aria-pressed="${profileDirection === 'vertical'}">Vertical</button>
+            <button type="button" class="widget-layout-scale-choice" data-widget-direction="horizontal" aria-pressed="${widgetDirections[selectedWidget] === 'horizontal'}">Horizontal</button>
+            <button type="button" class="widget-layout-scale-choice" data-widget-direction="vertical" aria-pressed="${widgetDirections[selectedWidget] === 'vertical'}">Vertical</button>
           </div>
         </div>
-        <div class="widget-layout-list">
-          ${listMarkup}
+        <div class="widget-layout-settings-grid">
+          <section class="widget-layout-widget-settings" aria-label="${widgetsSectionLabel}">
+            <h4 class="widget-layout-section-title">${widgetsSectionLabel}</h4>
+            <div class="widget-layout-list">${listMarkup}</div>
+          </section>
+          <section class="widget-layout-profile-settings" aria-label="${profileSectionLabel}">
+            <h4 class="widget-layout-section-title">${profileSectionLabel}</h4>
+            <div class="widget-layout-profile-list">${profileListMarkup}</div>
+          </section>
         </div>
-        <section class="widget-layout-profile-settings" aria-label="${profileSectionLabel}">
-          <h4>${profileSectionLabel}</h4>
-          <div class="widget-layout-profile-list">${profileListMarkup}</div>
-        </section>
         <div class="widget-layout-footer">
           <button type="button" class="custom-file-button" data-close-widget-layout>Cancel</button>
           <button type="button" class="custom-file-button" data-apply-widget-layout>Apply</button>
@@ -717,17 +805,45 @@ function openHomeWidgetEditor() {
       nextLayout[key] = {
         enabled: item.querySelector('[data-widget-toggle]').checked,
           order,
-          size: draftSizes[key] || 'big'
+          size: draftSizes[key] || 'big',
+          direction: widgetDirections[key] || 'horizontal'
       };
     });
-    nextLayout.profile = { ...nextLayout.profile, direction: profileDirection, contentOrder: [...profileOrder] };
+    nextLayout.profile = {
+      ...nextLayout.profile,
+      contentOrder: [...profileOrder],
+      contentEnabled: Object.fromEntries(Array.from(
+        profileList.querySelectorAll('[data-profile-content-toggle]'),
+        input => [input.dataset.profileContentToggle, input.checked]
+      ))
+    };
     return nextLayout;
   };
   const scaleControl = overlay.querySelector('.widget-layout-scale');
+  const directionControl = overlay.querySelector('#widget-arrangement-control');
   const updateScaleControl = () => {
     scaleControl.hidden = !selectedWidget;
+    directionControl.hidden = !selectedWidget;
     scaleControl.querySelectorAll('[data-scale-choice]').forEach(button => {
       button.setAttribute('aria-pressed', String(draftSizes[selectedWidget] === button.dataset.scaleChoice));
+    });
+    const currentDirection = widgetDirections[selectedWidget] || 'horizontal';
+    const directionName = widgetNames[selectedWidget];
+    const directionText = directionName ? `${profileDirectionLabel} (${directionName})` : profileDirectionLabel;
+    const directionLabel = directionControl.querySelector('[data-widget-direction-label]');
+    if (directionLabel.textContent !== directionText) {
+      directionLabel.textContent = directionText;
+      if (!document.documentElement.classList.contains('reduced-motion')
+        && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        directionLabel.animate([
+          { opacity: 0, transform: 'translateY(3px)' },
+          { opacity: 1, transform: 'translateY(0)' }
+        ], { duration: 180, easing: 'ease-out' });
+      }
+    }
+    directionControl.querySelector('[role="group"]').setAttribute('aria-label', directionText);
+    directionControl.querySelectorAll('[data-widget-direction]').forEach(button => {
+      button.setAttribute('aria-pressed', String(currentDirection === button.dataset.widgetDirection));
     });
   };
   const renderPreview = () => {
@@ -748,6 +864,7 @@ function openHomeWidgetEditor() {
       card.className = 'widget-layout-preview-card';
       card.dataset.widget = key;
       card.dataset.widgetSize = draftSizes[key] || 'big';
+      card.dataset.widgetDirection = widgetDirections[key] || 'horizontal';
       card.style.order = String(index);
       card.setAttribute('aria-pressed', String(key === selectedWidget));
       card.draggable = true;
@@ -836,7 +953,7 @@ function openHomeWidgetEditor() {
 
   overlay.querySelectorAll('[data-widget-toggle]').forEach(input => {
     input.addEventListener('change', () => {
-      if (selectedWidget && !getOrderedItems().find(item => item.dataset.widget === selectedWidget)
+      if (!selectedWidget || !getOrderedItems().find(item => item.dataset.widget === selectedWidget)
         ?.querySelector('[data-widget-toggle]').checked) {
         selectedWidget = getOrderedItems().find(item => item.querySelector('[data-widget-toggle]').checked)?.dataset.widget || null;
       }
@@ -854,17 +971,18 @@ function openHomeWidgetEditor() {
   scaleControl.querySelectorAll('[data-scale-choice]').forEach(button => {
     button.addEventListener('click', () => {
       if (!selectedWidget) return;
-      draftSizes[selectedWidget] = button.dataset.scaleChoice;
-      renderPreview();
+      animateEditorMovement(() => {
+        draftSizes[selectedWidget] = button.dataset.scaleChoice;
+        renderPreview();
+      });
     });
   });
 
-  overlay.querySelectorAll('[data-profile-direction]').forEach(button => {
+  overlay.querySelectorAll('[data-widget-direction]').forEach(button => {
     button.addEventListener('click', () => {
-      profileDirection = button.dataset.profileDirection;
-      overlay.querySelectorAll('[data-profile-direction]').forEach(option => {
-        option.setAttribute('aria-pressed', String(option.dataset.profileDirection === profileDirection));
-      });
+      if (!selectedWidget) return;
+      widgetDirections[selectedWidget] = button.dataset.widgetDirection;
+      renderPreview();
     });
   });
 
@@ -1109,8 +1227,6 @@ function openCustomColorPicker(trigger, key) {
     if (key === 'customAccentColor') {
       localStorage.setItem('accentColor', 'custom');
       const accentSelect = document.querySelector('[data-setting-key="accentColor"]');
-      const customOption = accentSelect?.querySelector('option[value="custom"]');
-      if (customOption) customOption.hidden = false;
       if (accentSelect) accentSelect.value = 'custom';
     }
     applyAllSettings();

@@ -90,6 +90,11 @@
               </label>
             </div>
 
+            <div class="setting-item">
+              <span>Home Widgets</span>
+              <button type="button" class="custom-file-button" id="open-home-widget-editor">Customize</button>
+            </div>
+
             <div class="gradient-settings" style="display:none; flex-direction:column; gap:8px; margin-bottom:12px;">
               <div class="setting-item">
                 <span>Custom Gradient Colors</span>
@@ -152,7 +157,7 @@
                 <option value="default">Blue</option>
                 <option value="navy">Navy Blue</option>
                 <option value="nord" selected>Nord</option>
-                <option value="custom" hidden>Custom</option>
+                <option value="custom">Custom</option>
               </select>
             </div>
 
@@ -174,6 +179,35 @@
                 <option value="christmas">Christmas</option>
               </select>
             </div>
+
+            <div class="setting-item" id="custom-accent-setting" style="display:none;">
+              <span>Custom Accent Color</span>
+              <button type="button" class="custom-color" data-setting-key="customAccentColor" aria-haspopup="dialog" aria-expanded="false" aria-label="Choose custom accent color">
+                <span class="custom-color-swatch" aria-hidden="true"></span>
+                <span class="custom-color-value">#5D94C2</span>
+              </button>
+            </div>
+
+            <label class="setting-item">
+              <span>Roundness</span>
+              <input class="experimental-range" type="range" min="0" max="24" step="1" value="8" data-setting-key="experimentalRoundness" data-unit="px" aria-label="Interface roundness">
+              <output>8px</output>
+            </label>
+            <label class="setting-item">
+              <span>Main Opacity</span>
+              <input class="experimental-range" type="range" min="0" max="100" value="78" data-setting-key="mainOpacity" data-unit="%" aria-label="Main opacity">
+              <output>78%</output>
+            </label>
+            <label class="setting-item">
+              <span>Card Opacity</span>
+              <input class="experimental-range" type="range" min="0" max="100" value="78" data-setting-key="cardOpacity" data-unit="%" aria-label="Card opacity">
+              <output>78%</output>
+            </label>
+            <label class="setting-item" id="boldness-intensity-setting" style="display:none;">
+              <span>Boldness Intensity</span>
+              <input class="experimental-range" type="range" min="400" max="900" step="25" value="700" data-setting-key="experimentalBoldness" data-unit="" aria-label="Boldness intensity">
+              <output>700</output>
+            </label>
           </div>
 
           <div class="settings-section">
@@ -187,13 +221,25 @@
               </label>
             </div>
 
+            <label class="setting-item" id="main-blur-setting" style="display:none;">
+              <span>Main Blur</span>
+              <input class="experimental-range" type="range" min="0" max="20" step="0.5" value="10" data-setting-key="mainBlurLevel" data-unit="px" aria-label="Main blur level">
+              <output>10px</output>
+            </label>
+
             <div class="setting-item">
-              <span>Wallpaper Blur</span>
+              <span>Wallpaper Blur Effect</span>
               <label class="switch">
                 <input type="checkbox" class="custom-checkbox" data-setting-key="backgroundBlur" data-default-on="true">
                 <span class="slider"></span>
               </label>
             </div>
+
+            <label class="setting-item" id="wallpaper-blur-setting" style="display:none;">
+              <span>Wallpaper Blur</span>
+              <input class="experimental-range" type="range" min="0" max="20" step="0.5" value="2.5" data-setting-key="wallpaperBlurLevel" data-unit="px" aria-label="Wallpaper blur level">
+              <output>2.5px</output>
+            </label>
 
             <div class="setting-item">
               <span>Reduced Animation</span>
@@ -223,53 +269,6 @@
               </label>
             </div>
 
-            <div class="experimental-settings" id="experimentalSettings">
-              <div class="setting-item" id="custom-accent-setting">
-                <span>Custom Accent Color</span>
-                <button type="button" class="custom-color" data-setting-key="customAccentColor" aria-haspopup="dialog" aria-expanded="false" aria-label="Choose custom accent color">
-                  <span class="custom-color-swatch" aria-hidden="true"></span>
-                  <span class="custom-color-value">#5D94C2</span>
-                </button>
-              </div>
-
-              <div class="setting-item">
-                <span>Home Widgets</span>
-                <button type="button" class="custom-file-button" id="open-home-widget-editor">Customize</button>
-              </div>
-
-              <label class="setting-item">
-                <span>Roundness</span>
-                <input class="experimental-range" type="range" min="0" max="24" step="1" value="8" data-setting-key="experimentalRoundness" data-unit="px" aria-label="Interface roundness">
-                <output>8px</output>
-              </label>
-
-              <label class="setting-item">
-                <span>Main Opacity</span>
-                <input class="experimental-range" type="range" min="0" max="100" value="78" data-setting-key="mainOpacity" data-unit="%" aria-label="Main opacity">
-                <output>78%</output>
-              </label>
-              <label class="setting-item">
-                <span>Card Opacity</span>
-                <input class="experimental-range" type="range" min="0" max="100" value="78" data-setting-key="cardOpacity" data-unit="%" aria-label="Card opacity">
-                <output>78%</output>
-              </label>
-              <label class="setting-item">
-                <span>Boldness Intensity</span>
-                <input class="experimental-range" type="range" min="400" max="900" step="25" value="700" data-setting-key="experimentalBoldness" data-unit="" aria-label="Boldness intensity">
-                <output>700</output>
-              </label>
-              <label class="setting-item">
-                <span>Main Blur</span>
-                <input class="experimental-range" type="range" min="0" max="20" step="0.5" value="10" data-setting-key="mainBlurLevel" data-unit="px" aria-label="Main blur level">
-                <output>10px</output>
-              </label>
-              <label class="setting-item">
-                <span>Wallpaper Blur</span>
-                <input class="experimental-range" type="range" min="0" max="20" step="0.5" value="2.5" data-setting-key="wallpaperBlurLevel" data-unit="px" aria-label="Wallpaper blur level">
-                <output>2.5px</output>
-              </label>
-
-            </div>
           </div>
         </div>
         <div class="card-bg settings-reset-card">
