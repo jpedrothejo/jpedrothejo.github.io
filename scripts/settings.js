@@ -525,14 +525,14 @@ function setupMinimizeButton() {
 
 function getDefaultHomeWidgetLayout() {
   return {
-    about: { enabled: true, order: 1, size: 'big', direction: 'horizontal' },
-    socials: { enabled: true, order: 2, size: 'small', direction: 'horizontal' },
-    status: { enabled: true, order: 3, size: 'small', direction: 'horizontal' },
+    about: { enabled: true, order: 1, size: 'big', direction: 'vertical' },
+    socials: { enabled: true, order: 2, size: 'small', direction: 'vertical' },
+    status: { enabled: true, order: 3, size: 'small', direction: 'vertical' },
     profile: {
       enabled: true,
       order: 0,
       size: 'big',
-      direction: 'horizontal',
+      direction: 'vertical',
       contentOrder: ['name', 'typeit'],
       contentEnabled: { username: true, time: true, typeit: true }
     }
@@ -562,7 +562,7 @@ function getHomeWidgetLayout() {
         enabled: parsed.about?.enabled ?? true,
         order: Number(parsed.about?.order ?? 0),
         size: parsed.about?.size === 'small' ? 'small' : 'big',
-        direction: parsed.about?.direction === 'vertical' ? 'vertical' : parsed.profile?.direction === 'vertical' ? 'vertical' : 'horizontal'
+        direction: parsed.about?.direction === 'vertical' ? 'vertical' : 'horizontal'
       },
       socials: {
         enabled: parsed.socials?.enabled ?? true,
@@ -598,25 +598,35 @@ function saveHomeWidgetLayout(layout) {
   localStorage.setItem('homeWidgetLayout', JSON.stringify(layout));
 }
 
+const widgetPositionAnimationIds = new WeakMap();
+const widgetPositionAnimations = new WeakMap();
+let nextWidgetPositionAnimationId = 0;
+
 function animateWidgetPositions(elements, update) {
-  const positions = new Map(elements.map(element => [element, element.getBoundingClientRect()]));
+  const animationId = ++nextWidgetPositionAnimationId;
+  const positions = new Map(elements.map(element => {
+    widgetPositionAnimations.get(element)?.cancel();
+    widgetPositionAnimationIds.set(element, animationId);
+    return [element, element.getBoundingClientRect()];
+  }));
   update();
   if (document.documentElement.classList.contains('reduced-motion')
     || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
   requestAnimationFrame(() => {
     positions.forEach((before, element) => {
-      if (!element.isConnected) return;
+      if (!element.isConnected || widgetPositionAnimationIds.get(element) !== animationId) return;
       const after = element.getBoundingClientRect();
       const x = before.left - after.left;
       const y = before.top - after.top;
       const scaleX = after.width > 0 ? before.width / after.width : 1;
       const scaleY = after.height > 0 ? before.height / after.height : 1;
       if (x || y || scaleX !== 1 || scaleY !== 1) {
-        element.animate([
+        const animation = element.animate([
           { transform: `translate(${x}px, ${y}px) scale(${scaleX}, ${scaleY})`, transformOrigin: 'top left' },
           { transform: 'translate(0, 0) scale(1, 1)', transformOrigin: 'top left' }
         ], { duration: 240, easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)' });
+        widgetPositionAnimations.set(element, animation);
       }
     });
   });
@@ -953,12 +963,21 @@ function openHomeWidgetEditor() {
 
   overlay.querySelectorAll('[data-widget-toggle]').forEach(input => {
     input.addEventListener('change', () => {
-      if (!selectedWidget || !getOrderedItems().find(item => item.dataset.widget === selectedWidget)
-        ?.querySelector('[data-widget-toggle]').checked) {
-        selectedWidget = getOrderedItems().find(item => item.querySelector('[data-widget-toggle]').checked)?.dataset.widget || null;
-      }
+      selectedWidget = input.checked
+        ? input.dataset.widgetToggle
+        : selectedWidget === input.dataset.widgetToggle
+          ? getOrderedItems().find(item => item.querySelector('[data-widget-toggle]').checked)?.dataset.widget || null
+          : selectedWidget;
       renderPreview();
     });
+  });
+
+  list.addEventListener('click', event => {
+    if (event.target.closest('input, button')) return;
+    const item = event.target.closest('.widget-layout-item');
+    if (!item?.querySelector('[data-widget-toggle]').checked) return;
+    selectedWidget = item.dataset.widget;
+    renderPreview();
   });
 
   preview.addEventListener('click', event => {
@@ -1357,10 +1376,11 @@ function resetSettingsToDefaults() {
     'socialLabelsEnabled', 'showFigcaptions', 'topbarMinimized', 'fontBold', 'fontFamily',
     'language', 'topbarPosition', 'wallpaper', 'accentColor', 'timeFormat', 'theme', 'blurEnabled', 'backgroundBlur',
     'reducedAnimation', 'potatoEnabled', 'experimentalFeaturesEnabled', 'experimentalFeaturesUnlocked', 'customAccentColor',
-    'customFontData', 'customWallpaper', 'homeWidgetLayout', 'mainOpacity', 'cardOpacity', 'mainBlurLevel', 'wallpaperBlurLevel', 'cardBlurLevel', 'experimentalRoundness',
+    'customFontData', 'customWallpaper', 'mainOpacity', 'cardOpacity', 'mainBlurLevel', 'wallpaperBlurLevel', 'cardBlurLevel', 'experimentalRoundness',
     'gradientCustomizeColors', 'gradientStopMotion', 'gradientColor1', 'gradientColor2', 'gradientColor3', 'gradientColor4'
   ];
   settingKeys.forEach(key => localStorage.removeItem(key));
+  saveHomeWidgetLayout(getDefaultHomeWidgetLayout());
   sessionStorage.removeItem('j7PrimePopupOpens');
   localStorage.setItem('experimentalBoldness', '700');
   localStorage.setItem('language', getPreferredLanguage());
