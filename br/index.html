@@ -15,7 +15,15 @@
   <link href="../scripts/style.css" rel="stylesheet" type="text/css" media="all">
   <link rel="icon" href="../images/site%20icon.ico">
   <script src="../scripts/settings.js"></script>
+  <script src="../scripts/language-popup.js"></script>
   <script src="../scripts/status-badges.js" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (typeof window.showLanguagePopup === 'function' && localStorage.getItem('languagePromptShown') !== '1') {
+        window.showLanguagePopup({ firstTime: true });
+      }
+    });
+  </script>
 </head>
 
 <body>

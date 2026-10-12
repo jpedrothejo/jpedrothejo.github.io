@@ -124,7 +124,7 @@
   }
 }
 
-html *:not(:where(.switch, .switch *)) {
+html *:not(:where(.switch, .switch *, .profile-avatar, .profile-avatar > img, .status-badge-dot)) {
   border-radius: var(--experimental-roundness) !important;
 }
 

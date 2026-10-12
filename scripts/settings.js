@@ -1540,6 +1540,8 @@ function resetSettingsToDefaults() {
     'gradientCustomizeColors', 'gradientStopMotion', 'gradientColor1', 'gradientColor2', 'gradientColor3', 'gradientColor4'
   ];
   settingKeys.forEach(key => localStorage.removeItem(key));
+  localStorage.removeItem('easterEggEnabled');
+  sessionStorage.removeItem('easterEggClicks');
   saveHomeWidgetLayout(getDefaultHomeWidgetLayout());
   sessionStorage.removeItem('j7PrimePopupOpens');
   localStorage.setItem('experimentalBoldness', '700');
@@ -1548,123 +1550,26 @@ function resetSettingsToDefaults() {
   window.location.reload();
 }
 
-function setEasterEggText(enabled) {
-  document.documentElement.classList.toggle('easter-egg-active', enabled);
-  if (!enabled) return;
-
-  const eggAccent = {
-    '--accent-color-primary': 'rgba(48, 126, 220, 0.2)',
-    '--accent-color-primary-opaque': 'rgba(48, 126, 220, 0.72)',
-    '--accent-color-hover': 'rgba(74, 153, 245, 0.28)',
-    '--accent-color-hover-opaque': 'rgba(74, 153, 245, 0.85)',
-    '--accent-color-button-bg': 'rgba(45, 125, 220, 0.72)',
-    '--accent-color-button-bg-opaque': 'rgba(45, 125, 220, 0.92)',
-    '--accent-color-glow': 'rgba(61, 145, 255, 0.42)',
-    '--accent-color-link': '#a4d4ff'
-  };
-  Object.entries(eggAccent).forEach(([property, value]) => {
-    document.documentElement.style.setProperty(property, value);
-  });
-
-  const replaceText = root => {
-    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
-      acceptNode(node) {
-        if (!node.nodeValue.trim() || node.nodeValue.trim() === 'Teardrop' || node.parentElement?.closest('script, style, .easter-egg-control, .easter-egg-toast')) {
-          return NodeFilter.FILTER_REJECT;
-        }
-        return NodeFilter.FILTER_ACCEPT;
-      }
-    });
-    const nodes = [];
-    while (walker.nextNode()) nodes.push(walker.currentNode);
-    nodes.forEach(node => { node.nodeValue = node.nodeValue.replace(/\S(?:.*\S)?/, 'Teardrop'); });
-  };
-  replaceText(document.body);
-  document.querySelectorAll('img').forEach(image => {
-    image.removeAttribute('srcset');
-    image.src = '/images/profile pic 2.jpg';
-    image.alt = 'Teardrop';
-  });
-  document.documentElement.style.setProperty('--wallpaper-image', 'url("/images/profile pic 2.jpg")');
-  document.title = 'Teardrop';
-
-  if (!window.easterEggObserver) {
-    window.easterEggObserver = new MutationObserver(() => {
-      replaceText(document.body);
-      document.querySelectorAll('img:not([data-easter-egg-image])').forEach(image => {
-        image.dataset.easterEggImage = 'true';
-        image.removeAttribute('srcset');
-        image.src = '/images/profile pic 2.jpg';
-        image.alt = 'Teardrop';
-      });
-    });
-    window.easterEggObserver.observe(document.body, { childList: true, subtree: true, characterData: true });
-  }
-}
-
 function updateModeIndicator() {
   let indicator = document.querySelector('.mode-indicator');
   if (!indicator) {
     indicator = document.createElement('button');
     indicator.className = 'mode-indicator';
     indicator.type = 'button';
-    indicator.addEventListener('click', () => {
-      if (localStorage.getItem('easterEggEnabled') !== '1') return;
-      localStorage.removeItem('easterEggEnabled');
-      sessionStorage.removeItem('easterEggClicks');
-      window.location.reload();
-    });
     document.body.appendChild(indicator);
   }
-  const easterEggEnabled = localStorage.getItem('easterEggEnabled') === '1';
+
   const experimentalEnabled = isEnabled('experimentalFeaturesEnabled', false);
   const portuguese = document.documentElement.lang === 'pt-BR';
-  indicator.textContent = easterEggEnabled
-    ? (portuguese ? 'Voltar ao normal' : 'Revert back to normal')
-    : (portuguese ? 'Modo Experimental' : 'Experimental Mode');
-  indicator.hidden = !easterEggEnabled && !experimentalEnabled;
-  indicator.classList.toggle('easter-egg-control', easterEggEnabled);
+  indicator.textContent = portuguese ? 'Modo Experimental' : 'Experimental Mode';
+  indicator.hidden = !experimentalEnabled;
+  indicator.classList.toggle('easter-egg-control', false);
   document.documentElement.classList.toggle('mode-indicator-visible', !indicator.hidden);
-}
-
-function setupProfileEasterEgg() {
-  document.querySelectorAll('.profile-avatar img').forEach(image => {
-    image.addEventListener('click', () => {
-      if (localStorage.getItem('easterEggEnabled') === '1') return;
-      const clicks = Number(sessionStorage.getItem('easterEggClicks') || 0) + 1;
-      sessionStorage.setItem('easterEggClicks', String(clicks));
-      if (clicks >= 3) {
-        let toast = document.querySelector('.easter-egg-toast');
-        if (!toast) {
-          toast = document.createElement('div');
-          toast.className = 'easter-egg-toast';
-          toast.setAttribute('aria-live', 'polite');
-          document.body.appendChild(toast);
-        }
-        const portuguese = document.documentElement.lang === 'pt-BR';
-        toast.textContent = clicks >= 7
-          ? (portuguese ? 'Easter egg desbloqueado!' : 'Easter egg unlocked!')
-          : (portuguese ? `Faltam ${7 - clicks} cliques para o easter egg` : `${7 - clicks} clicks left for the easter egg`);
-        toast.hidden = false;
-        window.clearTimeout(window.easterEggToastTimeout);
-        window.easterEggToastTimeout = window.setTimeout(() => { toast.hidden = true; }, 2200);
-      }
-      if (clicks >= 7) {
-        localStorage.setItem('easterEggEnabled', '1');
-        setEasterEggText(true);
-        updateModeIndicator();
-      }
-    });
-  });
 }
 
 function updateLocalTime() {
   const clock = document.getElementById('current-time');
   if (!clock) return;
-  if (localStorage.getItem('easterEggEnabled') === '1') {
-    clock.textContent = 'Teardrop';
-    return;
-  }
 
   const timeOptions = { hour: 'numeric', minute: '2-digit' };
   const timeFormat = localStorage.getItem('timeFormat') || 'system';
@@ -1728,6 +1633,9 @@ function applyAllSettings(animateTopbar = false, animateWallpaper = false) {
   updateModeIndicator();
 }
 
+localStorage.removeItem('easterEggEnabled');
+sessionStorage.removeItem('easterEggClicks');
+
 applyBg();
 applyFont();
 applyAccentColor();
@@ -1747,9 +1655,7 @@ if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initializeInputs);
   document.addEventListener('DOMContentLoaded', setupMinimizeButton);
   document.addEventListener('DOMContentLoaded', showLanguagePromptIfFirstTime);
-  document.addEventListener('DOMContentLoaded', setupProfileEasterEgg);
   document.addEventListener('DOMContentLoaded', initializeLocalTime);
-  document.addEventListener('DOMContentLoaded', () => setEasterEggText(localStorage.getItem('easterEggEnabled') === '1'));
 } else {
   applyAllSettings();
   initializeCheckboxes();
@@ -1761,9 +1667,7 @@ if (document.readyState === 'loading') {
   initializeInputs();
   setupMinimizeButton();
   showLanguagePromptIfFirstTime();
-  setupProfileEasterEgg();
   initializeLocalTime();
-  setEasterEggText(localStorage.getItem('easterEggEnabled') === '1');
 }
 
 function triggerPotatoMode(potatoToggle) {
@@ -1883,66 +1787,8 @@ function initializeInputs() {
 function showLanguagePromptIfFirstTime() {
   if (localStorage.getItem('languagePromptShown') === '1') return;
 
-  const existing = document.getElementById('languageModalOverlay');
-  if (existing) {
-    const overlay = existing;
-    overlay.hidden = false;
-    requestAnimationFrame(() => overlay.classList.add('show'));
-    document.body.classList.add('device-modal-open');
-    const buttons = overlay.querySelectorAll('.language-choice-btn');
-    buttons.forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const lang = btn.dataset.lang === 'pt' ? 'pt-br' : 'en';
-        localStorage.setItem('language', lang);
-        localStorage.setItem('languagePromptShown', '1');
-        applyAllSettings();
-        overlay.classList.remove('show');
-        overlay.addEventListener('transitionend', function handler() {
-          overlay.hidden = true;
-          document.body.classList.remove('device-modal-open');
-          overlay.removeEventListener('transitionend', handler);
-        });
-      });
-    });
+  if (typeof window.showLanguagePopup === 'function') {
+    window.showLanguagePopup({ firstTime: true });
     return;
   }
-
-  const overlay = document.createElement('div');
-  overlay.className = 'device-modal-overlay';
-  overlay.id = 'firstTimeLangOverlay';
-  overlay.hidden = false;
-  requestAnimationFrame(() => overlay.classList.add('show'));
-  document.body.classList.add('device-modal-open');
-
-  const modal = document.createElement('div');
-  modal.className = 'device-modal';
-  modal.setAttribute('role', 'dialog');
-  modal.setAttribute('aria-modal', 'true');
-
-  modal.innerHTML = `
-    <h2 id="firstTimeLangTitle">Choose your language</h2>
-    <p>Select your preferred language for this website.</p>
-    <div style="display:flex; gap:8px; margin-top:12px;">
-      <button class="language-choice-btn" data-lang="en" type="button">English</button>
-      <button class="language-choice-btn" data-lang="pt-br" type="button">Português</button>
-    </div>
-  `;
-
-  overlay.appendChild(modal);
-  document.body.appendChild(overlay);
-
-  modal.querySelectorAll('.language-choice-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const lang = btn.dataset.lang;
-      localStorage.setItem('language', lang);
-      localStorage.setItem('languagePromptShown', '1');
-      applyAllSettings();
-      overlay.classList.remove('show');
-      overlay.addEventListener('transitionend', function handler() {
-        overlay.hidden = true;
-        document.body.classList.remove('device-modal-open');
-        overlay.removeEventListener('transitionend', handler);
-      });
-    });
-  });
 }
