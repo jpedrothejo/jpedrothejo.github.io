@@ -204,32 +204,9 @@
             <h3>Desempenho</h3>
 
             <div class="setting-item">
-              <span>Efeito de Desfoque</span>
-              <label class="switch">
-                <input type="checkbox" class="custom-checkbox" data-setting-key="blurEnabled">
-                <span class="slider"></span>
-              </label>
+              <span>Configurações de Desfoque</span>
+              <button type="button" class="custom-file-button" id="open-blur-settings-editor" aria-haspopup="dialog" aria-expanded="false">Abrir</button>
             </div>
-
-            <label class="setting-item" id="main-blur-setting" style="display:none;">
-              <span>Desfoque principal</span>
-              <input class="experimental-range" type="range" min="0" max="20" step="0.5" value="10" data-setting-key="mainBlurLevel" data-unit="px" aria-label="Nível de desfoque principal">
-              <output>10px</output>
-            </label>
-
-            <div class="setting-item">
-              <span>Ativar desfoque do papel de parede</span>
-              <label class="switch">
-                <input type="checkbox" class="custom-checkbox" data-setting-key="backgroundBlur" data-default-on="true">
-                <span class="slider"></span>
-              </label>
-            </div>
-
-            <label class="setting-item" id="wallpaper-blur-setting" style="display:none;">
-              <span>Desfoque do papel de parede</span>
-              <input class="experimental-range" type="range" min="0" max="20" step="0.5" value="2.5" data-setting-key="wallpaperBlurLevel" data-unit="px" aria-label="Nível de desfoque do papel de parede">
-              <output>2.5px</output>
-            </label>
             
             <div class="setting-item">
               <span>Reduzir Animações</span>

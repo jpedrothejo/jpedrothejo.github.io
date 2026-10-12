@@ -124,7 +124,7 @@
   }
 }
 
-html.experimental-features-enabled *:not(:where(.settings button, .settings .switch, .settings .switch *, .settings-reset-card button, .widget-layout-popup button, .device-modal-close)) {
+html *:not(:where(.switch, .switch *)) {
   border-radius: var(--experimental-roundness) !important;
 }
 
@@ -1450,10 +1450,15 @@ button {
   width: min(720px, 92vw);
   max-height: min(82vh, 760px);
   overflow: auto;
+  scrollbar-width: none;
   padding: 18px;
   opacity: 0;
   transform: translateY(12px) scale(0.97);
   transition: opacity 0.24s ease, transform 0.24s ease;
+}
+
+.widget-layout-popup::-webkit-scrollbar {
+  display: none;
 }
 
 .widget-layout-overlay.show .widget-layout-popup {
@@ -1685,7 +1690,7 @@ button {
 
 .widget-layout-profile-toggle input {
   margin: 0;
-  accent-color: var(--accent-color-link);
+  accent-color: var(--accent-color-button-bg-opaque);
 }
 
 .widget-layout-control-label {
@@ -1720,7 +1725,7 @@ html.font-bold-enabled .widget-layout-profile-toggle {
 }
 
 .widget-layout-item input[type="checkbox"] {
-  accent-color: var(--accent-color-link);
+  accent-color: var(--accent-color-button-bg-opaque);
 }
 
 .widget-layout-actions {
@@ -1742,6 +1747,150 @@ html.font-bold-enabled .widget-layout-profile-toggle {
   justify-content: flex-end;
   margin-top: 16px;
   gap: 10px;
+}
+
+.blur-settings-popup {
+  width: min(640px, 92vw);
+}
+
+.blur-settings-popup .widget-layout-header h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.blur-settings-preview-wrap {
+  margin-bottom: 16px;
+}
+
+.blur-settings-preview {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 176px;
+  overflow: hidden;
+  isolation: isolate;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  background: linear-gradient(130deg, #28435b, #497b75 48%, #ba886a);
+}
+
+.blur-preview-wallpaper {
+  position: absolute;
+  inset: -16px;
+  z-index: -1;
+  background-image: var(--wallpaper-image, none),
+    radial-gradient(ellipse at 20% 25%, rgba(236, 185, 115, 0.9), transparent 36%),
+    radial-gradient(ellipse at 78% 75%, rgba(89, 182, 166, 0.85), transparent 38%),
+    linear-gradient(130deg, #28435b, #497b75 48%, #ba886a);
+  background-size: cover, cover, cover, cover;
+  background-position: center;
+  transform: scale(1.08);
+  transition: filter 0.18s ease;
+}
+
+.blur-preview-background-label {
+  position: absolute;
+  top: 12px;
+  left: 14px;
+  padding: 4px 8px;
+  border-radius: 5px;
+  background: rgba(0, 0, 0, 0.42);
+  font-size: 0.72rem;
+}
+
+.blur-preview-surface {
+  display: grid;
+  gap: 10px;
+  width: min(320px, calc(100% - 36px));
+  min-height: 98px;
+  padding: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  border-radius: 9px;
+  background: rgba(19, 25, 32, 0.48);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+  transform: translateY(12px);
+  transition: backdrop-filter 0.18s ease, background-color 0.18s ease;
+}
+
+.blur-preview-surface[data-blur-enabled="false"] {
+  background: rgba(19, 25, 32, 0.84);
+}
+
+.blur-preview-card {
+  padding: 8px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.11);
+  font-size: 0.78rem;
+}
+
+.blur-editor-list {
+  gap: 8px;
+}
+
+.blur-editor-toggle,
+.blur-editor-range {
+  min-width: 0;
+  cursor: default;
+  user-select: auto;
+}
+
+.blur-editor-toggle > span:first-child,
+.blur-editor-range > span:first-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.blur-editor-toggle .switch {
+  flex: 0 0 auto;
+}
+
+.blur-editor-range[hidden] {
+  display: none;
+}
+
+.blur-editor-range {
+  gap: 8px;
+}
+
+.blur-editor-range > span:first-child {
+  flex: 1 1 auto;
+}
+
+.blur-editor-range .experimental-range {
+  flex: 0 1 108px;
+}
+
+.blur-editor-range output {
+  flex: 0 0 38px;
+}
+
+@media (max-width: 600px) {
+  .blur-settings-popup {
+    padding: 14px;
+  }
+
+  .blur-settings-grid .setting-item > span:first-child {
+    min-width: 0;
+  }
+
+  .blur-settings-grid {
+    gap: 12px;
+  }
+
+  .blur-settings-grid .widget-layout-section-title {
+    margin-bottom: 8px;
+  }
+
+  .blur-editor-list {
+    gap: 6px;
+  }
+
+  .blur-settings-grid .blur-editor-toggle,
+  .blur-settings-grid .blur-editor-range {
+    padding: 5px 8px;
+  }
 }
 
 .topnav {

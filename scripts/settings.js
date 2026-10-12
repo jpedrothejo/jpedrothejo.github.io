@@ -74,9 +74,9 @@ function applyBlur() {
   if (mainBlurSetting) mainBlurSetting.style.display = blurEnabled ? 'flex' : 'none';
   const storedMainBlur = Number(localStorage.getItem('mainBlurLevel') ?? 10);
   const mainBlur = Number.isFinite(storedMainBlur) ? Math.min(20, Math.max(0, storedMainBlur)) : 10;
-  const blurValue = blurEnabled ? 'blur(10px) saturate(180%)' : 'none';
+  const blurValue = blurEnabled ? `blur(${mainBlur}px) saturate(180%)` : 'none';
 
-  document.documentElement.style.setProperty('--main-blur', `${mainBlur}px`);
+  document.documentElement.style.setProperty('--main-blur', `${blurEnabled ? mainBlur : 0}px`);
   document.documentElement.style.setProperty('--main-saturation', blurEnabled ? '180%' : '100%');
 
   document.querySelectorAll('.topnav, .social-bg, .popup-overlay, .popup-empty')
@@ -1101,6 +1101,166 @@ function initializeHomeWidgetEditor() {
   applyHomeWidgetLayout();
 }
 
+function openBlurSettingsEditor() {
+  const trigger = document.getElementById('open-blur-settings-editor');
+  if (!trigger || document.getElementById('blur-settings-overlay')) return;
+
+  const portuguese = document.documentElement.lang === 'pt-BR';
+  const labels = portuguese
+    ? {
+      title: 'Configurações de Desfoque', close: 'Fechar', cancel: 'Cancelar', apply: 'Aplicar',
+      preview: 'Pré-visualização', main: 'Desfoque da interface', mainLevel: 'Intensidade do desfoque principal',
+      wallpaper: 'Desfoque do papel de parede', wallpaperLevel: 'Intensidade do desfoque do papel de parede',
+      surface: 'Superfície principal', card: 'Cartão', background: 'Papel de parede'
+    }
+    : {
+      title: 'Blur Settings', close: 'Close', cancel: 'Cancel', apply: 'Apply',
+      preview: 'Preview', main: 'Interface blur', mainLevel: 'Main blur level',
+      wallpaper: 'Wallpaper blur', wallpaperLevel: 'Wallpaper blur level',
+      surface: 'Main surface', card: 'Card', background: 'Wallpaper'
+    };
+  const draft = {
+    blurEnabled: getSettingBooleanState('blurEnabled', true),
+    mainBlurLevel: Number(localStorage.getItem('mainBlurLevel') ?? 10),
+    backgroundBlur: getSettingBooleanState('backgroundBlur', true),
+    wallpaperBlurLevel: Number(localStorage.getItem('wallpaperBlurLevel') ?? 2.5)
+  };
+  if (!Number.isFinite(draft.mainBlurLevel)) draft.mainBlurLevel = 10;
+  if (!Number.isFinite(draft.wallpaperBlurLevel)) draft.wallpaperBlurLevel = 2.5;
+
+  const overlay = document.createElement('div');
+  overlay.id = 'blur-settings-overlay';
+  overlay.className = 'widget-layout-overlay blur-settings-overlay';
+  overlay.innerHTML = `
+    <section class="widget-layout-popup blur-settings-popup" role="dialog" aria-modal="true" aria-labelledby="blur-settings-title">
+      <header class="widget-layout-header">
+        <h2 id="blur-settings-title">${labels.title}</h2>
+        <button type="button" class="device-modal-close" data-close-blur-settings aria-label="${labels.close}">×</button>
+      </header>
+      <section class="blur-settings-preview-wrap" aria-label="${labels.preview}">
+        <h3 class="widget-layout-section-title">${labels.preview}</h3>
+        <div class="blur-settings-preview" data-blur-preview>
+          <div class="blur-preview-wallpaper" data-preview-wallpaper></div>
+          <span class="blur-preview-background-label">${labels.background}</span>
+          <div class="blur-preview-surface" data-preview-surface>
+            <strong>${labels.surface}</strong>
+            <div class="blur-preview-card" data-preview-card>${labels.card}</div>
+          </div>
+        </div>
+      </section>
+      <div class="widget-layout-settings-grid blur-settings-grid">
+        <section class="widget-layout-widget-settings" aria-label="${labels.main}">
+          <h3 class="widget-layout-section-title">${labels.main}</h3>
+          <div class="widget-layout-list blur-editor-list">
+            <div class="widget-layout-item blur-editor-toggle">
+              <span>${labels.main}</span>
+              <label class="switch">
+                <input type="checkbox" data-blur-key="blurEnabled" ${draft.blurEnabled ? 'checked' : ''}>
+                <span class="slider"></span>
+              </label>
+            </div>
+            <label class="widget-layout-item blur-editor-range" data-blur-range="mainBlurLevel">
+              <span>${labels.mainLevel}</span>
+              <input class="experimental-range" type="range" min="0" max="20" step="0.5" value="${draft.mainBlurLevel}" data-blur-key="mainBlurLevel" aria-label="${labels.mainLevel}">
+              <output>${draft.mainBlurLevel}px</output>
+            </label>
+          </div>
+        </section>
+        <section class="widget-layout-profile-settings" aria-label="${labels.wallpaper}">
+          <h3 class="widget-layout-section-title">${labels.wallpaper}</h3>
+          <div class="widget-layout-list blur-editor-list">
+            <div class="widget-layout-item blur-editor-toggle">
+              <span>${labels.wallpaper}</span>
+              <label class="switch">
+                <input type="checkbox" data-blur-key="backgroundBlur" ${draft.backgroundBlur ? 'checked' : ''}>
+                <span class="slider"></span>
+              </label>
+            </div>
+            <label class="widget-layout-item blur-editor-range" data-blur-range="wallpaperBlurLevel">
+              <span>${labels.wallpaperLevel}</span>
+              <input class="experimental-range" type="range" min="0" max="20" step="0.5" value="${draft.wallpaperBlurLevel}" data-blur-key="wallpaperBlurLevel" aria-label="${labels.wallpaperLevel}">
+              <output>${draft.wallpaperBlurLevel}px</output>
+            </label>
+          </div>
+        </section>
+      </div>
+      <footer class="widget-layout-footer">
+        <button type="button" class="custom-file-button" data-close-blur-settings>${labels.cancel}</button>
+        <button type="button" class="custom-file-button" data-apply-blur-settings>${labels.apply}</button>
+      </footer>
+    </section>
+  `;
+  document.body.appendChild(overlay);
+  trigger.setAttribute('aria-expanded', 'true');
+
+  const previewWallpaper = overlay.querySelector('[data-preview-wallpaper]');
+  const previewSurface = overlay.querySelector('[data-preview-surface]');
+  const updatePreview = () => {
+    draft.blurEnabled = overlay.querySelector('[data-blur-key="blurEnabled"]').checked;
+    draft.backgroundBlur = overlay.querySelector('[data-blur-key="backgroundBlur"]').checked;
+    draft.mainBlurLevel = Number(overlay.querySelector('[data-blur-key="mainBlurLevel"]').value);
+    draft.wallpaperBlurLevel = Number(overlay.querySelector('[data-blur-key="wallpaperBlurLevel"]').value);
+    overlay.querySelector('[data-blur-range="mainBlurLevel"]').hidden = !draft.blurEnabled;
+    overlay.querySelector('[data-blur-range="wallpaperBlurLevel"]').hidden = !draft.backgroundBlur;
+    overlay.querySelector('[data-blur-key="mainBlurLevel"] + output').textContent = `${draft.mainBlurLevel}px`;
+    overlay.querySelector('[data-blur-key="wallpaperBlurLevel"] + output').textContent = `${draft.wallpaperBlurLevel}px`;
+    previewWallpaper.style.filter = draft.backgroundBlur && draft.wallpaperBlurLevel > 0
+      ? `blur(${draft.wallpaperBlurLevel}px)`
+      : 'none';
+    previewSurface.style.backdropFilter = draft.blurEnabled
+      ? `blur(${draft.mainBlurLevel}px) saturate(180%)`
+      : 'none';
+    previewSurface.style.webkitBackdropFilter = previewSurface.style.backdropFilter;
+    previewSurface.dataset.blurEnabled = String(draft.blurEnabled);
+  };
+  const handleKeydown = event => {
+    if (event.key === 'Escape') closeEditor();
+  };
+  const closeEditor = () => {
+    document.removeEventListener('keydown', handleKeydown);
+    trigger.setAttribute('aria-expanded', 'false');
+    if (document.documentElement.classList.contains('reduced-motion')
+      || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      overlay.remove();
+      trigger.focus();
+      return;
+    }
+    overlay.classList.remove('show');
+    window.setTimeout(() => {
+      overlay.remove();
+      trigger.focus();
+    }, 240);
+  };
+
+  overlay.querySelectorAll('[data-blur-key]').forEach(input => {
+    input.addEventListener(input.type === 'range' ? 'input' : 'change', updatePreview);
+  });
+  overlay.querySelectorAll('[data-close-blur-settings]').forEach(button => {
+    button.addEventListener('click', closeEditor);
+  });
+  overlay.querySelector('[data-apply-blur-settings]').addEventListener('click', () => {
+    localStorage.setItem('blurEnabled', draft.blurEnabled ? '1' : '0');
+    localStorage.setItem('mainBlurLevel', String(draft.mainBlurLevel));
+    localStorage.setItem('backgroundBlur', draft.backgroundBlur ? '1' : '0');
+    localStorage.setItem('wallpaperBlurLevel', String(draft.wallpaperBlurLevel));
+    applyAllSettings();
+    closeEditor();
+  });
+  overlay.addEventListener('click', event => {
+    if (event.target === overlay) closeEditor();
+  });
+  document.addEventListener('keydown', handleKeydown);
+
+  updatePreview();
+  void overlay.offsetWidth;
+  requestAnimationFrame(() => overlay.classList.add('show'));
+  overlay.querySelector('[data-blur-key="blurEnabled"]').focus();
+}
+
+function initializeBlurSettingsEditor() {
+  document.getElementById('open-blur-settings-editor')?.addEventListener('click', openBlurSettingsEditor);
+}
+
 function initializeCheckboxes() {
   document.querySelectorAll('.custom-checkbox[data-setting-key]').forEach(checkbox => {
     const key = checkbox.dataset.settingKey;
@@ -1580,6 +1740,7 @@ if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', applyAllSettings);
   document.addEventListener('DOMContentLoaded', initializeCheckboxes);
   document.addEventListener('DOMContentLoaded', initializeHomeWidgetEditor);
+  document.addEventListener('DOMContentLoaded', initializeBlurSettingsEditor);
   document.addEventListener('DOMContentLoaded', initializeColorPickers);
   document.addEventListener('DOMContentLoaded', initializeRangeInputs);
   document.addEventListener('DOMContentLoaded', initializeSelects);
@@ -1593,6 +1754,7 @@ if (document.readyState === 'loading') {
   applyAllSettings();
   initializeCheckboxes();
   initializeHomeWidgetEditor();
+  initializeBlurSettingsEditor();
   initializeColorPickers();
   initializeRangeInputs();
   initializeSelects();
@@ -1611,6 +1773,12 @@ function triggerPotatoMode(potatoToggle) {
 
   settingsToDisable.forEach(key => {
     const targetCheckbox = document.querySelector(`[data-setting-key="${key}"]`);
+    if (!targetCheckbox && (key === 'blurEnabled' || key === 'backgroundBlur')) {
+      localStorage.setItem(key, isPotatoModeOn ? '0' : '1');
+      const draftControl = document.querySelector(`#blur-settings-overlay [data-blur-key="${key}"]`);
+      if (draftControl) draftControl.checked = !isPotatoModeOn;
+      return;
+    }
     if (targetCheckbox) {
       targetCheckbox.checked = !isPotatoModeOn;
       targetCheckbox.disabled = isPotatoModeOn;
@@ -1641,6 +1809,7 @@ function triggerPotatoMode(potatoToggle) {
     }
     wallpaperDropdown.dispatchEvent(new Event('change', { bubbles: true }));
   }
+  applyAllSettings();
 }
 
 function initializeInputs() {
