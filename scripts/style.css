@@ -124,10 +124,6 @@
   }
 }
 
-html *:not(:where(.switch, .switch *, .profile-avatar, .profile-avatar > img, .status-badge-dot)) {
-  border-radius: var(--experimental-roundness) !important;
-}
-
 html.font-bold-enabled *:not(:where(.settings button, .settings .switch, .settings .switch *, .settings-reset-card button, .widget-layout-popup button, .device-modal-close)) {
   font-weight: var(--experimental-boldness);
 }
@@ -3166,4 +3162,20 @@ body.device-modal-open {
 
 .device-card-link:active .device-card {
   transform: translateY(-1px) scale(0.995);
+}
+
+@property --main-blur {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 0px;
+}
+
+@property --main-saturation {
+  syntax: '<percentage>';
+  inherits: true;
+  initial-value: 100%;
+}
+
+html.blur-transitioning {
+  transition: background 0.3s, color 0.3s, --main-blur 0.45s var(--ease-out), --main-saturation 0.45s var(--ease-out);
 }

@@ -89,6 +89,27 @@ function applyBlur() {
 }
 
 
+function animateBlurChange(update) {
+  const root = document.documentElement;
+  if (root.classList.contains('reduced-motion') || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    update();
+    return;
+  }
+  const targets = Array.from(document.querySelectorAll('.topnav, .social-bg, .popup-overlay, .popup-empty'));
+  const before = targets.map(element => getComputedStyle(element).backdropFilter);
+  root.classList.add('blur-transitioning');
+  update();
+  targets.forEach((element, index) => {
+    const after = getComputedStyle(element).backdropFilter;
+    if (before[index] === after) return;
+    element.animate([{ backdropFilter: before[index] }, { backdropFilter: after }], {
+      duration: 450,
+      easing: 'cubic-bezier(0.22, 1, 0.36, 1)'
+    });
+  });
+  window.setTimeout(() => root.classList.remove('blur-transitioning'), 650);
+}
+
 function applyBackgroundBlur() {
   const blurEnabled = isEnabled('backgroundBlur', true);
   const wallpaperBlurSetting = document.getElementById('wallpaper-blur-setting');
@@ -625,11 +646,30 @@ function animateWidgetPositions(elements, update) {
         const animation = element.animate([
           { transform: `translate(${x}px, ${y}px) scale(${scaleX}, ${scaleY})`, transformOrigin: 'top left' },
           { transform: 'translate(0, 0) scale(1, 1)', transformOrigin: 'top left' }
-        ], { duration: 240, easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)' });
+        ], { duration: 360, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' });
         widgetPositionAnimations.set(element, animation);
       }
     });
   });
+}
+
+let homeWidgetReplay = null;
+
+function takeHomeWidgetReplayLayout() {
+  if (homeWidgetReplay) return homeWidgetReplay.layout;
+  const raw = localStorage.getItem('homeWidgetLayoutReplay');
+  if (raw === null) return null;
+  localStorage.removeItem('homeWidgetLayoutReplay');
+  if (document.documentElement.classList.contains('reduced-motion')
+    || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return null;
+  try {
+    const previous = JSON.parse(raw);
+    if (!previous || typeof previous !== 'object' || !previous.profile) return null;
+    homeWidgetReplay = { layout: previous, scheduled: false };
+    return previous;
+  } catch (error) {
+    return null;
+  }
 }
 
 function applyHomeWidgetLayout(animate = false) {
@@ -637,7 +677,8 @@ function applyHomeWidgetLayout(animate = false) {
   const profileCopy = document.querySelector('.profile-copy');
   if (!widgets.length && !profileCopy) return;
 
-  const layout = getHomeWidgetLayout();
+  const replayLayout = animate ? null : takeHomeWidgetReplayLayout();
+  const layout = replayLayout || getHomeWidgetLayout();
   const orderedWidgets = widgets.sort((first, second) => {
     return (layout[first.dataset.widget]?.order ?? 0) - (layout[second.dataset.widget]?.order ?? 0);
   });
@@ -671,6 +712,13 @@ function applyHomeWidgetLayout(animate = false) {
   };
   if (animate) animateWidgetPositions([...widgets, ...profileWidgets], update);
   else update();
+  if (replayLayout && homeWidgetReplay && !homeWidgetReplay.scheduled) {
+    homeWidgetReplay.scheduled = true;
+    window.setTimeout(() => {
+      homeWidgetReplay = null;
+      applyHomeWidgetLayout(true);
+    }, 700);
+  }
 }
 
 function openHomeWidgetEditor() {
@@ -856,6 +904,7 @@ function openHomeWidgetEditor() {
       button.setAttribute('aria-pressed', String(currentDirection === button.dataset.widgetDirection));
     });
   };
+  let previewReady = false;
   const renderPreview = () => {
     const draft = getDraftLayout();
     const enabledKeys = getOrderedItems()
@@ -869,6 +918,7 @@ function openHomeWidgetEditor() {
     });
     preview.querySelector('.widget-layout-preview-empty').hidden = enabledKeys.length > 0;
     enabledKeys.forEach((key, index) => {
+      const isNewCard = !existingCards.has(key);
       const card = existingCards.get(key) || document.createElement('button');
       card.type = 'button';
       card.className = 'widget-layout-preview-card';
@@ -880,6 +930,13 @@ function openHomeWidgetEditor() {
       card.draggable = true;
       card.textContent = widgetNames[key];
       preview.appendChild(card);
+      if (isNewCard && previewReady && !document.documentElement.classList.contains('reduced-motion')
+        && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        card.animate([
+          { opacity: 0, transform: 'scale(0.88)' },
+          { opacity: 1, transform: 'scale(1)' }
+        ], { duration: 280, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' });
+      }
     });
     updateScaleControl();
   };
@@ -933,12 +990,14 @@ function openHomeWidgetEditor() {
   };
 
   renderPreview();
+  previewReady = true;
 
   const closeButtons = overlay.querySelectorAll('[data-close-widget-layout]');
   closeButtons.forEach(button => button.addEventListener('click', closeEditor));
 
   overlay.querySelectorAll('[data-apply-widget-layout]').forEach(button => {
     button.addEventListener('click', () => {
+      localStorage.setItem('homeWidgetLayoutReplay', JSON.stringify(layout));
       saveHomeWidgetLayout(getDraftLayout());
       applyHomeWidgetLayout(true);
       closeEditor();
@@ -963,12 +1022,14 @@ function openHomeWidgetEditor() {
 
   overlay.querySelectorAll('[data-widget-toggle]').forEach(input => {
     input.addEventListener('change', () => {
-      selectedWidget = input.checked
-        ? input.dataset.widgetToggle
-        : selectedWidget === input.dataset.widgetToggle
-          ? getOrderedItems().find(item => item.querySelector('[data-widget-toggle]').checked)?.dataset.widget || null
-          : selectedWidget;
-      renderPreview();
+      animateEditorMovement(() => {
+        selectedWidget = input.checked
+          ? input.dataset.widgetToggle
+          : selectedWidget === input.dataset.widgetToggle
+            ? getOrderedItems().find(item => item.querySelector('[data-widget-toggle]').checked)?.dataset.widget || null
+            : selectedWidget;
+        renderPreview();
+      });
     });
   });
 
@@ -1000,8 +1061,10 @@ function openHomeWidgetEditor() {
   overlay.querySelectorAll('[data-widget-direction]').forEach(button => {
     button.addEventListener('click', () => {
       if (!selectedWidget) return;
-      widgetDirections[selectedWidget] = button.dataset.widgetDirection;
-      renderPreview();
+      animateEditorMovement(() => {
+        widgetDirections[selectedWidget] = button.dataset.widgetDirection;
+        renderPreview();
+      });
     });
   });
 
@@ -1243,7 +1306,7 @@ function openBlurSettingsEditor() {
     localStorage.setItem('mainBlurLevel', String(draft.mainBlurLevel));
     localStorage.setItem('backgroundBlur', draft.backgroundBlur ? '1' : '0');
     localStorage.setItem('wallpaperBlurLevel', String(draft.wallpaperBlurLevel));
-    applyAllSettings();
+    animateBlurChange(applyAllSettings);
     closeEditor();
   });
   overlay.addEventListener('click', event => {
