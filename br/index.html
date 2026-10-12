@@ -15,22 +15,14 @@
   <link href="../scripts/style.css" rel="stylesheet" type="text/css" media="all">
   <link rel="icon" href="../images/site%20icon.ico">
   <script src="../scripts/settings.js"></script>
-  <script src="../scripts/language-popup.js"></script>
   <script src="../scripts/status-badges.js" defer></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      if (typeof window.showLanguagePopup === 'function' && localStorage.getItem('languagePromptShown') !== '1') {
-        window.showLanguagePopup({ firstTime: true });
-      }
-    });
-  </script>
 </head>
 
 <body>
   <div class="topnav">
     <a class="active" href="/" data-full-label="🏠" data-minimized-label="🏠">🏠</a>
     <a href="/devices.html" data-full-label="Dispositivos" data-minimized-label="📱">Dispositivos</a>
-    <a href="/projects.html" data-full-label="Projetos" data-minimized-label="📄">Projetos</a>
+    <a href="/tools.html" data-full-label="Ferramentas" data-minimized-label="🛠️">Ferramentas</a>
     <a href="/settings.html" data-full-label="Config." data-minimized-label="⚙️">Config.</a>
     <a class="minimize-btn" id="minimizeBtn" title="Minimize">−</a>
   </div>
@@ -59,7 +51,7 @@
               "bem vindo ao meu site!",
               "siga minhas redes sociais em baixo!",
               "oi",
-              "olhe os projetos na <a href='/projects.html'>página de projetos</a>!",
+              "baixe ferramentas de flash na <a href='/tools.html'>página de ferramentas</a>!",
               "clique na minha foto de perfil 7 vezes",
               "abra o popup do J7 Prime 7 vezes",
             ];

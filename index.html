@@ -14,22 +14,14 @@
   <link href="./scripts/style.css" rel="stylesheet" type="text/css" media="all">
   <link rel="icon" href="./images/site%20icon.ico">
   <script src="./scripts/settings.js"></script>
-  <script src="./scripts/language-popup.js"></script>
   <script src="./scripts/status-badges.js" defer></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      if (typeof window.showLanguagePopup === 'function' && localStorage.getItem('languagePromptShown') !== '1') {
-        window.showLanguagePopup({ firstTime: true });
-      }
-    });
-  </script>
 </head>
 
 <body>
   <div class="topnav">
     <a class="active" href="/" data-full-label="🏠" data-minimized-label="🏠">🏠</a>
     <a href="/devices.html" data-full-label="Devices" data-minimized-label="📱">Devices</a>
-    <a href="/projects.html" data-full-label="Projects" data-minimized-label="📂">Projects</a>
+    <a href="/tools.html" data-full-label="Tools" data-minimized-label="🛠️">Tools</a>
     <a href="/settings.html" data-full-label="Settings" data-minimized-label="⚙️">Settings</a>
     <a class="minimize-btn" id="minimizeBtn" title="Minimize">−</a>
   </div>
@@ -60,7 +52,7 @@
               "check my socials below!",
               "open the J7 Prime popup 7 times",
               "hi",
-              "check my projects at the <a href='/projects.html'>projects page</a>!",
+              "grab flashing tools at the <a href='/tools.html'>tools page</a>!",
               "click my pfp 7 times",
             ];
             const randomMessage = messages[Math.floor(Math.random() * messages.length)];
@@ -202,6 +194,17 @@
   });
   </script>
 
+  <div class="device-modal-overlay" id="languageModalOverlay" hidden>
+  <div class="device-modal" role="dialog" aria-modal="true" aria-labelledby="languageModalTitle">
+    <h2 id="languageModalTitle">Choose your language</h2>
+    <p>Pick your preferred language for this website.</p>
+    <div class="language-modal-actions">
+      <button class="language-choice-btn" data-lang="en" type="button">English</button>
+      <button class="language-choice-btn" data-lang="pt" type="button">Português</button>
+    </div>
+  </div>
+</div>
+ 
 <div class="device-modal-overlay" id="socialModalOverlay" hidden>
   <div class="device-modal" role="dialog" aria-modal="true" aria-labelledby="socialModalTitle">
     <button class="device-modal-close" id="socialModalClose" type="button" aria-label="Close">×</button>

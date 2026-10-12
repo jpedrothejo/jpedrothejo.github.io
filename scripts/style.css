@@ -875,7 +875,7 @@ html.gradient-static body::before {
 @keyframes page-enter {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(14px);
   }
 
   to {
@@ -887,46 +887,12 @@ html.gradient-static body::before {
 @keyframes nav-item-enter {
   from {
     opacity: 0;
-    transform: translateY(-8px);
+    transform: translateY(-8px) scale(0.96);
   }
 
   to {
     opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes minimize-button-enter {
-  0% {
-    opacity: 0;
-    transform: translateX(-10px) scale(0.45) rotate(-18deg) perspective(1px);
-  }
-
-  70% {
-    opacity: 1;
-    transform: translateX(2px) scale(1.12) rotate(4deg) perspective(1px);
-  }
-
-  100% {
-    opacity: 1;
-    transform: translateX(0) scale(1) rotate(0deg) perspective(1px);
-  }
-}
-
-@keyframes minimize-button-enter-vertical {
-  0% {
-    opacity: 0;
-    transform: translateY(-10px) scale(0.45) rotate(-18deg) perspective(1px);
-  }
-
-  70% {
-    opacity: 1;
-    transform: translateY(2px) scale(1.12) rotate(4deg) perspective(1px);
-  }
-
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1) rotate(0deg);
+    transform: translateY(0) scale(1);
   }
 }
 
@@ -934,19 +900,13 @@ html.gradient-static body::before {
   0% {
     width: 0;
     opacity: 0;
-    transform: translateX(-8px) scale(0.7) rotate(-12deg) perspective(1px);
-  }
-
-  60% {
-    width: 28px;
-    opacity: 1;
-    transform: translateX(2px) scale(1.02) rotate(2deg) perspective(1px);
+    transform: translateX(-6px) scale(0.8) perspective(1px);
   }
 
   100% {
     width: 28px;
     opacity: 1;
-    transform: translateX(0) scale(1) rotate(0deg) perspective(1px);
+    transform: translateX(0) scale(1) perspective(1px);
   }
 }
 
@@ -1910,12 +1870,12 @@ html.font-bold-enabled .widget-layout-profile-toggle {
   transition: padding 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
               width 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
               transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
-              visibility 0s linear 0.2s;
-              border-radius: 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+              visibility 0s linear 0.2s,
+              border-radius 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .topnav > a:not(.minimize-btn) {
-  animation: nav-item-enter 0.45s ease both;
+  animation: nav-item-enter 0.5s var(--ease-out) both;
 }
 
 html.topbar-transitioning .topnav,
@@ -2058,7 +2018,7 @@ html.topbar-transitioning .minimize-btn {
   visibility: visible;
   pointer-events: auto;
   transform: translateX(0) scale(1) rotate(0deg) perspective(1px);
-  animation: minimize-button-reveal 0.28s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation: minimize-button-reveal 0.32s var(--ease-out) both;
   transition-delay: 0s;
 }
 
@@ -2229,7 +2189,7 @@ html.topbar-transitioning .minimize-btn {
 
 .main>* {
   margin: 0;
-  animation: page-enter 0.42s cubic-bezier(0.2, 0.8, 0.2, 1) 0.04s both;
+  animation: page-enter 0.5s var(--ease-out) 0.04s both;
 }
 
 .main > *:nth-child(2) {
@@ -2238,12 +2198,6 @@ html.topbar-transitioning .minimize-btn {
 
 .main > *:nth-child(3) {
   animation-delay: 0.14s;
-}
-
-.main.projects-main {
-  align-items: center;
-  width: fit-content;
-  max-width: 95vw;
 }
 
 .main h2 {
@@ -2460,6 +2414,7 @@ html.reduced-motion *,
 html.reduced-motion *::before,
 html.reduced-motion *::after {
   animation-duration: 0.01ms !important;
+  animation-delay: 0ms !important;
   animation-iteration-count: 1 !important;
   transition-duration: 0.01ms !important;
   transition-delay: 0ms !important;
@@ -2907,22 +2862,22 @@ html.blur-disabled .popup-empty {
 
 .device-card .item {
   opacity: 0;
-  transform: translateY(10px);
-  animation: device-card-appear 0.6s ease forwards;
+  transform: translateY(14px) scale(0.98);
+  animation: device-card-appear 0.55s var(--ease-out) forwards;
 }
 
-.device-card:nth-child(1) .item { animation-delay: 0.08s; }
-.device-card:nth-child(2) .item { animation-delay: 0.16s; }
-.device-card:nth-child(3) .item { animation-delay: 0.24s; }
-.device-card:nth-child(4) .item { animation-delay: 0.32s; }
-.device-card:nth-child(5) .item { animation-delay: 0.40s; }
-.device-card:nth-child(6) .item { animation-delay: 0.48s; }
-.device-card:nth-child(7) .item { animation-delay: 0.56s; }
+.device-card:nth-child(1) .item { animation-delay: 0.06s; }
+.device-card:nth-child(2) .item { animation-delay: 0.12s; }
+.device-card:nth-child(3) .item { animation-delay: 0.18s; }
+.device-card:nth-child(4) .item { animation-delay: 0.24s; }
+.device-card:nth-child(5) .item { animation-delay: 0.30s; }
+.device-card:nth-child(6) .item { animation-delay: 0.36s; }
+.device-card:nth-child(7) .item { animation-delay: 0.42s; }
 
 @keyframes device-card-appear {
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
@@ -2943,7 +2898,7 @@ html.blur-disabled .popup-empty {
   z-index: 2000;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.24s ease, visibility 0s linear 0.24s;
+  transition: opacity 0.28s var(--ease-out), visibility 0s linear 0.28s;
 }
 
 .device-modal-overlay.show {
@@ -2964,7 +2919,7 @@ html.blur-disabled .popup-empty {
   position: relative;
   opacity: 0;
   transform: translateY(12px) scale(0.97);
-  transition: opacity 0.24s ease, transform 0.24s ease;
+  transition: opacity 0.28s var(--ease-out), transform 0.32s var(--ease-out);
   backdrop-filter: blur(20px) saturate(135%);
   -webkit-backdrop-filter: blur(20px) saturate(135%);
 }
@@ -3099,8 +3054,116 @@ body.device-modal-open {
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
     animation-iteration-count: 1 !important;
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+.settings-section h3 {
+  border-radius: 0 !important;
+}
+
+.tool-name {
+  display: block;
+}
+
+.tool-name .os-icons {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 5px;
+  opacity: 0.7;
+}
+
+.os-icon {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  fill: currentColor;
+  overflow: visible;
+  border-radius: 0 !important;
+}
+
+.setting-item > a.custom-file-button,
+.setting-item > a.custom-file-button:visited,
+.setting-item > a.custom-file-button:hover,
+.setting-item > a.custom-file-button:focus,
+.setting-item > a.custom-file-button:active {
+  color: #ffffff !important;
+  text-decoration: none;
+}
+
+:root {
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.topnav > a:nth-child(2):not(.minimize-btn) {
+  animation-delay: 0.05s;
+}
+
+.topnav > a:nth-child(3):not(.minimize-btn) {
+  animation-delay: 0.10s;
+}
+
+.topnav > a:nth-child(4):not(.minimize-btn) {
+  animation-delay: 0.15s;
+}
+
+@keyframes row-enter {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.settings-section:not(.experimental-settings-section) > .setting-item {
+  animation: row-enter 0.45s var(--ease-out) both;
+  animation-delay: 0.45s;
+}
+
+.settings-section:not(.experimental-settings-section) > .setting-item:nth-child(2) {
+  animation-delay: 0.120s;
+}
+
+.settings-section:not(.experimental-settings-section) > .setting-item:nth-child(3) {
+  animation-delay: 0.165s;
+}
+
+.settings-section:not(.experimental-settings-section) > .setting-item:nth-child(4) {
+  animation-delay: 0.210s;
+}
+
+.settings-section:not(.experimental-settings-section) > .setting-item:nth-child(5) {
+  animation-delay: 0.255s;
+}
+
+.settings-section:not(.experimental-settings-section) > .setting-item:nth-child(6) {
+  animation-delay: 0.300s;
+}
+
+.settings-section:not(.experimental-settings-section) > .setting-item:nth-child(7) {
+  animation-delay: 0.345s;
+}
+
+.settings-section:not(.experimental-settings-section) > .setting-item:nth-child(8) {
+  animation-delay: 0.390s;
+}
+
+.settings-section:not(.experimental-settings-section) > .setting-item:nth-child(9) {
+  animation-delay: 0.435s;
+}
+
+.custom-file-button:active {
+  transform: translateY(0) scale(0.97);
+}
+
+.device-card-link:active .device-card {
+  transform: translateY(-1px) scale(0.995);
 }
