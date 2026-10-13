@@ -147,6 +147,83 @@ function toggleClass(id, className, invert = false, defaultOn = true) {
   document.documentElement.classList.toggle(className, shouldApply);
 }
 
+const rowDisplayAnimations = new WeakMap();
+let settingsMotionReady = false;
+window.addEventListener('load', () => requestAnimationFrame(() => { settingsMotionReady = true; }));
+
+function prefersReducedMotion() {
+  return document.documentElement.classList.contains('reduced-motion')
+    || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
+function setRowDisplay(element, show, options = {}) {
+  if (!element) return;
+  const { display = 'flex', hidden = false, instant = false } = options;
+  const finish = visible => {
+    if (hidden) {
+      element.hidden = !visible;
+      element.style.display = '';
+    } else {
+      element.style.display = visible ? display : 'none';
+    }
+  };
+  const running = rowDisplayAnimations.get(element);
+  if (running && running.show === show) return;
+  if (running) {
+    running.animation.cancel();
+    rowDisplayAnimations.delete(element);
+    element.style.overflow = '';
+    element.style.boxSizing = '';
+  }
+  const shown = getComputedStyle(element).display !== 'none';
+  if (shown === show || instant || !settingsMotionReady || prefersReducedMotion()) {
+    finish(show);
+    return;
+  }
+  if (show) {
+    finish(true);
+    element.style.animation = 'none';
+  }
+  const rect = element.getBoundingClientRect();
+  const computed = getComputedStyle(element);
+  const gap = parseFloat(getComputedStyle(element.parentElement).rowGap) || 0;
+  const natural = {
+    height: `${rect.height}px`,
+    opacity: 1,
+    transform: 'translateY(0) scale(1)',
+    paddingTop: computed.paddingTop,
+    paddingBottom: computed.paddingBottom,
+    marginTop: computed.marginTop,
+    borderTopWidth: computed.borderTopWidth,
+    borderBottomWidth: computed.borderBottomWidth
+  };
+  const collapsed = {
+    height: '0px',
+    opacity: 0,
+    transform: `translateY(${-Math.min(rect.height, 28)}px) scale(0.94)`,
+    paddingTop: '0px',
+    paddingBottom: '0px',
+    marginTop: `${-gap}px`,
+    borderTopWidth: '0px',
+    borderBottomWidth: '0px'
+  };
+  element.style.overflow = 'hidden';
+  element.style.boxSizing = 'border-box';
+  const animation = element.animate(show ? [collapsed, natural] : [natural, collapsed], {
+    duration: 340,
+    easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+    fill: show ? 'none' : 'forwards'
+  });
+  rowDisplayAnimations.set(element, { animation, show });
+  animation.onfinish = () => {
+    rowDisplayAnimations.delete(element);
+    element.style.overflow = '';
+    element.style.boxSizing = '';
+    if (!show) finish(false);
+    animation.cancel();
+  };
+}
+
 function applyBg() {
   toggleClass('bgEnabled', 'no-bg', true);
 }
@@ -161,7 +238,7 @@ function applyFont() {
   const boldEnabled = isEnabled('fontBold', false);
   document.documentElement.classList.toggle('font-bold-enabled', boldEnabled);
   const boldnessSetting = document.getElementById('boldness-intensity-setting');
-  if (boldnessSetting) boldnessSetting.style.display = boldEnabled ? 'flex' : 'none';
+  setRowDisplay(boldnessSetting, boldEnabled);
   const customFontData = localStorage.getItem('customFontData') || '';
   const hasCustomFont = /^data:[^;]+;base64,/.test(customFontData);
   if (!localStorage.getItem('fontFamily')) localStorage.setItem('fontFamily', fontFamily);
@@ -170,7 +247,7 @@ function applyFont() {
     fontFamily = 'plusjakarta';
   }
   const customFontSetting = document.getElementById('custom-font-setting');
-  if (customFontSetting) customFontSetting.style.display = selectedFontFamily === 'custom' ? 'flex' : 'none';
+  setRowDisplay(customFontSetting, selectedFontFamily === 'custom');
   const boldSetting = document.querySelector('[data-setting-key="fontBold"]')?.closest('.setting-item');
   if (boldSetting) boldSetting.style.display = fontFamily === 'adwaita' ? 'none' : '';
   const customFontStyle = document.getElementById('custom-font-face');
@@ -332,6 +409,7 @@ setupJ7PrimePopupUnlock();
 
 function applySocialLabels() {
   toggleClass('socialLabelsEnabled', 'show-social-labels', false);
+  toggleClass('toolDescriptionsEnabled', 'hide-tool-descriptions', true);
 }
 
 function applyFigcaptionVisibility() {
@@ -343,7 +421,7 @@ function applyAccentColor() {
   const accent = localStorage.getItem('accentColor') || 'nord';
   const root = document.documentElement;
   const customAccentSetting = document.getElementById('custom-accent-setting');
-  if (customAccentSetting) customAccentSetting.style.display = accent === 'custom' ? 'flex' : 'none';
+  setRowDisplay(customAccentSetting, accent === 'custom');
 
   root.classList.remove('accent-navy', 'accent-nord', 'accent-custom');
   const customColor = localStorage.getItem('customAccentColor') || '#5d94c2';
@@ -422,11 +500,12 @@ function updateHalloweenBatOverlay(activeTheme) {
 
 function applyTheme() {
   const savedTheme = localStorage.getItem('theme') || 'auto';
-  const validThemes = ['auto', 'default', 'halloween', 'christmas'];
+  const validThemes = ['auto', 'default', 'old', 'halloween', 'christmas'];
   const theme = validThemes.includes(savedTheme) ? savedTheme : 'auto';
   const activeTheme = theme === 'auto' ? getAutomaticTheme() : theme;
   const root = document.documentElement;
 
+  root.classList.toggle('theme-old', theme === 'old');
   root.classList.toggle('holiday-halloween', activeTheme === 'halloween');
   root.classList.toggle('holiday-christmas', activeTheme === 'christmas');
   updateHalloweenBatOverlay(activeTheme);
@@ -439,7 +518,7 @@ function applyWallpaper(animate = false) {
   const wallpaper = savedWallpaper === 'custom' && !hasCustomWallpaper ? 'Metro.jpg' : savedWallpaper;
   const root = document.documentElement;
   const customWallpaperSetting = document.getElementById('custom-wallpaper-setting');
-  if (customWallpaperSetting) customWallpaperSetting.style.display = savedWallpaper === 'custom' ? 'flex' : 'none';
+  setRowDisplay(customWallpaperSetting, savedWallpaper === 'custom');
   const applyWallpaperSettings = () => {
     root.classList.toggle('gradient-wallpaper', wallpaper === 'gradient');
     root.classList.toggle('gradient-static', wallpaper === 'gradient' && isEnabled('gradientStopMotion', false));
@@ -483,11 +562,11 @@ function applyGradientSettings() {
 
 function toggleGradientSettings(show) {
   document.querySelectorAll('.gradient-settings').forEach(el => {
-    el.style.display = show ? 'flex' : 'none';
+    setRowDisplay(el, show);
   });
   document.querySelectorAll('.gradient-color-pickers').forEach(el => {
     const customizeColors = isEnabled('gradientCustomizeColors', false);
-    el.style.display = show && customizeColors ? 'flex' : 'none';
+    setRowDisplay(el, show && customizeColors);
   });
 }
 
@@ -1258,13 +1337,13 @@ function openBlurSettingsEditor() {
 
   const previewWallpaper = overlay.querySelector('[data-preview-wallpaper]');
   const previewSurface = overlay.querySelector('[data-preview-surface]');
-  const updatePreview = () => {
+  const updatePreview = (animate = false) => {
     draft.blurEnabled = overlay.querySelector('[data-blur-key="blurEnabled"]').checked;
     draft.backgroundBlur = overlay.querySelector('[data-blur-key="backgroundBlur"]').checked;
     draft.mainBlurLevel = Number(overlay.querySelector('[data-blur-key="mainBlurLevel"]').value);
     draft.wallpaperBlurLevel = Number(overlay.querySelector('[data-blur-key="wallpaperBlurLevel"]').value);
-    overlay.querySelector('[data-blur-range="mainBlurLevel"]').hidden = !draft.blurEnabled;
-    overlay.querySelector('[data-blur-range="wallpaperBlurLevel"]').hidden = !draft.backgroundBlur;
+    setRowDisplay(overlay.querySelector('[data-blur-range="mainBlurLevel"]'), draft.blurEnabled, { hidden: true, instant: !animate });
+    setRowDisplay(overlay.querySelector('[data-blur-range="wallpaperBlurLevel"]'), draft.backgroundBlur, { hidden: true, instant: !animate });
     overlay.querySelector('[data-blur-key="mainBlurLevel"] + output').textContent = `${draft.mainBlurLevel}px`;
     overlay.querySelector('[data-blur-key="wallpaperBlurLevel"] + output').textContent = `${draft.wallpaperBlurLevel}px`;
     previewWallpaper.style.filter = draft.backgroundBlur && draft.wallpaperBlurLevel > 0
@@ -1296,7 +1375,7 @@ function openBlurSettingsEditor() {
   };
 
   overlay.querySelectorAll('[data-blur-key]').forEach(input => {
-    input.addEventListener(input.type === 'range' ? 'input' : 'change', updatePreview);
+    input.addEventListener(input.type === 'range' ? 'input' : 'change', () => updatePreview(true));
   });
   overlay.querySelectorAll('[data-close-blur-settings]').forEach(button => {
     button.addEventListener('click', closeEditor);
@@ -1341,7 +1420,7 @@ function initializeCheckboxes() {
 
     if (key === 'gradientCustomizeColors') {
       document.querySelectorAll('.gradient-color-pickers').forEach(el => {
-        el.style.display = checkbox.checked ? 'flex' : 'none';
+        setRowDisplay(el, checkbox.checked);
       });
     }
 
@@ -1596,7 +1675,7 @@ function initializeRangeInputs() {
 
 function resetSettingsToDefaults() {
   const settingKeys = [
-    'socialLabelsEnabled', 'showFigcaptions', 'topbarMinimized', 'fontBold', 'fontFamily',
+    'socialLabelsEnabled', 'toolDescriptionsEnabled', 'showFigcaptions', 'topbarMinimized', 'fontBold', 'fontFamily',
     'language', 'topbarPosition', 'wallpaper', 'accentColor', 'timeFormat', 'theme', 'blurEnabled', 'backgroundBlur',
     'reducedAnimation', 'potatoEnabled', 'experimentalFeaturesEnabled', 'experimentalFeaturesUnlocked', 'customAccentColor',
     'customFontData', 'customWallpaper', 'mainOpacity', 'cardOpacity', 'mainBlurLevel', 'wallpaperBlurLevel', 'cardBlurLevel', 'experimentalRoundness',
@@ -1611,6 +1690,163 @@ function resetSettingsToDefaults() {
   localStorage.setItem('language', getPreferredLanguage());
   localStorage.setItem('languagePromptShown', '1');
   window.location.reload();
+}
+
+const resetSettingKeyMap = {
+  accentColor: ['accentColor', 'customAccentColor'],
+  fontFamily: ['fontFamily', 'customFontData'],
+  wallpaper: ['wallpaper', 'customWallpaper']
+};
+
+function collectResettableSettings() {
+  const portuguese = document.documentElement.lang === 'pt-BR';
+  const on = portuguese ? 'Ligado' : 'On';
+  const off = portuguese ? 'Desligado' : 'Off';
+  const groups = [];
+  document.querySelectorAll('.settings-section').forEach(section => {
+    if (getComputedStyle(section).display === 'none') return;
+    const rows = [];
+    section.querySelectorAll('.setting-item').forEach(row => {
+      if (getComputedStyle(row).display === 'none') return;
+      const label = row.querySelector(':scope > span')?.textContent.trim();
+      if (!label) return;
+      const control = row.querySelector('[data-setting-key]');
+      let keys = null;
+      let value = '';
+      let widgets = false;
+      if (control) {
+        keys = resetSettingKeyMap[control.dataset.settingKey] || [control.dataset.settingKey];
+        if (control.type === 'checkbox') value = control.checked ? on : off;
+        else if (control.tagName === 'SELECT') value = control.selectedOptions[0]?.textContent.trim() || '';
+        else if (control.type === 'range') value = row.querySelector('output')?.textContent.trim() || control.value;
+        else value = row.querySelector('.custom-color-value')?.textContent.trim() || '';
+      } else if (row.querySelector('#open-blur-settings-editor')) {
+        keys = ['blurEnabled', 'mainBlurLevel', 'backgroundBlur', 'wallpaperBlurLevel', 'cardBlurLevel'];
+      } else if (row.querySelector('#open-home-widget-editor')) {
+        keys = [];
+        widgets = true;
+      }
+      if (keys) rows.push({ label, value, keys, widgets });
+    });
+    if (rows.length) groups.push({ title: section.querySelector(':scope > h3')?.textContent.trim() || '', rows });
+  });
+  return groups;
+}
+
+function openResetSettingsEditor() {
+  const trigger = document.getElementById('open-reset-settings-editor');
+  if (!trigger || document.getElementById('reset-settings-overlay')) return;
+
+  const portuguese = document.documentElement.lang === 'pt-BR';
+  const labels = portuguese
+    ? {
+      title: 'Restaurar uma configuração padrão', hint: 'Escolha quais configurações voltam ao valor padrão.',
+      close: 'Fechar', cancel: 'Cancelar', selectAll: 'Selecionar tudo', clear: 'Limpar', apply: 'Restaurar'
+    }
+    : {
+      title: 'Reset a setting to default', hint: 'Choose which settings go back to their default value.',
+      close: 'Close', cancel: 'Cancel', selectAll: 'Select all', clear: 'Clear', apply: 'Reset'
+    };
+  const escapeHtml = value => value.replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
+  const entries = [];
+  const groupsHtml = collectResettableSettings().map(group => `
+    <section class="settings-section">
+      <h3>${escapeHtml(group.title)}</h3>
+      ${group.rows.map(row => {
+        const index = entries.push(row) - 1;
+        return `<label class="setting-item">
+        <span>${escapeHtml(row.label)}</span>
+        <div class="reset-settings-control">
+          <span class="reset-settings-value">${escapeHtml(row.value)}</span>
+          <span class="switch"><input type="checkbox" data-reset-index="${index}" aria-label="${escapeHtml(row.label)}"><span class="slider"></span></span>
+        </div>
+      </label>`;
+      }).join('')}
+    </section>`).join('');
+
+  const overlay = document.createElement('div');
+  overlay.id = 'reset-settings-overlay';
+  overlay.className = 'widget-layout-overlay reset-settings-overlay';
+  overlay.innerHTML = `
+    <section class="widget-layout-popup reset-settings-popup" role="dialog" aria-modal="true" aria-labelledby="reset-settings-title">
+      <header class="widget-layout-header">
+        <h2 id="reset-settings-title">${labels.title}</h2>
+        <button type="button" class="device-modal-close" data-close-reset-settings aria-label="${labels.close}">×</button>
+      </header>
+      <p class="reset-settings-hint">${labels.hint}</p>
+      <div class="reset-settings-preview">${groupsHtml}</div>
+      <footer class="widget-layout-footer">
+        <button type="button" class="custom-file-button" data-reset-toggle-all>${labels.selectAll}</button>
+        <button type="button" class="custom-file-button" data-close-reset-settings>${labels.cancel}</button>
+        <button type="button" class="custom-file-button" data-apply-reset-settings disabled>${labels.apply}</button>
+      </footer>
+    </section>
+  `;
+  document.body.appendChild(overlay);
+  trigger.setAttribute('aria-expanded', 'true');
+
+  const inputs = Array.from(overlay.querySelectorAll('[data-reset-index]'));
+  const applyButton = overlay.querySelector('[data-apply-reset-settings]');
+  const toggleAllButton = overlay.querySelector('[data-reset-toggle-all]');
+  const updateSelection = () => {
+    const count = inputs.filter(input => input.checked).length;
+    applyButton.disabled = count === 0;
+    applyButton.textContent = count ? `${labels.apply} (${count})` : labels.apply;
+    toggleAllButton.textContent = count === inputs.length ? labels.clear : labels.selectAll;
+    inputs.forEach(input => input.closest('.setting-item').classList.toggle('is-selected', input.checked));
+  };
+  const handleKeydown = event => {
+    if (event.key === 'Escape') closeEditor();
+  };
+  const closeEditor = () => {
+    document.removeEventListener('keydown', handleKeydown);
+    trigger.setAttribute('aria-expanded', 'false');
+    if (prefersReducedMotion()) {
+      overlay.remove();
+      trigger.focus();
+      return;
+    }
+    overlay.classList.remove('show');
+    window.setTimeout(() => {
+      overlay.remove();
+      trigger.focus();
+    }, 240);
+  };
+
+  inputs.forEach(input => input.addEventListener('change', updateSelection));
+  toggleAllButton.addEventListener('click', () => {
+    const selectAll = inputs.some(input => !input.checked);
+    inputs.forEach(input => { input.checked = selectAll; });
+    updateSelection();
+  });
+  overlay.querySelectorAll('[data-close-reset-settings]').forEach(button => {
+    button.addEventListener('click', closeEditor);
+  });
+  applyButton.addEventListener('click', () => {
+    const selected = inputs.filter(input => input.checked).map(input => entries[Number(input.dataset.resetIndex)]);
+    if (!selected.length) return;
+    if (selected.length === entries.length) {
+      resetSettingsToDefaults();
+      return;
+    }
+    selected.forEach(entry => entry.keys.forEach(key => localStorage.removeItem(key)));
+    if (selected.some(entry => entry.widgets)) saveHomeWidgetLayout(getDefaultHomeWidgetLayout());
+    if (selected.some(entry => entry.keys.includes('language'))) localStorage.setItem('language', getPreferredLanguage());
+    window.location.reload();
+  });
+  overlay.addEventListener('click', event => {
+    if (event.target === overlay) closeEditor();
+  });
+  document.addEventListener('keydown', handleKeydown);
+
+  updateSelection();
+  void overlay.offsetWidth;
+  requestAnimationFrame(() => overlay.classList.add('show'));
+  inputs[0]?.focus();
+}
+
+function initializeResetSettingsEditor() {
+  document.getElementById('open-reset-settings-editor')?.addEventListener('click', openResetSettingsEditor);
 }
 
 function updateModeIndicator() {
@@ -1712,6 +1948,7 @@ if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initializeCheckboxes);
   document.addEventListener('DOMContentLoaded', initializeHomeWidgetEditor);
   document.addEventListener('DOMContentLoaded', initializeBlurSettingsEditor);
+  document.addEventListener('DOMContentLoaded', initializeResetSettingsEditor);
   document.addEventListener('DOMContentLoaded', initializeColorPickers);
   document.addEventListener('DOMContentLoaded', initializeRangeInputs);
   document.addEventListener('DOMContentLoaded', initializeSelects);
@@ -1724,6 +1961,7 @@ if (document.readyState === 'loading') {
   initializeCheckboxes();
   initializeHomeWidgetEditor();
   initializeBlurSettingsEditor();
+  initializeResetSettingsEditor();
   initializeColorPickers();
   initializeRangeInputs();
   initializeSelects();

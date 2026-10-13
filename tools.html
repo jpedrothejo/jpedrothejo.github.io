@@ -8,6 +8,14 @@
   <link href="/scripts/style.css" rel="stylesheet" type="text/css" media="all">
   <link rel="icon" href="images/site icon.ico">
   <script src="/scripts/settings.js"></script>
+  <script src="/scripts/language-popup.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (typeof window.showLanguagePopup === 'function' && localStorage.getItem('languagePromptShown') !== '1') {
+        window.showLanguagePopup({ firstTime: true });
+      }
+    });
+  </script>
 </head>
 
 <body>
@@ -32,15 +40,15 @@
           <h3>Android</h3>
 
             <div class="setting-item">
-              <span class="tool-name" title="adb and fastboot, straight from Google.">Android Platform Tools<span class="os-icons"><svg class="os-icon" role="img" aria-label="Windows"><title>Windows</title><use href="#os-windows"/></svg><svg class="os-icon" role="img" aria-label="macOS"><title>macOS</title><use href="#os-macos"/></svg><svg class="os-icon" role="img" aria-label="Linux"><title>Linux</title><use href="#os-linux"/></svg></span></span>
+              <span class="tool-name" title="adb and fastboot, straight from Google.">Android Platform Tools<span class="os-icons"><svg class="os-icon" role="img" aria-label="Windows"><title>Windows</title><use href="#os-windows"/></svg><svg class="os-icon" role="img" aria-label="macOS"><title>macOS</title><use href="#os-macos"/></svg><svg class="os-icon" role="img" aria-label="Linux"><title>Linux</title><use href="#os-linux"/></svg></span><span class="tool-desc">adb and fastboot, straight from Google.</span></span>
               <a class="custom-file-button" href="https://developer.android.com/tools/releases/platform-tools" target="_blank" rel="noopener noreferrer">Download</a>
             </div>
             <div class="setting-item">
-              <span class="tool-name" title="Display and control an Android phone from your computer over USB or Wi-Fi.">scrcpy<span class="os-icons"><svg class="os-icon" role="img" aria-label="Windows"><title>Windows</title><use href="#os-windows"/></svg><svg class="os-icon" role="img" aria-label="macOS"><title>macOS</title><use href="#os-macos"/></svg><svg class="os-icon" role="img" aria-label="Linux"><title>Linux</title><use href="#os-linux"/></svg></span></span>
+              <span class="tool-name" title="Display and control an Android phone from your computer over USB or Wi-Fi.">scrcpy<span class="os-icons"><svg class="os-icon" role="img" aria-label="Windows"><title>Windows</title><use href="#os-windows"/></svg><svg class="os-icon" role="img" aria-label="macOS"><title>macOS</title><use href="#os-macos"/></svg><svg class="os-icon" role="img" aria-label="Linux"><title>Linux</title><use href="#os-linux"/></svg></span><span class="tool-desc">Display and control an Android phone from your computer over USB or Wi-Fi.</span></span>
               <a class="custom-file-button" href="https://github.com/Genymobile/scrcpy/releases" target="_blank" rel="noopener noreferrer">Download</a>
             </div>
             <div class="setting-item">
-              <span class="tool-name" title="My Android app that shows device, root and Knox information.">Device Info<span class="os-icons"><svg class="os-icon" role="img" aria-label="Android"><title>Android</title><use href="#os-android"/></svg></span></span>
+              <span class="tool-name" title="My Android app that shows device, root and Knox information.">Device Info<span class="os-icons"><svg class="os-icon" role="img" aria-label="Android"><title>Android</title><use href="#os-android"/></svg></span><span class="tool-desc">My Android app that shows device, root and Knox information.</span></span>
               <a class="custom-file-button" href="https://drive.google.com/file/d/1KXkyhIv28tF__zyom8poOW0-3yP71Y9t/view?usp=sharing" target="_blank" rel="noopener noreferrer">Download</a>
             </div>
         </div>
@@ -48,27 +56,27 @@
           <h3>Samsung</h3>
 
             <div class="setting-item">
-              <span class="tool-name" title="Samsung's Windows flashing tool for Download Mode. All versions are available from SamFw.">Odin3<span class="os-icons"><svg class="os-icon" role="img" aria-label="Windows"><title>Windows</title><use href="#os-windows"/></svg></span></span>
+              <span class="tool-name" title="Samsung's Windows flashing tool for Download Mode. All versions are available from SamFw.">Odin3<span class="os-icons"><svg class="os-icon" role="img" aria-label="Windows"><title>Windows</title><use href="#os-windows"/></svg></span><span class="tool-desc">Samsung's Windows flashing tool for Download Mode. All versions are available from SamFw.</span></span>
               <a class="custom-file-button" href="https://samfw.com/blog/download-odin-all-version" target="_blank" rel="noopener noreferrer">Download</a>
             </div>
             <div class="setting-item">
-              <span class="tool-name" title="Samsung's own flashing tool for Download Mode. There is no official download site, so XDA's thread is the safest source.">Odin4<span class="os-icons"><svg class="os-icon" role="img" aria-label="Linux"><title>Linux</title><use href="#os-linux"/></svg></span></span>
+              <span class="tool-name" title="Samsung's own flashing tool for Download Mode. There is no official download site, so XDA's thread is the safest source.">Odin4<span class="os-icons"><svg class="os-icon" role="img" aria-label="Linux"><title>Linux</title><use href="#os-linux"/></svg></span><span class="tool-desc">Samsung's own flashing tool for Download Mode. There is no official download site, so XDA's thread is the safest source.</span></span>
               <a class="custom-file-button" href="https://xdaforums.com/t/official-samsung-odin-v4-1-2-1-dc05e3ea-for-linux.4453423/" target="_blank" rel="noopener noreferrer">XDA thread</a>
             </div>
             <div class="setting-item">
-              <span class="tool-name" title="Open-source Odin4 alternative that has to be built from source.">odin4 (open source)<span class="os-icons"><svg class="os-icon" role="img" aria-label="Linux"><title>Linux</title><use href="#os-linux"/></svg></span></span>
+              <span class="tool-name" title="Open-source Odin4 alternative that has to be built from source.">odin4 (open source)<span class="os-icons"><svg class="os-icon" role="img" aria-label="Linux"><title>Linux</title><use href="#os-linux"/></svg></span><span class="tool-desc">Open-source Odin4 alternative that has to be built from source.</span></span>
               <a class="custom-file-button" href="https://github.com/Llucs/odin4" target="_blank" rel="noopener noreferrer">Source</a>
             </div>
             <div class="setting-item">
-              <span class="tool-name" title="Open-source Odin replacement built on libusb.">Heimdall<span class="os-icons"><svg class="os-icon" role="img" aria-label="Windows"><title>Windows</title><use href="#os-windows"/></svg><svg class="os-icon" role="img" aria-label="macOS"><title>macOS</title><use href="#os-macos"/></svg><svg class="os-icon" role="img" aria-label="Linux"><title>Linux</title><use href="#os-linux"/></svg></span></span>
+              <span class="tool-name" title="Open-source Odin replacement built on libusb.">Heimdall<span class="os-icons"><svg class="os-icon" role="img" aria-label="Windows"><title>Windows</title><use href="#os-windows"/></svg><svg class="os-icon" role="img" aria-label="macOS"><title>macOS</title><use href="#os-macos"/></svg><svg class="os-icon" role="img" aria-label="Linux"><title>Linux</title><use href="#os-linux"/></svg></span><span class="tool-desc">Open-source Odin replacement built on libusb.</span></span>
               <a class="custom-file-button" href="https://github.com/Benjamin-Dobell/Heimdall" target="_blank" rel="noopener noreferrer">Source</a>
             </div>
             <div class="setting-item">
-              <span class="tool-name" title="Driver Windows needs to detect Galaxy phones in Download Mode.">Samsung USB Driver<span class="os-icons"><svg class="os-icon" role="img" aria-label="Windows"><title>Windows</title><use href="#os-windows"/></svg></span></span>
+              <span class="tool-name" title="Driver Windows needs to detect Galaxy phones in Download Mode.">Samsung USB Driver<span class="os-icons"><svg class="os-icon" role="img" aria-label="Windows"><title>Windows</title><use href="#os-windows"/></svg></span><span class="tool-desc">Driver Windows needs to detect Galaxy phones in Download Mode.</span></span>
               <a class="custom-file-button" href="https://developer.samsung.com/android-usb-driver" target="_blank" rel="noopener noreferrer">Download</a>
             </div>
             <div class="setting-item">
-              <span class="tool-name" title="Windows utility for Samsung phones from SamFw.">SamFw Tool<span class="os-icons"><svg class="os-icon" role="img" aria-label="Windows"><title>Windows</title><use href="#os-windows"/></svg></span></span>
+              <span class="tool-name" title="Windows utility for Samsung phones from SamFw.">SamFw Tool<span class="os-icons"><svg class="os-icon" role="img" aria-label="Windows"><title>Windows</title><use href="#os-windows"/></svg></span><span class="tool-desc">Windows utility for Samsung phones from SamFw.</span></span>
               <a class="custom-file-button" href="https://samfw.com/blog/samfwtool" target="_blank" rel="noopener noreferrer">Download</a>
             </div>
         </div>

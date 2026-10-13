@@ -56,6 +56,15 @@
             </div>
 
             <div class="setting-item">
+              <span>Mostrar descrições das ferramentas</span>
+              <label class="switch">
+                <input type="checkbox" class="custom-checkbox" data-setting-key="toolDescriptionsEnabled"
+                  data-default-on="true">
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="setting-item">
               <span>Mostrar Figcaptions</span>
               <label class="switch">
                 <input type="checkbox" class="custom-checkbox" data-setting-key="showFigcaptions" data-default-on="true">
@@ -173,6 +182,7 @@
               <select class="custom-select" data-setting-key="theme" aria-label="Tema">
                 <option value="auto" selected>Automático</option>
                 <option value="default">Padrão</option>
+                <option value="old">Antigo</option>
                 <option value="halloween">Halloween</option>
                 <option value="christmas">Natal</option>
               </select>
@@ -247,7 +257,7 @@
           </div>
         </div>
         <div class="card-bg settings-reset-card">
-          <button class="custom-file-button" type="button" onclick="resetSettingsToDefaults()">Restaurar configurações padrão</button>
+          <button class="custom-file-button" type="button" id="open-reset-settings-editor" aria-haspopup="dialog" aria-expanded="false">Restaurar uma configuração padrão</button>
         </div>
     </div>
   </center>

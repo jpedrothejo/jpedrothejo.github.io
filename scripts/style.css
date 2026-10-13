@@ -124,6 +124,10 @@
   }
 }
 
+html:where(:not(.theme-old)) *:not(:where(.switch, .switch *, .profile-avatar, .profile-avatar > img, .status-badge-dot)) {
+  border-radius: var(--experimental-roundness) !important;
+}
+
 html.font-bold-enabled *:not(:where(.settings button, .settings .switch, .settings .switch *, .settings-reset-card button, .widget-layout-popup button, .device-modal-close)) {
   font-weight: var(--experimental-boldness);
 }
@@ -3178,4 +3182,130 @@ body.device-modal-open {
 
 html.blur-transitioning {
   transition: background 0.3s, color 0.3s, --main-blur 0.45s var(--ease-out), --main-saturation 0.45s var(--ease-out);
+}
+
+html.theme-old {
+  --wallpaper-blur: none !important;
+}
+
+html.theme-old .main,
+html.theme-old .topnav,
+html.theme-old .social-bg,
+html.theme-old .card-bg {
+  background: var(--accent-color-primary) !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+html.theme-old.pattern-wallpaper .main,
+html.theme-old.pattern-wallpaper .topnav,
+html.theme-old.pattern-wallpaper .social-bg,
+html.theme-old.pattern-wallpaper .card-bg,
+html.theme-old.pattern-wallpaper .settings-section,
+html.theme-old.pattern-wallpaper .device-card {
+  background: rgba(9, 9, 11, 0.78) !important;
+}
+
+html.theme-old .setting-item:has([data-setting-key="mainOpacity"], [data-setting-key="cardOpacity"], [data-setting-key="experimentalRoundness"], #open-blur-settings-editor) {
+  display: none !important;
+}
+
+.tool-name .tool-desc {
+  display: block;
+  max-width: 36ch;
+  margin-top: 6px;
+  font-size: 0.8rem;
+  line-height: 1.35;
+  opacity: 0.75;
+}
+
+html.hide-tool-descriptions .tool-desc {
+  display: none;
+}
+
+.reset-settings-popup {
+  width: min(860px, 94vw);
+}
+
+.reset-settings-hint {
+  margin: 0 0 12px;
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.reset-settings-preview {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 12px;
+  align-items: start;
+  text-align: left;
+}
+
+.reset-settings-preview .setting-item {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.reset-settings-preview .setting-item:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.reset-settings-preview .setting-item.is-selected {
+  background-color: color-mix(in srgb, var(--accent-color-glow) 28%, transparent);
+}
+
+.reset-settings-control {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.reset-settings-value {
+  max-width: 150px;
+  overflow: hidden;
+  font-size: 0.8rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  opacity: 0.65;
+}
+
+.device-modal-overlay,
+.widget-layout-overlay {
+  background: color-mix(in srgb, var(--accent-color-glow) 22%, rgba(5, 6, 10, 0.42));
+  backdrop-filter: blur(calc(var(--main-blur) * 0.9)) saturate(var(--main-saturation));
+  -webkit-backdrop-filter: blur(calc(var(--main-blur) * 0.9)) saturate(var(--main-saturation));
+}
+
+.device-modal,
+.widget-layout-popup,
+.experimental-unlock-dialog {
+  background: color-mix(in srgb, var(--accent-color-primary) min(100%, calc(var(--main-opacity) + 12%)), transparent);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  color: #ffffff;
+}
+
+.device-modal-close {
+  border: 1px solid color-mix(in srgb, var(--accent-color-glow) 70%, rgba(255, 255, 255, 0.35));
+}
+
+.device-modal-close:hover,
+.device-modal-close:focus-visible {
+  background: var(--accent-color-hover);
+}
+
+html.theme-old .device-modal-overlay,
+html.theme-old .widget-layout-overlay {
+  background: rgba(5, 6, 10, 0.6);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+html.theme-old .device-modal,
+html.theme-old .widget-layout-popup,
+html.theme-old .experimental-unlock-dialog {
+  background: var(--accent-color-primary) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
