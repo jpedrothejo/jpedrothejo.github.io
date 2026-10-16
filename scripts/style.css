@@ -3296,17 +3296,6 @@ html.hide-tool-descriptions .tool-desc {
   background: var(--accent-color-hover);
 }
 
-html.theme-old .device-modal-overlay,
-html.theme-old .widget-layout-overlay {
-  background: rgba(5, 6, 10, 0.6);
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-}
-
-html.theme-old .device-modal,
-html.theme-old .widget-layout-popup,
-html.theme-old .experimental-unlock-dialog {
-  background: var(--accent-color-primary) !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
+.hidden {
+  display: none !important;
 }

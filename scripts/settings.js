@@ -500,12 +500,11 @@ function updateHalloweenBatOverlay(activeTheme) {
 
 function applyTheme() {
   const savedTheme = localStorage.getItem('theme') || 'auto';
-  const validThemes = ['auto', 'default', 'old', 'halloween', 'christmas'];
+  const validThemes = ['auto', 'default', 'halloween', 'christmas'];
   const theme = validThemes.includes(savedTheme) ? savedTheme : 'auto';
   const activeTheme = theme === 'auto' ? getAutomaticTheme() : theme;
   const root = document.documentElement;
 
-  root.classList.toggle('theme-old', theme === 'old');
   root.classList.toggle('holiday-halloween', activeTheme === 'halloween');
   root.classList.toggle('holiday-christmas', activeTheme === 'christmas');
   updateHalloweenBatOverlay(activeTheme);
