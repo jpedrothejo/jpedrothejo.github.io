@@ -1373,6 +1373,7 @@ button {
 .home-social-links .icon-img {
   width: 32px;
   height: 32px;
+  border-radius: 0px !important;
 }
 
 .home-social-links .bsky-icon {
