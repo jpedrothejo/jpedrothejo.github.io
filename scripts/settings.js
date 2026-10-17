@@ -498,15 +498,175 @@ function updateHalloweenBatOverlay(activeTheme) {
   document.body.appendChild(overlay);
 }
 
+const materialAccentSeeds = { default: '#5d94c2', navy: '#4052b5', nord: '#88c0d0' };
+
+const materialSchemeSpec = {
+  light: [
+    ['primary', 'p', 40], ['on-primary', 'p', 100], ['primary-container', 'p', 90], ['on-primary-container', 'p', 10],
+    ['secondary', 's', 40], ['on-secondary', 's', 100], ['secondary-container', 's', 90], ['on-secondary-container', 's', 10],
+    ['tertiary', 't', 40], ['on-tertiary', 't', 100], ['tertiary-container', 't', 90], ['on-tertiary-container', 't', 10],
+    ['surface', 'n', 98], ['on-surface', 'n', 10], ['surface-variant', 'nv', 90], ['on-surface-variant', 'nv', 30],
+    ['outline', 'nv', 50], ['outline-variant', 'nv', 80], ['inverse-surface', 'n', 20], ['inverse-on-surface', 'n', 95],
+    ['inverse-primary', 'p', 80], ['surface-dim', 'n', 87], ['surface-bright', 'n', 98],
+    ['surface-container-lowest', 'n', 100], ['surface-container-low', 'n', 96], ['surface-container', 'n', 94],
+    ['surface-container-high', 'n', 92], ['surface-container-highest', 'n', 90]
+  ],
+  dark: [
+    ['primary', 'p', 80], ['on-primary', 'p', 20], ['primary-container', 'p', 30], ['on-primary-container', 'p', 90],
+    ['secondary', 's', 80], ['on-secondary', 's', 20], ['secondary-container', 's', 30], ['on-secondary-container', 's', 90],
+    ['tertiary', 't', 80], ['on-tertiary', 't', 20], ['tertiary-container', 't', 30], ['on-tertiary-container', 't', 90],
+    ['surface', 'n', 6], ['on-surface', 'n', 90], ['surface-variant', 'nv', 30], ['on-surface-variant', 'nv', 80],
+    ['outline', 'nv', 60], ['outline-variant', 'nv', 30], ['inverse-surface', 'n', 90], ['inverse-on-surface', 'n', 20],
+    ['inverse-primary', 'p', 40], ['surface-dim', 'n', 6], ['surface-bright', 'n', 24],
+    ['surface-container-lowest', 'n', 4], ['surface-container-low', 'n', 10], ['surface-container', 'n', 12],
+    ['surface-container-high', 'n', 17], ['surface-container-highest', 'n', 22]
+  ]
+};
+
+const materialErrorColors = {
+  light: { 'error': '#b3261e', 'on-error': '#ffffff', 'error-container': '#f9dedc', 'on-error-container': '#410e0b' },
+  dark: { 'error': '#f2b8b5', 'on-error': '#601410', 'error-container': '#8c1d18', 'on-error-container': '#f9dedc' }
+};
+
+const materialTokenNames = [
+  ...materialSchemeSpec.light.map(entry => entry[0]),
+  ...Object.keys(materialErrorColors.light)
+];
+
+const materialIncompatibleSettings = [
+  '[data-setting-key="wallpaper"]',
+  '[data-setting-key="mainOpacity"]',
+  '[data-setting-key="cardOpacity"]',
+  '[data-setting-key="experimentalRoundness"]',
+  '#open-blur-settings-editor'
+];
+
+function isMaterialTheme() {
+  return document.documentElement.classList.contains('theme-material');
+}
+
+function materialLabFromHex(hex) {
+  const [red, green, blue] = hex.slice(1).match(/.{2}/g).map(value => {
+    const channel = parseInt(value, 16) / 255;
+    return channel <= 0.04045 ? channel / 12.92 : Math.pow((channel + 0.055) / 1.055, 2.4);
+  });
+  const x = (0.4124564 * red + 0.3575761 * green + 0.1804375 * blue) / 0.95047;
+  const y = 0.2126729 * red + 0.7151522 * green + 0.072175 * blue;
+  const z = (0.0193339 * red + 0.119192 * green + 0.9503041 * blue) / 1.08883;
+  const f = value => value > 216 / 24389 ? Math.cbrt(value) : (24389 / 27 * value + 16) / 116;
+  return { a: 500 * (f(x) - f(y)), b: 200 * (f(y) - f(z)) };
+}
+
+function materialSeedHue(hex) {
+  const { a, b } = materialLabFromHex(hex);
+  const hue = Math.atan2(b, a) * 180 / Math.PI;
+  return hue < 0 ? hue + 360 : hue;
+}
+
+function materialLinearRgb(tone, chroma, hue) {
+  const radians = hue * Math.PI / 180;
+  const fy = (tone + 16) / 116;
+  const fx = fy + chroma * Math.cos(radians) / 500;
+  const fz = fy - chroma * Math.sin(radians) / 200;
+  const inverse = value => value * value * value > 216 / 24389 ? value * value * value : (116 * value - 16) / (24389 / 27);
+  const x = 0.95047 * inverse(fx);
+  const y = inverse(fy);
+  const z = 1.08883 * inverse(fz);
+  return [
+    3.2404542 * x - 1.5371385 * y - 0.4985314 * z,
+    -0.969266 * x + 1.8760108 * y + 0.041556 * z,
+    0.0556434 * x - 0.2040259 * y + 1.0572252 * z
+  ];
+}
+
+function materialToneColor(hue, chroma, tone) {
+  if (tone <= 0) return '#000000';
+  if (tone >= 100) return '#ffffff';
+  const fits = value => materialLinearRgb(tone, value, hue).every(channel => channel > -0.0005 && channel < 1.0005);
+  let usable = chroma;
+  if (!fits(chroma)) {
+    let low = 0;
+    let high = chroma;
+    for (let step = 0; step < 18; step++) {
+      const middle = (low + high) / 2;
+      if (fits(middle)) low = middle;
+      else high = middle;
+    }
+    usable = low;
+  }
+  const encoded = materialLinearRgb(tone, usable, hue).map(channel => {
+    const clamped = Math.min(1, Math.max(0, channel));
+    const gamma = clamped <= 0.0031308 ? clamped * 12.92 : 1.055 * Math.pow(clamped, 1 / 2.4) - 0.055;
+    return Math.round(gamma * 255).toString(16).padStart(2, '0');
+  });
+  return `#${encoded.join('')}`;
+}
+
+function getMaterialSeed() {
+  const accent = localStorage.getItem('accentColor') || 'nord';
+  const customColor = localStorage.getItem('customAccentColor') || '#5d94c2';
+  if (accent === 'custom' && /^#[0-9a-f]{6}$/i.test(customColor)) return customColor;
+  return materialAccentSeeds[accent] || materialAccentSeeds.nord;
+}
+
+function applyMaterialPalette(mode) {
+  const root = document.documentElement;
+  materialTokenNames.forEach(name => root.style.removeProperty(`--md-sys-color-${name}`));
+  if (!mode) return;
+
+  const hue = materialSeedHue(getMaterialSeed());
+  const palettes = {
+    p: [hue, 36],
+    s: [hue, 16],
+    t: [(hue + 60) % 360, 24],
+    n: [hue, 6],
+    nv: [hue, 8]
+  };
+  materialSchemeSpec[mode].forEach(([name, palette, tone]) => {
+    const [paletteHue, chroma] = palettes[palette];
+    root.style.setProperty(`--md-sys-color-${name}`, materialToneColor(paletteHue, chroma, tone));
+  });
+  Object.entries(materialErrorColors[mode]).forEach(([name, value]) => {
+    root.style.setProperty(`--md-sys-color-${name}`, value);
+  });
+}
+
+function applyMaterialSettingsVisibility() {
+  const material = isMaterialTheme();
+  materialIncompatibleSettings.forEach(selector => {
+    const row = document.querySelector(selector)?.closest('.setting-item');
+    setRowDisplay(row, !material, { hidden: true });
+  });
+}
+
+function markCurrentNavLink() {
+  const normalize = path => path
+    .replace(/^\/br(?=\/|$)/, '')
+    .replace(/index\.html$/, '')
+    .replace(/\.html$/, '')
+    .replace(/\/$/, '') || '/';
+  const current = normalize(window.location.pathname);
+  document.querySelectorAll('.topnav a[href]').forEach(link => {
+    const target = normalize(new URL(link.getAttribute('href'), window.location.href).pathname);
+    if (target === current) link.setAttribute('aria-current', 'page');
+    else link.removeAttribute('aria-current');
+  });
+}
+
 function applyTheme() {
   const savedTheme = localStorage.getItem('theme') || 'auto';
-  const validThemes = ['auto', 'default', 'halloween', 'christmas'];
+  const validThemes = ['auto', 'default', 'halloween', 'christmas', 'material-dark', 'material-light'];
   const theme = validThemes.includes(savedTheme) ? savedTheme : 'auto';
   const activeTheme = theme === 'auto' ? getAutomaticTheme() : theme;
   const root = document.documentElement;
+  const materialMode = activeTheme === 'material-dark' ? 'dark' : activeTheme === 'material-light' ? 'light' : null;
 
   root.classList.toggle('holiday-halloween', activeTheme === 'halloween');
   root.classList.toggle('holiday-christmas', activeTheme === 'christmas');
+  root.classList.toggle('theme-material', materialMode !== null);
+  root.classList.toggle('material-dark', materialMode === 'dark');
+  root.classList.toggle('material-light', materialMode === 'light');
+  applyMaterialPalette(materialMode);
   updateHalloweenBatOverlay(activeTheme);
 }
 
@@ -517,7 +677,7 @@ function applyWallpaper(animate = false) {
   const wallpaper = savedWallpaper === 'custom' && !hasCustomWallpaper ? 'Metro.jpg' : savedWallpaper;
   const root = document.documentElement;
   const customWallpaperSetting = document.getElementById('custom-wallpaper-setting');
-  setRowDisplay(customWallpaperSetting, savedWallpaper === 'custom');
+  setRowDisplay(customWallpaperSetting, savedWallpaper === 'custom' && !isMaterialTheme());
   const applyWallpaperSettings = () => {
     root.classList.toggle('gradient-wallpaper', wallpaper === 'gradient');
     root.classList.toggle('gradient-static', wallpaper === 'gradient' && isEnabled('gradientStopMotion', false));
@@ -531,7 +691,7 @@ function applyWallpaper(animate = false) {
     } else {
       root.style.setProperty('--wallpaper-image', `url(/images/${wallpaper})`);
     }
-    toggleGradientSettings(wallpaper === 'gradient');
+    toggleGradientSettings(wallpaper === 'gradient' && !isMaterialTheme());
   };
   if (animate) {
     root.classList.add('wallpaper-transitioning');
@@ -1923,6 +2083,8 @@ function applyAllSettings(animateTopbar = false, animateWallpaper = false) {
   applyFont();
   applyAccentColor();
   applyTheme();
+  applyMaterialSettingsVisibility();
+  markCurrentNavLink();
   applySocialLabels();
   applyFigcaptionVisibility();
   applyWallpaper(animateWallpaper);

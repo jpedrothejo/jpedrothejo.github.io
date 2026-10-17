@@ -124,7 +124,7 @@
   }
 }
 
-html:where(:not(.theme-old)) *:not(:where(.switch, .switch *, .profile-avatar, .profile-avatar > img, .status-badge-dot)) {
+html:where(:not(.theme-material)) *:not(:where(.switch, .switch *, .profile-avatar, .profile-avatar > img, .status-badge-dot)) {
   border-radius: var(--experimental-roundness) !important;
 }
 
@@ -3185,32 +3185,6 @@ html.blur-transitioning {
   transition: background 0.3s, color 0.3s, --main-blur 0.45s var(--ease-out), --main-saturation 0.45s var(--ease-out);
 }
 
-html.theme-old {
-  --wallpaper-blur: none !important;
-}
-
-html.theme-old .main,
-html.theme-old .topnav,
-html.theme-old .social-bg,
-html.theme-old .card-bg {
-  background: var(--accent-color-primary) !important;
-  -webkit-backdrop-filter: none !important;
-  backdrop-filter: none !important;
-}
-
-html.theme-old.pattern-wallpaper .main,
-html.theme-old.pattern-wallpaper .topnav,
-html.theme-old.pattern-wallpaper .social-bg,
-html.theme-old.pattern-wallpaper .card-bg,
-html.theme-old.pattern-wallpaper .settings-section,
-html.theme-old.pattern-wallpaper .device-card {
-  background: rgba(9, 9, 11, 0.78) !important;
-}
-
-html.theme-old .setting-item:has([data-setting-key="mainOpacity"], [data-setting-key="cardOpacity"], [data-setting-key="experimentalRoundness"], #open-blur-settings-editor) {
-  display: none !important;
-}
-
 .tool-name .tool-desc {
   display: block;
   max-width: 36ch;
@@ -3298,4 +3272,511 @@ html.hide-tool-descriptions .tool-desc {
 
 .hidden {
   display: none !important;
+}
+
+html.theme-material {
+  --md-shape-xs: 4px;
+  --md-shape-s: 8px;
+  --md-shape-m: 12px;
+  --md-shape-l: 16px;
+  --md-shape-xl: 28px;
+  --md-shape-full: 999px;
+  --md-motion: cubic-bezier(0.2, 0, 0, 1);
+  --md-elevation-1: 0 1px 2px rgba(0, 0, 0, 0.3), 0 1px 3px 1px rgba(0, 0, 0, 0.15);
+  --md-elevation-2: 0 1px 2px rgba(0, 0, 0, 0.3), 0 2px 6px 2px rgba(0, 0, 0, 0.15);
+  --md-elevation-3: 0 1px 3px rgba(0, 0, 0, 0.3), 0 4px 8px 3px rgba(0, 0, 0, 0.15);
+  --md-state-hover: color-mix(in srgb, var(--md-sys-color-on-surface) 8%, transparent);
+  --accent-color-primary: var(--md-sys-color-surface-container) !important;
+  --accent-color-primary-opaque: var(--md-sys-color-surface-container-high) !important;
+  --accent-color-hover: var(--md-state-hover) !important;
+  --accent-color-hover-opaque: var(--md-sys-color-surface-container-highest) !important;
+  --accent-color-button-bg: var(--md-sys-color-secondary-container) !important;
+  --accent-color-button-bg-opaque: var(--md-sys-color-secondary-container) !important;
+  --accent-color-glow: transparent !important;
+  --accent-color-link: var(--md-sys-color-primary) !important;
+  --navy-hover-bg: var(--md-state-hover) !important;
+  background: var(--md-sys-color-surface) !important;
+  color: var(--md-sys-color-on-surface);
+  scrollbar-color: var(--md-sys-color-outline-variant) transparent;
+}
+
+html.theme-material.material-dark {
+  color-scheme: dark;
+}
+
+html.theme-material.material-light {
+  color-scheme: light;
+}
+
+html.theme-material body::before,
+html.theme-material body::after {
+  display: none;
+}
+
+html.theme-material body {
+  color: var(--md-sys-color-on-surface);
+}
+
+html.theme-material ::selection {
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+}
+
+html.theme-material :is(a, button, select, input):focus-visible {
+  outline: 3px solid var(--md-sys-color-secondary);
+  outline-offset: 2px;
+}
+
+html.theme-material .main {
+  background: var(--md-sys-color-surface-container-low) !important;
+  border: 0;
+  border-radius: var(--md-shape-xl);
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+html.theme-material .topnav {
+  background: var(--md-sys-color-surface-container) !important;
+  border: 0;
+  border-radius: var(--md-shape-l);
+  box-shadow: var(--md-elevation-2);
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+html.theme-material .social-bg,
+html.theme-material .card-bg {
+  background: var(--md-sys-color-surface-container-high) !important;
+  border: 0;
+  border-radius: var(--md-shape-l);
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+html.theme-material .card-bg .card-bg {
+  background: var(--md-sys-color-surface-container-highest) !important;
+}
+
+html.theme-material .settings-section {
+  background: var(--md-sys-color-surface-container-high) !important;
+  border: 0;
+  border-radius: var(--md-shape-l);
+  box-shadow: none;
+}
+
+html.theme-material .settings-section h3,
+html.theme-material .device-section h3 {
+  color: var(--md-sys-color-on-surface);
+  border-bottom-color: var(--md-sys-color-outline-variant);
+}
+
+html.theme-material .device-card {
+  border-radius: var(--md-shape-l);
+  box-shadow: none;
+  transition: box-shadow 0.2s var(--md-motion), background-color 0.2s var(--md-motion);
+}
+
+html.theme-material .device-card-link:hover .device-card,
+html.theme-material .device-card-link:focus-visible .device-card {
+  transform: none;
+  border-color: transparent;
+  box-shadow: var(--md-elevation-2);
+  background: color-mix(in srgb, var(--md-sys-color-surface-container-high), var(--md-sys-color-on-surface) 8%) !important;
+}
+
+html.theme-material .device-card a,
+html.theme-material .device-card figcaption {
+  color: var(--md-sys-color-on-surface);
+}
+
+html.theme-material a,
+html.theme-material a:visited {
+  color: var(--md-sys-color-primary);
+}
+
+html.theme-material a:not(.device-card-link):hover {
+  color: var(--md-sys-color-primary);
+  opacity: 0.85;
+}
+
+html.theme-material .status-badge-link,
+html.theme-material .status-badge-link:visited,
+html.theme-material .device-card-link,
+html.theme-material .device-card-link:visited,
+html.theme-material .file-table a,
+html.theme-material .file-table a:visited {
+  color: inherit;
+}
+
+html.theme-material .file-table a:hover {
+  color: var(--md-sys-color-primary) !important;
+}
+
+html.theme-material .topnav a,
+html.theme-material .topnav a:visited {
+  color: var(--md-sys-color-on-surface-variant);
+  border-radius: var(--md-shape-full);
+}
+
+html.theme-material .topnav a:hover {
+  background-color: var(--md-state-hover);
+  color: var(--md-sys-color-on-surface);
+  opacity: 1;
+}
+
+html.theme-material .topnav a[aria-current="page"]:not(.minimize-btn) {
+  background-color: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
+}
+
+html.theme-material .topnav a[aria-current="page"]:not(.minimize-btn):hover {
+  background-color: color-mix(in srgb, var(--md-sys-color-secondary-container), var(--md-sys-color-on-secondary-container) 8%);
+  color: var(--md-sys-color-on-secondary-container);
+}
+
+html:where(.theme-material) button {
+  background-color: var(--md-sys-color-surface-container-highest);
+  color: var(--md-sys-color-on-surface);
+}
+
+html.theme-material .custom-file-button,
+html.theme-material .language-choice-btn {
+  background-color: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
+  border: 0;
+  border-radius: var(--md-shape-full);
+  padding: 8px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.1px;
+  box-shadow: none;
+}
+
+html.theme-material .custom-file-button:hover,
+html.theme-material .custom-file-button:focus-visible,
+html.theme-material .language-choice-btn:hover,
+html.theme-material .language-choice-btn:focus-visible {
+  background-color: color-mix(in srgb, var(--md-sys-color-secondary-container), var(--md-sys-color-on-secondary-container) 8%);
+  border-color: transparent;
+  box-shadow: var(--md-elevation-1);
+  transform: none;
+}
+
+html.theme-material .custom-file-button:active,
+html.theme-material .language-choice-btn:active {
+  background-color: color-mix(in srgb, var(--md-sys-color-secondary-container), var(--md-sys-color-on-secondary-container) 10%);
+  box-shadow: none;
+  transform: none;
+}
+
+html.theme-material a.custom-file-button,
+html.theme-material a.custom-file-button:visited,
+html.theme-material a.custom-file-button:hover,
+html.theme-material a.custom-file-button:focus,
+html.theme-material a.custom-file-button:active {
+  background-color: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary) !important;
+  opacity: 1;
+}
+
+html.theme-material a.custom-file-button:hover,
+html.theme-material a.custom-file-button:focus-visible {
+  background-color: color-mix(in srgb, var(--md-sys-color-primary), var(--md-sys-color-on-primary) 8%);
+}
+
+html.theme-material .custom-file-label {
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+html.theme-material .custom-select {
+  background-color: transparent;
+  color: var(--md-sys-color-on-surface);
+  border: 1px solid var(--md-sys-color-outline);
+  border-radius: var(--md-shape-s);
+  box-shadow: none;
+}
+
+html.theme-material .custom-select:hover {
+  background-color: var(--md-state-hover);
+  border-color: var(--md-sys-color-on-surface);
+  transform: none;
+}
+
+html.theme-material .custom-select:focus {
+  background-color: transparent;
+  border-color: var(--md-sys-color-primary);
+  box-shadow: inset 0 0 0 1px var(--md-sys-color-primary);
+  transform: none;
+}
+
+html.theme-material.material-light .custom-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath fill='none' stroke='%2349454f' stroke-width='1.5' d='M1 1.5l4 3 4-3'/%3E%3C/svg%3E");
+}
+
+html.theme-material .custom-select option {
+  background: var(--md-sys-color-surface-container);
+  color: var(--md-sys-color-on-surface);
+}
+
+html.theme-material .switch {
+  min-width: 52px;
+  width: 52px;
+  height: 32px;
+}
+
+html.theme-material .slider {
+  width: 52px;
+  box-sizing: border-box;
+  border: 2px solid var(--md-sys-color-outline);
+  border-radius: var(--md-shape-full);
+  background-color: var(--md-sys-color-surface-container-highest);
+  transition: background-color 0.2s var(--md-motion), border-color 0.2s var(--md-motion);
+}
+
+html.theme-material .switch:hover .slider,
+html.theme-material .switch input:focus + .slider {
+  transform: none;
+  box-shadow: none;
+}
+
+html.theme-material .slider:before {
+  width: 16px;
+  height: 16px;
+  left: 6px;
+  bottom: 6px;
+  background-color: var(--md-sys-color-outline);
+  transition: left 0.2s var(--md-motion), bottom 0.2s var(--md-motion), width 0.2s var(--md-motion), height 0.2s var(--md-motion), background-color 0.2s var(--md-motion);
+}
+
+html.theme-material input:checked + .slider {
+  background-color: var(--md-sys-color-primary);
+  border-color: var(--md-sys-color-primary);
+}
+
+html.theme-material input:checked + .slider:before {
+  width: 24px;
+  height: 24px;
+  left: 22px;
+  bottom: 2px;
+  background-color: var(--md-sys-color-on-primary);
+  transform: none;
+}
+
+html.theme-material .switch input:focus-visible + .slider {
+  outline: 3px solid var(--md-sys-color-secondary);
+  outline-offset: 2px;
+}
+
+html.theme-material .setting-item input[type="text"],
+html.theme-material .setting-item .custom-text {
+  background: transparent;
+  border: 1px solid var(--md-sys-color-outline);
+  border-radius: var(--md-shape-xs);
+  color: var(--md-sys-color-on-surface);
+}
+
+html.theme-material .custom-color {
+  background: transparent;
+  color: var(--md-sys-color-on-surface);
+  border: 1px solid var(--md-sys-color-outline);
+  border-radius: var(--md-shape-s);
+}
+
+html.theme-material .custom-color:hover,
+html.theme-material .custom-color:focus-visible {
+  background: var(--md-state-hover);
+}
+
+html.theme-material .custom-color-swatch {
+  border-color: var(--md-sys-color-outline);
+  border-radius: var(--md-shape-full);
+}
+
+html.theme-material .custom-font-error,
+html.theme-material .experimental-unlock-error {
+  color: var(--md-sys-color-error);
+}
+
+html.theme-material .device-modal-overlay,
+html.theme-material .widget-layout-overlay,
+html.theme-material .custom-color-picker-overlay,
+html.theme-material .experimental-unlock-overlay {
+  background: rgba(0, 0, 0, 0.32);
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+html.theme-material .device-modal,
+html.theme-material .widget-layout-popup,
+html.theme-material .experimental-unlock-dialog,
+html.theme-material .custom-color-picker {
+  background: var(--md-sys-color-surface-container-high) !important;
+  color: var(--md-sys-color-on-surface);
+  border: 0;
+  border-radius: var(--md-shape-xl);
+  box-shadow: var(--md-elevation-3);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+html.theme-material .device-modal h2 {
+  color: var(--md-sys-color-on-surface);
+}
+
+html.theme-material .device-modal-close,
+html.theme-material .custom-color-picker-close {
+  background: transparent;
+  color: var(--md-sys-color-on-surface-variant);
+  border: 0;
+}
+
+html.theme-material .device-modal-close:hover,
+html.theme-material .device-modal-close:focus-visible,
+html.theme-material .custom-color-picker-close:hover,
+html.theme-material .custom-color-picker-close:focus-visible {
+  background: var(--md-state-hover);
+  transform: none;
+}
+
+html.theme-material .custom-color-picker-hex-label,
+html.theme-material .custom-color-picker-channel {
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+html.theme-material .custom-color-picker-channel output {
+  color: var(--md-sys-color-on-surface);
+}
+
+html.theme-material .custom-color-picker-hex,
+html.theme-material .experimental-unlock-dialog input {
+  background: transparent;
+  color: var(--md-sys-color-on-surface);
+  border: 1px solid var(--md-sys-color-outline);
+  border-radius: var(--md-shape-xs);
+}
+
+html.theme-material .custom-color-picker-preview {
+  border-color: var(--md-sys-color-outline-variant);
+  border-radius: var(--md-shape-full);
+}
+
+html.theme-material .widget-layout-preview {
+  background: var(--md-sys-color-surface-container-low);
+  border: 0;
+  border-radius: var(--md-shape-l);
+}
+
+html.theme-material .widget-layout-preview-card,
+html.theme-material .widget-layout-item {
+  background: var(--md-sys-color-surface-container-highest);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-shape-m);
+  color: var(--md-sys-color-on-surface);
+}
+
+html.theme-material .widget-layout-preview-card[aria-pressed="true"] {
+  background: var(--md-sys-color-secondary-container);
+  border-color: transparent;
+  color: var(--md-sys-color-on-secondary-container);
+}
+
+html.theme-material .widget-layout-preview-empty {
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+html.theme-material .widget-layout-scale-options {
+  padding: 0;
+  background: transparent;
+  border: 1px solid var(--md-sys-color-outline);
+  border-radius: var(--md-shape-full);
+}
+
+html.theme-material .widget-layout-scale-choice {
+  border-radius: var(--md-shape-full);
+  color: var(--md-sys-color-on-surface);
+}
+
+html.theme-material .widget-layout-scale-choice:hover:not([aria-pressed="true"]) {
+  background: var(--md-state-hover);
+}
+
+html.theme-material .widget-layout-scale-choice[aria-pressed="true"] {
+  background: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
+}
+
+html.theme-material .widget-layout-actions button {
+  background: transparent;
+  border: 1px solid var(--md-sys-color-outline);
+  border-radius: var(--md-shape-full);
+  color: var(--md-sys-color-primary);
+}
+
+html.theme-material .widget-layout-profile-toggle input,
+html.theme-material .widget-layout-item input[type="checkbox"] {
+  accent-color: var(--md-sys-color-primary);
+}
+
+html.theme-material .reset-settings-preview .setting-item {
+  border-radius: var(--md-shape-m);
+}
+
+html.theme-material .reset-settings-preview .setting-item:hover {
+  background-color: var(--md-state-hover);
+}
+
+html.theme-material .reset-settings-preview .setting-item.is-selected {
+  background-color: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
+}
+
+html.theme-material .status-badge {
+  background: transparent;
+  color: var(--md-sys-color-on-surface);
+  border-radius: var(--md-shape-s);
+}
+
+html:where(.theme-material) .status-badge {
+  border-color: var(--md-sys-color-outline-variant);
+}
+
+html.theme-material .status-badge-label {
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+html.theme-material .social-label {
+  color: var(--md-sys-color-on-surface-variant) !important;
+}
+
+html.theme-material .profile-avatar {
+  border-color: var(--md-sys-color-primary);
+  background: var(--md-sys-color-surface-container-highest);
+  box-shadow: none;
+}
+
+html.theme-material .profile-avatar > img {
+  border-color: var(--md-sys-color-surface-container-high);
+}
+
+html.theme-material .easter-egg-toast,
+html.theme-material .mode-indicator {
+  background: var(--md-sys-color-inverse-surface);
+  color: var(--md-sys-color-inverse-on-surface);
+  border: 0;
+  border-radius: var(--md-shape-xs);
+  box-shadow: var(--md-elevation-3);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+html.theme-material .file-search {
+  background: transparent;
+  border: 1px solid var(--md-sys-color-outline);
+  border-radius: var(--md-shape-xs);
+  color: var(--md-sys-color-on-surface);
+}
+
+html.theme-material .file-search::placeholder {
+  color: var(--md-sys-color-on-surface-variant);
 }
