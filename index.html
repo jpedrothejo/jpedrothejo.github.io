@@ -15,6 +15,7 @@
   <link rel="icon" href="./images/site%20icon.ico">
   <script src="./scripts/settings.js"></script>
   <script src="./scripts/status-badges.js" defer></script>
+  <script src="https://unpkg.com/typeit@8.7.1/dist/index.umd.js" defer></script>
 </head>
 
 <body>
@@ -32,7 +33,7 @@
     <section class="card-bg home-category home-profile" data-widget="profile">
     <div class="profile-layout">
       <div class="profile-avatar">
-        <img src="images/profile pic.png" width="225" alt="Profile picture">
+        <img src="images/profile pic.png" width="225" height="225" fetchpriority="high" decoding="async" alt="Profile picture">
       </div>
       <div class="profile-copy">
         <div class="pfp-name">
@@ -43,24 +44,29 @@
           </p>
         </div>
         <div class="card-bg profile-typeit">
-          <script src="https://unpkg.com/typeit@8.7.1/dist/index.umd.js"></script>
           <p id="welcome"></p>
           <script>
-            const messages = [
-              "''You're not a good person. You know that, Right?''",
-              "welcome to my website!",
-              "check my socials below!",
-              "open the J7 Prime popup 7 times",
-              "hi",
-              "grab flashing tools at the <a href='/tools.html'>tools page</a>!",
-              "click my pfp 7 times",
-            ];
-            const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-            new TypeIt("#welcome", {
-              strings: [randomMessage],
-              speed: 35,
-              waitUntilVisible: true,
-            }).go();
+            window.addEventListener("DOMContentLoaded", () => {
+              const messages = [
+                "''You're not a good person. You know that, Right?''",
+                "welcome to my website!",
+                "check my socials below!",
+                "open the J7 Prime popup 7 times",
+                "hi",
+                "grab flashing tools at the <a href='/tools.html'>tools page</a>!",
+                "click my pfp 7 times",
+              ];
+              const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+              if (!window.TypeIt) {
+                document.getElementById("welcome").innerHTML = randomMessage;
+                return;
+              }
+              new TypeIt("#welcome", {
+                strings: [randomMessage],
+                speed: 35,
+                waitUntilVisible: true,
+              }).go();
+            });
           </script>
         </div>
       </div>

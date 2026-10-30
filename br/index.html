@@ -16,6 +16,7 @@
   <link rel="icon" href="../images/site%20icon.ico">
   <script src="../scripts/settings.js"></script>
   <script src="../scripts/status-badges.js" defer></script>
+  <script src="https://unpkg.com/typeit@8.7.1/dist/index.umd.js" defer></script>
 </head>
 
 <body>
@@ -33,7 +34,7 @@
     <section class="card-bg home-category home-profile" data-widget="profile">
     <div class="profile-layout">
       <div class="profile-avatar">
-        <img src="/images/profile pic.png" width="225" alt="Foto de perfil">
+        <img src="/images/profile pic.png" width="225" height="225" fetchpriority="high" decoding="async" alt="Foto de perfil">
       </div>
       <div class="profile-copy">
         <div class="pfp-name">
@@ -44,23 +45,28 @@
           </p>
         </div>
         <div class="card-bg profile-typeit">
-          <script src="https://unpkg.com/typeit@8.7.1/dist/index.umd.js"></script>
           <p id="welcome"></p>
           <script>
-            const messages = [
-              "bem vindo ao meu site!",
-              "siga minhas redes sociais em baixo!",
-              "oi",
-              "baixe ferramentas de flash na <a href='/tools.html'>página de ferramentas</a>!",
-              "clique na minha foto de perfil 7 vezes",
-              "abra o popup do J7 Prime 7 vezes",
-            ];
-            const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-            new TypeIt("#welcome", {
-              strings: [randomMessage],
-              speed: 35,
-              waitUntilVisible: true,
-            }).go();
+            window.addEventListener("DOMContentLoaded", () => {
+              const messages = [
+                "bem vindo ao meu site!",
+                "siga minhas redes sociais em baixo!",
+                "oi",
+                "baixe ferramentas de flash na <a href='/tools.html'>página de ferramentas</a>!",
+                "clique na minha foto de perfil 7 vezes",
+                "abra o popup do J7 Prime 7 vezes",
+              ];
+              const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+              if (!window.TypeIt) {
+                document.getElementById("welcome").innerHTML = randomMessage;
+                return;
+              }
+              new TypeIt("#welcome", {
+                strings: [randomMessage],
+                speed: 35,
+                waitUntilVisible: true,
+              }).go();
+            });
           </script>
         </div>
       </div>

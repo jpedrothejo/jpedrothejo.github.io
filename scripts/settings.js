@@ -412,27 +412,236 @@ function applySocialLabels() {
   toggleClass('toolDescriptionsEnabled', 'hide-tool-descriptions', true);
 }
 
+let luckyNumberValue = null;
+
+function getLuckyNumber() {
+  if (luckyNumberValue === null) {
+    const digits = 1 + Math.floor(Math.random() * 4);
+    const min = digits === 1 ? 1 : Math.pow(10, digits - 1);
+    const max = Math.pow(10, digits) - 1;
+    luckyNumberValue = min + Math.floor(Math.random() * (max - min + 1));
+  }
+  return luckyNumberValue;
+}
+
+function applyLuckyNumber() {
+  toggleClass('luckyNumberEnabled', 'hide-lucky-number', true);
+  if (!document.body) return;
+
+  let badge = document.querySelector('.lucky-number');
+  if (!badge) {
+    badge = document.createElement('div');
+    badge.className = 'lucky-number';
+    badge.innerHTML = '<span class="lucky-number-label"></span><span class="lucky-number-value"></span>';
+    document.body.appendChild(badge);
+  }
+
+  const portuguese = getPreferredLanguage() === 'pt-br';
+  const label = portuguese ? 'Número da Sorte' : 'Lucky Number';
+  const value = String(getLuckyNumber());
+  badge.querySelector('.lucky-number-label').textContent = `${label}: `;
+  badge.querySelector('.lucky-number-value').textContent = value;
+  badge.setAttribute('aria-label', `${label}: ${value}`);
+  badge.setAttribute('aria-hidden', String(!isEnabled('luckyNumberEnabled', true)));
+}
+
 function applyFigcaptionVisibility() {
   const showFigcaptions = isEnabled('showFigcaptions', true);
   document.documentElement.classList.toggle('hide-figcaptions', !showFigcaptions);
 }
 
+const autoAccentFallback = '#88c0d0';
+const autoAccentDefaultGradient = ['#0f172a', '#4f46e5', '#ec4899', '#22d3ee'];
+
+function isMaterialThemeSelected() {
+  return ['material', 'material-dark', 'material-light'].includes(localStorage.getItem('theme') || '');
+}
+
+function hexToHslParts(hex) {
+  const [red, green, blue] = hex.slice(1).match(/.{2}/g).map(channel => parseInt(channel, 16) / 255);
+  const maximum = Math.max(red, green, blue);
+  const minimum = Math.min(red, green, blue);
+  const delta = maximum - minimum;
+  const lightness = (maximum + minimum) / 2;
+  const saturation = delta === 0 ? 0 : delta / (1 - Math.abs(2 * lightness - 1));
+  let hue = 0;
+  if (delta !== 0) {
+    if (maximum === red) hue = ((green - blue) / delta) % 6;
+    else if (maximum === green) hue = (blue - red) / delta + 2;
+    else hue = (red - green) / delta + 4;
+    hue *= 60;
+    if (hue < 0) hue += 360;
+  }
+  return { hue, saturation, lightness };
+}
+
+function hslPartsToHex(hue, saturation, lightness) {
+  const chroma = (1 - Math.abs(2 * lightness - 1)) * saturation;
+  const section = hue / 60;
+  const secondary = chroma * (1 - Math.abs(section % 2 - 1));
+  const [red, green, blue] = section < 1 ? [chroma, secondary, 0]
+    : section < 2 ? [secondary, chroma, 0]
+    : section < 3 ? [0, chroma, secondary]
+    : section < 4 ? [0, secondary, chroma]
+    : section < 5 ? [secondary, 0, chroma]
+    : [chroma, 0, secondary];
+  const offset = lightness - chroma / 2;
+  return `#${[red, green, blue].map(channel => Math.round((channel + offset) * 255).toString(16).padStart(2, '0')).join('')}`;
+}
+
+function normalizeAutoAccent(red, green, blue) {
+  const hex = `#${[red, green, blue].map(channel => Math.round(channel).toString(16).padStart(2, '0')).join('')}`;
+  const { hue, saturation, lightness } = hexToHslParts(hex);
+  return hslPartsToHex(hue, Math.min(0.85, Math.max(saturation, Math.min(0.3, saturation + 0.15))), Math.min(0.6, Math.max(0.4, lightness)));
+}
+
+function pickDominantColor(data) {
+  const buckets = new Map();
+  for (let index = 0; index < data.length; index += 4) {
+    if (data[index + 3] < 128) continue;
+    const red = data[index];
+    const green = data[index + 1];
+    const blue = data[index + 2];
+    const { saturation, lightness } = hexToHslParts(`#${[red, green, blue].map(channel => channel.toString(16).padStart(2, '0')).join('')}`);
+    const weight = 0.05 + saturation * (1 - Math.abs(2 * lightness - 1)) * (lightness < 0.1 || lightness > 0.92 ? 0.1 : 1);
+    const key = (red >> 5) << 6 | (green >> 5) << 3 | (blue >> 5);
+    const bucket = buckets.get(key) || { weight: 0, red: 0, green: 0, blue: 0 };
+    bucket.weight += weight;
+    bucket.red += red * weight;
+    bucket.green += green * weight;
+    bucket.blue += blue * weight;
+    buckets.set(key, bucket);
+  }
+  let best = null;
+  buckets.forEach(bucket => {
+    if (!best || bucket.weight > best.weight) best = bucket;
+  });
+  if (!best) return autoAccentFallback;
+  return normalizeAutoAccent(best.red / best.weight, best.green / best.weight, best.blue / best.weight);
+}
+
+function hashString(value) {
+  const step = Math.max(1, Math.floor(value.length / 512));
+  let hash = 0;
+  for (let index = 0; index < value.length; index += step) hash = (hash * 31 + value.charCodeAt(index)) | 0;
+  return `${hash.toString(36)}-${value.length}`;
+}
+
+function getWallpaperAccentSource() {
+  const saved = localStorage.getItem('wallpaper') || 'Metro.jpg';
+  const customWallpaper = localStorage.getItem('customWallpaper') || '';
+  const hasCustom = /^data:image\//.test(customWallpaper);
+  const wallpaper = saved === 'custom' && !hasCustom ? 'Metro.jpg' : saved;
+  if (wallpaper === 'gradient') return { key: 'gradient', gradient: true };
+  if (wallpaper === 'no-bg' || wallpaper === 'pattern') return { key: wallpaper, none: true };
+  if (wallpaper === 'custom') return { key: `custom:${hashString(customWallpaper)}`, src: customWallpaper };
+  return { key: wallpaper, src: `/images/${wallpaper}` };
+}
+
+function getGradientAccentHex() {
+  let best = autoAccentFallback;
+  let bestScore = -1;
+  for (let index = 1; index <= 4; index++) {
+    const stored = localStorage.getItem(`gradientColor${index}`);
+    const color = /^#[0-9a-f]{6}$/i.test(stored || '') ? stored : autoAccentDefaultGradient[index - 1];
+    const { saturation, lightness } = hexToHslParts(color);
+    const score = saturation * (1 - Math.abs(2 * lightness - 1));
+    if (score > bestScore) {
+      bestScore = score;
+      best = color;
+    }
+  }
+  const { hue, saturation, lightness } = hexToHslParts(best);
+  return hslPartsToHex(hue, Math.min(0.85, Math.max(0.3, saturation)), Math.min(0.6, Math.max(0.4, lightness)));
+}
+
+function readAutoAccentCache() {
+  try {
+    return JSON.parse(localStorage.getItem('autoAccentCache')) || {};
+  } catch (error) {
+    return {};
+  }
+}
+
+const autoAccentPending = new Set();
+
+function requestAutoAccent(source) {
+  if (autoAccentPending.has(source.key)) return;
+  autoAccentPending.add(source.key);
+  const finish = hex => {
+    const cache = readAutoAccentCache();
+    cache[source.key] = hex;
+    const keys = Object.keys(cache);
+    if (keys.length > 12) delete cache[keys[0]];
+    try {
+      localStorage.setItem('autoAccentCache', JSON.stringify(cache));
+    } catch (error) {
+      localStorage.removeItem('autoAccentCache');
+    }
+    autoAccentPending.delete(source.key);
+    applyAccentColor();
+  };
+  const image = new Image();
+  image.onload = () => {
+    let hex = autoAccentFallback;
+    try {
+      const canvas = document.createElement('canvas');
+      canvas.width = 48;
+      canvas.height = 48;
+      const context = canvas.getContext('2d', { willReadFrequently: true });
+      context.drawImage(image, 0, 0, 48, 48);
+      hex = pickDominantColor(context.getImageData(0, 0, 48, 48).data);
+    } catch (error) {
+      hex = autoAccentFallback;
+    }
+    finish(hex);
+  };
+  image.onerror = () => finish(autoAccentFallback);
+  image.src = source.src;
+}
+
+function getAutoAccentHex() {
+  const source = getWallpaperAccentSource();
+  if (source.gradient) return getGradientAccentHex();
+  if (source.none) return autoAccentFallback;
+  const cached = readAutoAccentCache()[source.key];
+  if (cached) return cached;
+  requestAutoAccent(source);
+  return null;
+}
+
+function syncAutoAccentOption() {
+  const select = document.querySelector('[data-setting-key="accentColor"]');
+  const option = select?.querySelector('option[value="auto"]');
+  if (!option) return;
+  const material = isMaterialThemeSelected();
+  option.hidden = material;
+  option.disabled = material;
+  const stored = localStorage.getItem('accentColor') || 'auto';
+  if (material && select.value === 'auto') select.value = 'nord';
+  else if (!material && stored === 'auto' && select.value !== 'auto') select.value = 'auto';
+}
+
 function applyAccentColor() {
-  const accent = localStorage.getItem('accentColor') || 'nord';
+  let accent = localStorage.getItem('accentColor') || 'auto';
+  if (accent === 'auto' && isMaterialThemeSelected()) accent = 'nord';
   const root = document.documentElement;
   const customAccentSetting = document.getElementById('custom-accent-setting');
   setRowDisplay(customAccentSetting, accent === 'custom');
 
   root.classList.remove('accent-navy', 'accent-nord', 'accent-custom');
   const customColor = localStorage.getItem('customAccentColor') || '#5d94c2';
-  const colorMatch = /^#([0-9a-f]{6})$/i.exec(customColor);
+  const accentHex = accent === 'custom' ? customColor : accent === 'auto' ? getAutoAccentHex() : accentSeeds[accent];
+  const colorMatch = accentHex ? /^#([0-9a-f]{6})$/i.exec(accentHex) : null;
   const customProperties = [
     '--accent-color-primary', '--accent-color-primary-opaque', '--accent-color-hover',
     '--accent-color-hover-opaque', '--accent-color-button-bg', '--accent-color-button-bg-opaque',
     '--accent-color-glow', '--accent-color-link'
   ];
 
-  if (accent === 'custom' && colorMatch) {
+  if (accentPresets[accent]) {
+    Object.entries(accentPresets[accent]).forEach(([property, value]) => root.style.setProperty(property, value));
+  } else if (colorMatch) {
     const channels = colorMatch[1].match(/.{2}/g).map(channel => parseInt(channel, 16));
     const [red, green, blue] = channels;
     const linkColor = channels.map(channel => Math.round(channel + (255 - channel) * 0.58));
@@ -447,7 +656,7 @@ function applyAccentColor() {
     root.style.setProperty('--accent-color-link', `rgb(${linkColor.join(', ')})`);
   } else {
     customProperties.forEach(property => root.style.removeProperty(property));
-    if (accent === 'navy' || accent === 'nord') root.classList.add(`accent-${accent}`);
+    if (accent === 'navy' || accent === 'nord' || accent === 'auto') root.classList.add(`accent-${accent === 'auto' ? 'nord' : accent}`);
   }
 }
 
@@ -498,7 +707,35 @@ function updateHalloweenBatOverlay(activeTheme) {
   document.body.appendChild(overlay);
 }
 
-const materialAccentSeeds = { default: '#5d94c2', navy: '#4052b5', nord: '#88c0d0' };
+const accentSeeds = {
+  red: '#e5484d', orange: '#f2772d', yellow: '#e5b800', green: '#21784f',
+  teal: '#12a594', cyan: '#00a2c7', purple: '#8e4ec6', pink: '#d6409f'
+};
+
+const accentPresets = {
+  orange: {
+    '--accent-color-primary': 'rgba(112, 58, 25, 0.2)',
+    '--accent-color-primary-opaque': 'rgba(170, 83, 31, 0.78)',
+    '--accent-color-hover': 'rgba(151, 78, 31, 0.32)',
+    '--accent-color-hover-opaque': 'rgba(196, 102, 42, 0.9)',
+    '--accent-color-button-bg': 'rgba(160, 77, 27, 0.64)',
+    '--accent-color-button-bg-opaque': 'rgba(160, 77, 27, 0.86)',
+    '--accent-color-glow': 'rgba(242, 119, 45, 0.36)',
+    '--accent-color-link': '#ffc18b'
+  },
+  green: {
+    '--accent-color-primary': 'rgba(30, 91, 68, 0.2)',
+    '--accent-color-primary-opaque': 'rgba(30, 112, 78, 0.78)',
+    '--accent-color-hover': 'rgba(33, 120, 79, 0.3)',
+    '--accent-color-hover-opaque': 'rgba(40, 140, 92, 0.9)',
+    '--accent-color-button-bg': 'rgba(33, 120, 79, 0.64)',
+    '--accent-color-button-bg-opaque': 'rgba(33, 120, 79, 0.86)',
+    '--accent-color-glow': 'rgba(46, 160, 105, 0.32)',
+    '--accent-color-link': '#a7e4c2'
+  }
+};
+
+const materialAccentSeeds = { default: '#5d94c2', navy: '#4052b5', nord: '#88c0d0', ...accentSeeds };
 
 const materialSchemeSpec = {
   light: [
@@ -545,58 +782,123 @@ function isMaterialTheme() {
   return document.documentElement.classList.contains('theme-material');
 }
 
-function materialLabFromHex(hex) {
-  const [red, green, blue] = hex.slice(1).match(/.{2}/g).map(value => {
-    const channel = parseInt(value, 16) / 255;
-    return channel <= 0.04045 ? channel / 12.92 : Math.pow((channel + 0.055) / 1.055, 2.4);
-  });
-  const x = (0.4124564 * red + 0.3575761 * green + 0.1804375 * blue) / 0.95047;
-  const y = 0.2126729 * red + 0.7151522 * green + 0.072175 * blue;
-  const z = (0.0193339 * red + 0.119192 * green + 0.9503041 * blue) / 1.08883;
-  const f = value => value > 216 / 24389 ? Math.cbrt(value) : (24389 / 27 * value + 16) / 116;
-  return { a: 500 * (f(x) - f(y)), b: 200 * (f(y) - f(z)) };
+function hctYFromLstar(lstar) {
+  const ft = (lstar + 16) / 116;
+  const cubed = ft * ft * ft;
+  return (cubed > 216 / 24389 ? cubed : lstar / (24389 / 27)) * 100;
 }
 
+const hctConditions = (() => {
+  const adaptingLuminance = 200 / Math.PI * hctYFromLstar(50) / 100;
+  const whiteR = 95.047 * 0.401288 + 100 * 0.650173 + 108.883 * -0.051461;
+  const whiteG = 95.047 * -0.250268 + 100 * 1.204414 + 108.883 * 0.045854;
+  const whiteB = 95.047 * -0.002079 + 100 * 0.048952 + 108.883 * 0.953127;
+  const surround = 1;
+  const d = Math.min(1, Math.max(0, surround * (1 - (1 / 3.6) * Math.exp((-adaptingLuminance - 42) / 92))));
+  const rgbD = [whiteR, whiteG, whiteB].map(value => d * (100 / value) + 1 - d);
+  const k = 1 / (5 * adaptingLuminance + 1);
+  const k4 = Math.pow(k, 4);
+  const k4F = 1 - k4;
+  const fl = k4 * adaptingLuminance + 0.1 * k4F * k4F * Math.cbrt(5 * adaptingLuminance);
+  const n = hctYFromLstar(50) / 100;
+  const nbb = 0.725 / Math.pow(n, 0.2);
+  const adapted = [whiteR * rgbD[0], whiteG * rgbD[1], whiteB * rgbD[2]].map(value => {
+    const factor = Math.pow(fl * value / 100, 0.42);
+    return 400 * factor / (factor + 27.13);
+  });
+  return {
+    rgbD, fl, n, nbb, nc: surround, c: 0.69, z: 1.48 + Math.sqrt(n),
+    aw: (40 * adapted[0] + 20 * adapted[1] + adapted[2]) / 20 * nbb
+  };
+})();
+
 function materialSeedHue(hex) {
-  const { a, b } = materialLabFromHex(hex);
+  const { rgbD, fl, n, nbb, nc, c, z, aw } = hctConditions;
+  const [red, green, blue] = hex.slice(1).match(/.{2}/g).map(value => {
+    const channel = parseInt(value, 16) / 255;
+    return (channel <= 0.040449936 ? channel / 12.92 : Math.pow((channel + 0.055) / 1.055, 2.4)) * 100;
+  });
+  const x = 0.41233895 * red + 0.35762064 * green + 0.18051042 * blue;
+  const y = 0.2126 * red + 0.7152 * green + 0.0722 * blue;
+  const zz = 0.01932141 * red + 0.11916382 * green + 0.95034478 * blue;
+  const adapt = value => {
+    const factor = Math.pow(fl * Math.abs(value) / 100, 0.42);
+    return Math.sign(value) * 400 * factor / (factor + 27.13);
+  };
+  const rA = adapt(rgbD[0] * (0.401288 * x + 0.650173 * y - 0.051461 * zz));
+  const gA = adapt(rgbD[1] * (-0.250268 * x + 1.204414 * y + 0.045854 * zz));
+  const bA = adapt(rgbD[2] * (-0.002079 * x + 0.048952 * y + 0.953127 * zz));
+  const a = (11 * rA - 12 * gA + bA) / 11;
+  const b = (rA + gA - 2 * bA) / 9;
   const hue = Math.atan2(b, a) * 180 / Math.PI;
   return hue < 0 ? hue + 360 : hue;
 }
 
-function materialLinearRgb(tone, chroma, hue) {
+function hctSolveLinear(hue, chroma, tone) {
+  const { rgbD, fl, n, nbb, nc, c, z, aw } = hctConditions;
+  const targetY = hctYFromLstar(tone);
   const radians = hue * Math.PI / 180;
-  const fy = (tone + 16) / 116;
-  const fx = fy + chroma * Math.cos(radians) / 500;
-  const fz = fy - chroma * Math.sin(radians) / 200;
-  const inverse = value => value * value * value > 216 / 24389 ? value * value * value : (116 * value - 16) / (24389 / 27);
-  const x = 0.95047 * inverse(fx);
-  const y = inverse(fy);
-  const z = 1.08883 * inverse(fz);
-  return [
-    3.2404542 * x - 1.5371385 * y - 0.4985314 * z,
-    -0.969266 * x + 1.8760108 * y + 0.041556 * z,
-    0.0556434 * x - 0.2040259 * y + 1.0572252 * z
-  ];
+  const hueSin = Math.sin(radians);
+  const hueCos = Math.cos(radians);
+  const tCoefficient = 1 / Math.pow(1.64 - Math.pow(0.29, n), 0.73);
+  const p1 = 0.25 * (Math.cos(radians + 2) + 3.8) * (50000 / 13) * nc * nbb;
+  const unadapt = value => {
+    const magnitude = Math.abs(value);
+    const base = Math.max(0, 27.13 * magnitude / (400 - magnitude));
+    return Math.sign(value) * (100 / fl) * Math.pow(base, 1 / 0.42);
+  };
+  let j = Math.sqrt(targetY) * 11;
+  for (let step = 0; step < 5; step++) {
+    const normalized = j / 100;
+    const alpha = chroma === 0 || j === 0 ? 0 : chroma / Math.sqrt(normalized);
+    const t = Math.pow(alpha * tCoefficient, 1 / 0.9);
+    const p2 = aw * Math.pow(normalized, 1 / c / z) / nbb;
+    const gamma = 23 * (p2 + 0.305) * t / (23 * p1 + 11 * t * hueCos + 108 * t * hueSin);
+    const a = gamma * hueCos;
+    const b = gamma * hueSin;
+    const r = unadapt((460 * p2 + 451 * a + 288 * b) / 1403) / rgbD[0];
+    const g = unadapt((460 * p2 - 891 * a - 261 * b) / 1403) / rgbD[1];
+    const bl = unadapt((460 * p2 - 220 * a - 6300 * b) / 1403) / rgbD[2];
+    const x = 1.86206786 * r - 1.01125463 * g + 0.14918677 * bl;
+    const y = 0.38752654 * r + 0.62144744 * g - 0.00897398 * bl;
+    const zz = -0.0158415 * r - 0.03412294 * g + 1.04996444 * bl;
+    const linear = [
+      3.2413774792 * x - 1.5376652403 * y - 0.4988536685 * zz,
+      -0.9691452513 * x + 1.8758853451 * y + 0.0415658562 * zz,
+      0.0556209407 * x - 0.2040259135 * y + 1.0571799111 * zz
+    ];
+    if (linear.some(value => value < 0) || y <= 0) return null;
+    if (step === 4 || Math.abs(y - targetY) < 0.002) {
+      return linear.some(value => value > 100.01) ? null : linear;
+    }
+    j -= (y - targetY) * j / (2 * y);
+  }
+  return null;
 }
 
 function materialToneColor(hue, chroma, tone) {
   if (tone <= 0) return '#000000';
   if (tone >= 100) return '#ffffff';
-  const fits = value => materialLinearRgb(tone, value, hue).every(channel => channel > -0.0005 && channel < 1.0005);
-  let usable = chroma;
-  if (!fits(chroma)) {
+  let linear = chroma < 0.0001 ? null : hctSolveLinear(hue, chroma, tone);
+  if (!linear && chroma >= 0.0001) {
     let low = 0;
     let high = chroma;
-    for (let step = 0; step < 18; step++) {
+    for (let step = 0; step < 22; step++) {
       const middle = (low + high) / 2;
-      if (fits(middle)) low = middle;
-      else high = middle;
+      const candidate = hctSolveLinear(hue, middle, tone);
+      if (candidate) {
+        low = middle;
+        linear = candidate;
+      } else {
+        high = middle;
+      }
     }
-    usable = low;
   }
-  const encoded = materialLinearRgb(tone, usable, hue).map(channel => {
-    const clamped = Math.min(1, Math.max(0, channel));
-    const gamma = clamped <= 0.0031308 ? clamped * 12.92 : 1.055 * Math.pow(clamped, 1 / 2.4) - 0.055;
+  const gray = hctYFromLstar(tone);
+  const channels = linear || [gray, gray, gray];
+  const encoded = channels.map(channel => {
+    const value = Math.min(1, Math.max(0, channel / 100));
+    const gamma = value <= 0.0031308 ? value * 12.92 : 1.055 * Math.pow(value, 1 / 2.4) - 0.055;
     return Math.round(gamma * 255).toString(16).padStart(2, '0');
   });
   return `#${encoded.join('')}`;
@@ -633,6 +935,9 @@ function applyMaterialPalette(mode) {
 
 function applyMaterialSettingsVisibility() {
   const material = isMaterialTheme();
+  const darkModeRow = document.querySelector('[data-setting-key="darkModeEnabled"]')?.closest('.setting-item');
+  setRowDisplay(darkModeRow, material, { hidden: true });
+  syncAutoAccentOption();
   materialIncompatibleSettings.forEach(selector => {
     const row = document.querySelector(selector)?.closest('.setting-item');
     setRowDisplay(row, !material, { hidden: true });
@@ -653,13 +958,22 @@ function markCurrentNavLink() {
   });
 }
 
+function migrateMaterialTheme() {
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme === 'material-dark' || savedTheme === 'material-light') {
+    localStorage.setItem('theme', 'material');
+    localStorage.setItem('darkModeEnabled', savedTheme === 'material-dark' ? '1' : '0');
+  }
+}
+
 function applyTheme() {
+  migrateMaterialTheme();
   const savedTheme = localStorage.getItem('theme') || 'auto';
-  const validThemes = ['auto', 'default', 'halloween', 'christmas', 'material-dark', 'material-light'];
+  const validThemes = ['auto', 'default', 'halloween', 'christmas', 'material'];
   const theme = validThemes.includes(savedTheme) ? savedTheme : 'auto';
   const activeTheme = theme === 'auto' ? getAutomaticTheme() : theme;
   const root = document.documentElement;
-  const materialMode = activeTheme === 'material-dark' ? 'dark' : activeTheme === 'material-light' ? 'light' : null;
+  const materialMode = activeTheme === 'material' ? (isEnabled('darkModeEnabled', true) ? 'dark' : 'light') : null;
 
   root.classList.toggle('holiday-halloween', activeTheme === 'halloween');
   root.classList.toggle('holiday-christmas', activeTheme === 'christmas');
@@ -1834,7 +2148,7 @@ function initializeRangeInputs() {
 
 function resetSettingsToDefaults() {
   const settingKeys = [
-    'socialLabelsEnabled', 'toolDescriptionsEnabled', 'showFigcaptions', 'topbarMinimized', 'fontBold', 'fontFamily',
+    'darkModeEnabled', 'potatoPreviousTheme', 'socialLabelsEnabled', 'toolDescriptionsEnabled', 'showFigcaptions', 'luckyNumberEnabled', 'topbarMinimized', 'fontBold', 'fontFamily',
     'language', 'topbarPosition', 'wallpaper', 'accentColor', 'timeFormat', 'theme', 'blurEnabled', 'backgroundBlur',
     'reducedAnimation', 'potatoEnabled', 'experimentalFeaturesEnabled', 'experimentalFeaturesUnlocked', 'customAccentColor',
     'customFontData', 'customWallpaper', 'mainOpacity', 'cardOpacity', 'mainBlurLevel', 'wallpaperBlurLevel', 'cardBlurLevel', 'experimentalRoundness',
@@ -2053,6 +2367,7 @@ function initializeSelects() {
     if (savedValue) {
       select.value = savedValue;
     }
+    if (key === 'accentColor') syncAutoAccentOption();
 
     select.addEventListener('change', (event) => {
       localStorage.setItem(key, event.target.value);
@@ -2087,6 +2402,7 @@ function applyAllSettings(animateTopbar = false, animateWallpaper = false) {
   markCurrentNavLink();
   applySocialLabels();
   applyFigcaptionVisibility();
+  applyLuckyNumber();
   applyWallpaper(animateWallpaper);
   applyTopbarPosition();
   applyTopbarMinimized(animateTopbar);
@@ -2101,6 +2417,7 @@ applyFont();
 applyAccentColor();
 applyTheme();
 applySocialLabels();
+applyLuckyNumber();
 applyWallpaper();
 applyTopbarPosition();
 
@@ -2164,6 +2481,20 @@ function triggerPotatoMode(potatoToggle) {
     reducedAnimationTarget.checked = isPotatoModeOn;
     localStorage.setItem('reducedAnimation', isPotatoModeOn ? '1' : '0');
     reducedAnimationTarget.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+
+  const themeSelect = document.querySelector('[data-setting-key="theme"]');
+  if (themeSelect) {
+    const currentTheme = localStorage.getItem('theme') || 'auto';
+    if (isPotatoModeOn) {
+      if (currentTheme !== 'material') localStorage.setItem('potatoPreviousTheme', currentTheme);
+      themeSelect.value = 'material';
+    } else {
+      const previousTheme = localStorage.getItem('potatoPreviousTheme');
+      if (previousTheme) themeSelect.value = previousTheme;
+      localStorage.removeItem('potatoPreviousTheme');
+    }
+    themeSelect.dispatchEvent(new Event('change', { bubbles: true }));
   }
 
   const wallpaperDropdown = document.querySelector('[data-setting-key="wallpaper"]') || document.getElementById('wallpaper');

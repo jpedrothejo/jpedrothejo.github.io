@@ -47,6 +47,14 @@
             <h3>Visual Settings</h3>
 
             <div class="setting-item">
+              <span>Dark Mode</span>
+              <label class="switch">
+                <input type="checkbox" class="custom-checkbox" data-setting-key="darkModeEnabled" data-default-on="true">
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="setting-item">
               <span>Show Social Labels</span>
               <label class="switch">
                 <input type="checkbox" class="custom-checkbox" data-setting-key="socialLabelsEnabled"
@@ -68,6 +76,14 @@
               <span>Show Figcaptions</span>
               <label class="switch">
                 <input type="checkbox" class="custom-checkbox" data-setting-key="showFigcaptions" data-default-on="true">
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="setting-item">
+              <span>Show Lucky Number</span>
+              <label class="switch">
+                <input type="checkbox" class="custom-checkbox" data-setting-key="luckyNumberEnabled" data-default-on="true">
                 <span class="slider"></span>
               </label>
             </div>
@@ -172,7 +188,16 @@
               <select class="custom-select" data-setting-key="accentColor">
                 <option value="default">Blue</option>
                 <option value="navy">Navy Blue</option>
-                <option value="nord" selected>Nord</option>
+                <option value="nord">Nord</option>
+                <option value="auto" selected>Automatic (Wallpaper)</option>
+                <option value="red">Red</option>
+                <option value="orange">Orange</option>
+                <option value="yellow">Yellow</option>
+                <option value="green">Green</option>
+                <option value="teal">Teal</option>
+                <option value="cyan">Cyan</option>
+                <option value="purple">Purple</option>
+                <option value="pink">Pink</option>
                 <option value="custom">Custom</option>
               </select>
             </div>
@@ -193,8 +218,7 @@
                 <option value="default">Default</option>
                 <option value="halloween">Halloween</option>
                 <option value="christmas">Christmas</option>
-                <option value="material-dark">Material 3 (Dark)</option>
-                <option value="material-light">Material 3 (Light)</option>
+                <option value="material">Material 3</option>
               </select>
             </div>
 
