@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 
 <head>
   <meta charset="UTF-8">
@@ -24,7 +24,7 @@
     <a href="/settings.html" data-full-label="Config." data-minimized-label="⚙️">Config.</a>
     <a class="minimize-btn" id="minimizeBtn" title="Minimize">−</a>
   </div>
-  <center>
+  <div class="center-wrap">
     <div class="main settings-main">
       <h1>Ferramentas</h1>
       <div class="settings" style="text-align: left;">
@@ -33,20 +33,19 @@
 
             <div class="setting-item">
               <span class="tool-name" title="adb e fastboot, direto do Google.">Android Platform Tools<span class="os-icons"><svg class="os-icon" role="img" aria-label="Windows"><title>Windows</title><use href="#os-windows"/></svg><svg class="os-icon" role="img" aria-label="macOS"><title>macOS</title><use href="#os-macos"/></svg><svg class="os-icon" role="img" aria-label="Linux"><title>Linux</title><use href="#os-linux"/></svg></span><span class="tool-desc">adb e fastboot, direto do Google.</span></span>
-              <a class="custom-file-button" href="https://developer.android.com/tools/releases/platform-tools" target="_blank" rel="noopener noreferrer">Baixar</a>
+              <a class="custom-file-button tool-action" href="https://developer.android.com/tools/releases/platform-tools" target="_blank" rel="noopener noreferrer">Baixar</a>
             </div>
             <div class="setting-item">
               <span class="tool-name" title="Exiba e controle um celular Android pelo computador via USB ou Wi-Fi.">scrcpy<span class="os-icons"><svg class="os-icon" role="img" aria-label="Windows"><title>Windows</title><use href="#os-windows"/></svg><svg class="os-icon" role="img" aria-label="macOS"><title>macOS</title><use href="#os-macos"/></svg><svg class="os-icon" role="img" aria-label="Linux"><title>Linux</title><use href="#os-linux"/></svg></span><span class="tool-desc">Exiba e controle um celular Android pelo computador via USB ou Wi-Fi.</span></span>
-              <a class="custom-file-button" href="https://github.com/Genymobile/scrcpy/releases" target="_blank" rel="noopener noreferrer">Baixar</a>
+              <a class="custom-file-button tool-action" href="https://github.com/Genymobile/scrcpy/releases" target="_blank" rel="noopener noreferrer">Baixar</a>
             </div>
             <div class="setting-item">
               <span class="tool-name" title="Meu app Android que mostra informações do aparelho, root e Knox.">Device Info (descontinuado)<span class="os-icons"><svg class="os-icon" role="img" aria-label="Android"><title>Android</title><use href="#os-android"/></svg></span><span class="tool-desc">Meu app Android que mostra informações do aparelho, root e Knox.</span></span>
-              <a class="custom-file-button" href="https://drive.google.com/file/d/1KXkyhIv28tF__zyom8poOW0-3yP71Y9t/view?usp=sharing" target="_blank" rel="noopener noreferrer">Baixar</a>
+              <a class="custom-file-button tool-action" href="https://drive.google.com/file/d/1KXkyhIv28tF__zyom8poOW0-3yP71Y9t/view?usp=sharing" target="_blank" rel="noopener noreferrer">Baixar</a>
             </div>
             <div class="setting-item">
-              <span class="tool-name" title="Meu app Android que mostra informações do aparelho, root e Knox, acompanhado ferramentas de flashear e outros.">jpedro's Toolkit (beta)<span class="os-icons"><svg class="os-icon" role="img" aria-label="Android"><title>Android</title><use href="#os-android"/></svg></span><span class="tool-desc">Meu app Android que mostra informações do aparelho, root e Knox, acompanhado ferramentas de flashear e outros.</span></span>
-              <a class="custom-file-button" href="https://github.com/jpedrothejo/jpedrostoolkit/releases" target="_blank" rel="noopener noreferrer">Download (GitHub)</a>
-              <a class="custom-file-button" href="https://drive.google.com/drive/folders/1Q8KXeqGaiBgTe2AsPTksIeh8isdcdi_z?usp=sharing" target="_blank" rel="noopener noreferrer">Download (GDrive)</a>
+              <span class="tool-name" title="Meu app Android que mostra informações do aparelho, root e Knox, acompanhado ferramentas de flashear e outros.">jpedro's Toolkit<span class="os-icons"><svg class="os-icon" role="img" aria-label="Android"><title>Android</title><use href="#os-android"/></svg></span><span class="tool-desc">Meu app Android que mostra informações do aparelho, root e Knox, acompanhado ferramentas de flashear e outros.</span></span>
+              <button class="custom-file-button tool-action" type="button" data-open-download-sources aria-haspopup="dialog" aria-expanded="false" aria-controls="toolkit-download-dialog">Baixar</button>
             </div>
         </div>
         <div class="settings-section">
@@ -54,31 +53,42 @@
 
             <div class="setting-item">
               <span class="tool-name" title="Ferramenta de flash da Samsung para Windows no Modo Download. Todas as versões estão disponíveis no SamFw.">Odin3<span class="os-icons"><svg class="os-icon" role="img" aria-label="Windows"><title>Windows</title><use href="#os-windows"/></svg></span><span class="tool-desc">Ferramenta de flash da Samsung para Windows no Modo Download. Todas as versões estão disponíveis no SamFw.</span></span>
-              <a class="custom-file-button" href="https://samfw.com/blog/download-odin-all-version" target="_blank" rel="noopener noreferrer">Baixar</a>
+              <a class="custom-file-button tool-action" href="https://samfw.com/blog/download-odin-all-version" target="_blank" rel="noopener noreferrer">Baixar</a>
             </div>
             <div class="setting-item">
               <span class="tool-name" title="Ferramenta de flash da própria Samsung para o Modo Download. Não existe site oficial de download, então o tópico do XDA é a fonte mais segura.">Odin4<span class="os-icons"><svg class="os-icon" role="img" aria-label="Linux"><title>Linux</title><use href="#os-linux"/></svg></span><span class="tool-desc">Ferramenta de flash da própria Samsung para o Modo Download. Não existe site oficial de download, então o tópico do XDA é a fonte mais segura.</span></span>
-              <a class="custom-file-button" href="https://xdaforums.com/t/official-samsung-odin-v4-1-2-1-dc05e3ea-for-linux.4453423/" target="_blank" rel="noopener noreferrer">Tópico no XDA</a>
+              <a class="custom-file-button tool-action" href="https://xdaforums.com/t/official-samsung-odin-v4-1-2-1-dc05e3ea-for-linux.4453423/" target="_blank" rel="noopener noreferrer">Tópico no XDA</a>
             </div>
             <div class="setting-item">
               <span class="tool-name" title="Alternativa de código aberto ao Odin4, que precisa ser compilada.">odin4 (código aberto)<span class="os-icons"><svg class="os-icon" role="img" aria-label="Linux"><title>Linux</title><use href="#os-linux"/></svg></span><span class="tool-desc">Alternativa de código aberto ao Odin4, que precisa ser compilada.</span></span>
-              <a class="custom-file-button" href="https://github.com/Llucs/odin4" target="_blank" rel="noopener noreferrer">Código-fonte</a>
+              <a class="custom-file-button tool-action" href="https://github.com/Llucs/odin4" target="_blank" rel="noopener noreferrer">Código-fonte</a>
             </div>
             <div class="setting-item">
               <span class="tool-name" title="Substituto de código aberto do Odin, baseado em libusb.">Heimdall<span class="os-icons"><svg class="os-icon" role="img" aria-label="Windows"><title>Windows</title><use href="#os-windows"/></svg><svg class="os-icon" role="img" aria-label="macOS"><title>macOS</title><use href="#os-macos"/></svg><svg class="os-icon" role="img" aria-label="Linux"><title>Linux</title><use href="#os-linux"/></svg></span><span class="tool-desc">Substituto de código aberto do Odin, baseado em libusb.</span></span>
-              <a class="custom-file-button" href="https://github.com/Benjamin-Dobell/Heimdall" target="_blank" rel="noopener noreferrer">Código-fonte</a>
+              <a class="custom-file-button tool-action" href="https://github.com/Benjamin-Dobell/Heimdall" target="_blank" rel="noopener noreferrer">Código-fonte</a>
             </div>
             <div class="setting-item">
               <span class="tool-name" title="Driver que o Windows precisa para detectar celulares Galaxy no Modo Download.">Driver USB da Samsung<span class="os-icons"><svg class="os-icon" role="img" aria-label="Windows"><title>Windows</title><use href="#os-windows"/></svg></span><span class="tool-desc">Driver que o Windows precisa para detectar celulares Galaxy no Modo Download.</span></span>
-              <a class="custom-file-button" href="https://developer.samsung.com/android-usb-driver" target="_blank" rel="noopener noreferrer">Baixar</a>
+              <a class="custom-file-button tool-action" href="https://developer.samsung.com/android-usb-driver" target="_blank" rel="noopener noreferrer">Baixar</a>
             </div>
             <div class="setting-item">
               <span class="tool-name" title="Utilitário para Windows para celulares Samsung, do SamFw.">SamFw Tool<span class="os-icons"><svg class="os-icon" role="img" aria-label="Windows"><title>Windows</title><use href="#os-windows"/></svg></span><span class="tool-desc">Utilitário para Windows para celulares Samsung, do SamFw.</span></span>
-              <a class="custom-file-button" href="https://samfw.com/blog/samfwtool" target="_blank" rel="noopener noreferrer">Baixar</a>
+              <a class="custom-file-button tool-action" href="https://samfw.com/blog/samfwtool" target="_blank" rel="noopener noreferrer">Baixar</a>
             </div>
         </div>
       </div>
     </div>
-  </center>
+  </div>
+  <div class="device-modal-overlay download-source-overlay" id="toolkit-download-dialog" hidden>
+    <section class="device-modal download-source-dialog" role="dialog" aria-modal="true" aria-labelledby="toolkit-download-title" aria-describedby="toolkit-download-description">
+      <button class="device-modal-close" type="button" data-close-download-sources aria-label="Fechar">×</button>
+      <h2 id="toolkit-download-title">Escolha uma fonte para baixar</h2>
+      <p id="toolkit-download-description">De onde você quer baixar o jpedro's Toolkit?</p>
+      <div class="download-source-actions">
+        <a class="custom-file-button tool-action" href="https://github.com/jpedrothejo/jpedrostoolkit/releases" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a class="custom-file-button tool-action" href="https://drive.google.com/drive/folders/1Q8KXeqGaiBgTe2AsPTksIeh8isdcdi_z?usp=sharing" target="_blank" rel="noopener noreferrer">Google Drive</a>
+      </div>
+    </section>
+  </div>
 </body>
 </html>

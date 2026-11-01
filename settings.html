@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
   <meta charset="UTF-8">
@@ -39,7 +39,7 @@
     <a href="/settings.html" data-full-label="Settings" data-minimized-label="⚙️">Settings</a>
     <a class="minimize-btn" id="minimizeBtn" title="Minimize">−</a>
   </div>
-  <center>
+  <div class="center-wrap">
     <div class="main settings-main">
       <h1>Settings</h1>
         <div class="settings" style="text-align: left;">
@@ -216,6 +216,7 @@
               <select class="custom-select" data-setting-key="theme" aria-label="Theme">
                 <option value="auto" selected>Automatic</option>
                 <option value="default">Default</option>
+                <option value="old">Old</option>
                 <option value="halloween">Halloween</option>
                 <option value="christmas">Christmas</option>
                 <option value="material">Material 3</option>
@@ -230,26 +231,26 @@
               </button>
             </div>
 
-            <label class="setting-item">
+            <div class="setting-item">
               <span>Roundness</span>
-              <input class="experimental-range" type="range" min="0" max="24" step="1" value="8" data-setting-key="experimentalRoundness" data-unit="px" aria-label="Interface roundness">
-              <output>8px</output>
-            </label>
-            <label class="setting-item">
+              <input class="experimental-range" type="range" min="0" max="24" step="1" value="14" data-setting-key="experimentalRoundness" data-unit="px" aria-label="Interface roundness">
+              <output>14px</output>
+            </div>
+            <div class="setting-item">
               <span>Main Opacity</span>
               <input class="experimental-range" type="range" min="0" max="100" value="78" data-setting-key="mainOpacity" data-unit="%" aria-label="Main opacity">
               <output>78%</output>
-            </label>
-            <label class="setting-item">
+            </div>
+            <div class="setting-item">
               <span>Card Opacity</span>
               <input class="experimental-range" type="range" min="0" max="100" value="78" data-setting-key="cardOpacity" data-unit="%" aria-label="Card opacity">
               <output>78%</output>
-            </label>
-            <label class="setting-item" id="boldness-intensity-setting" style="display:none;">
+            </div>
+            <div class="setting-item" id="boldness-intensity-setting" style="display:none;">
               <span>Boldness Intensity</span>
               <input class="experimental-range" type="range" min="400" max="900" step="25" value="700" data-setting-key="experimentalBoldness" data-unit="" aria-label="Boldness intensity">
               <output>700</output>
-            </label>
+            </div>
           </div>
 
           <div class="settings-section">
@@ -294,6 +295,6 @@
           <button class="custom-file-button" type="button" id="open-reset-settings-editor" aria-haspopup="dialog" aria-expanded="false">Reset a setting to default</button>
         </div>
       </div>
-  </center>
+  </div>
 </body>
 </html>

@@ -136,8 +136,8 @@ function applyExperimentalBoldness() {
 }
 
 function applyExperimentalRoundness() {
-  const storedValue = Number(localStorage.getItem('experimentalRoundness') ?? 8);
-  const roundness = Number.isFinite(storedValue) ? Math.min(24, Math.max(0, storedValue)) : 8;
+  const storedValue = Number(localStorage.getItem('experimentalRoundness') ?? 14);
+  const roundness = Number.isFinite(storedValue) ? Math.min(24, Math.max(0, storedValue)) : 14;
   document.documentElement.style.setProperty('--experimental-roundness', `${roundness}px`);
 }
 
@@ -951,10 +951,66 @@ function markCurrentNavLink() {
     .replace(/\.html$/, '')
     .replace(/\/$/, '') || '/';
   const current = normalize(window.location.pathname);
-  document.querySelectorAll('.topnav a[href]').forEach(link => {
-    const target = normalize(new URL(link.getAttribute('href'), window.location.href).pathname);
-    if (target === current) link.setAttribute('aria-current', 'page');
-    else link.removeAttribute('aria-current');
+  const navs = document.querySelectorAll('.topnav');
+  navs.forEach(nav => {
+    nav.querySelectorAll('a[href]').forEach(link => {
+      const target = normalize(new URL(link.getAttribute('href'), window.location.href).pathname);
+      const isCurrentPage = target === current;
+      link.classList.toggle('active', isCurrentPage);
+      if (isCurrentPage) link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+  });
+
+  const storageKey = 'navHighlightTransition';
+  const transitionValue = sessionStorage.getItem(storageKey);
+  if (transitionValue) {
+    sessionStorage.removeItem(storageKey);
+    const transition = JSON.parse(transitionValue);
+    const destination = normalize(transition.destination);
+    if (destination === current && transition.source !== current) {
+      navs.forEach(nav => {
+      const activeLink = nav.querySelector('a.active');
+        if (!activeLink) return;
+        const navBounds = nav.getBoundingClientRect();
+        const linkBounds = activeLink.getBoundingClientRect();
+        activeLink.style.setProperty('--nav-highlight-x', `${transition.x - (linkBounds.left - navBounds.left)}px`);
+        activeLink.style.setProperty('--nav-highlight-y', `${transition.y - (linkBounds.top - navBounds.top)}px`);
+        activeLink.style.setProperty('--nav-highlight-scale-x', `${transition.width / linkBounds.width}`);
+        activeLink.style.setProperty('--nav-highlight-scale-y', `${transition.height / linkBounds.height}`);
+        activeLink.classList.add('nav-highlight-entering');
+        activeLink.addEventListener('animationend', () => {
+          activeLink.classList.remove('nav-highlight-entering');
+          activeLink.style.removeProperty('--nav-highlight-x');
+          activeLink.style.removeProperty('--nav-highlight-y');
+          activeLink.style.removeProperty('--nav-highlight-scale-x');
+          activeLink.style.removeProperty('--nav-highlight-scale-y');
+        }, { once: true });
+      });
+    }
+  }
+
+  navs.forEach(nav => {
+    if (nav.dataset.highlightTransitionReady) return;
+    nav.dataset.highlightTransitionReady = 'true';
+    nav.addEventListener('click', event => {
+      const link = event.target instanceof Element ? event.target.closest('a[href]') : null;
+      const activeLink = nav.querySelector('.topnav a.active');
+      if (!link || link.classList.contains('minimize-btn') || !activeLink
+        || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      const targetUrl = new URL(link.getAttribute('href'), window.location.href);
+      if (targetUrl.origin !== window.location.origin || normalize(targetUrl.pathname) === current) return;
+      const navBounds = nav.getBoundingClientRect();
+      const activeBounds = activeLink.getBoundingClientRect();
+      sessionStorage.setItem('navHighlightTransition', JSON.stringify({
+        source: current,
+        destination: normalize(targetUrl.pathname),
+        x: activeBounds.left - navBounds.left,
+        y: activeBounds.top - navBounds.top,
+        width: activeBounds.width,
+        height: activeBounds.height
+      }));
+    });
   });
 }
 
@@ -969,7 +1025,7 @@ function migrateMaterialTheme() {
 function applyTheme() {
   migrateMaterialTheme();
   const savedTheme = localStorage.getItem('theme') || 'auto';
-  const validThemes = ['auto', 'default', 'halloween', 'christmas', 'material'];
+  const validThemes = ['auto', 'default', 'old', 'halloween', 'christmas', 'material'];
   const theme = validThemes.includes(savedTheme) ? savedTheme : 'auto';
   const activeTheme = theme === 'auto' ? getAutomaticTheme() : theme;
   const root = document.documentElement;
@@ -977,6 +1033,7 @@ function applyTheme() {
 
   root.classList.toggle('holiday-halloween', activeTheme === 'halloween');
   root.classList.toggle('holiday-christmas', activeTheme === 'christmas');
+  root.classList.toggle('theme-old', activeTheme === 'old');
   root.classList.toggle('theme-material', materialMode !== null);
   root.classList.toggle('material-dark', materialMode === 'dark');
   root.classList.toggle('material-light', materialMode === 'light');
@@ -1872,6 +1929,65 @@ function openBlurSettingsEditor() {
   overlay.querySelector('[data-blur-key="blurEnabled"]').focus();
 }
 
+function initializeDownloadSourcePicker() {
+  const overlay = document.getElementById('toolkit-download-dialog');
+  if (!overlay) {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initializeDownloadSourcePicker, { once: true });
+    }
+    return;
+  }
+  if (overlay.dataset.initialized === 'true') return;
+  overlay.dataset.initialized = 'true';
+
+  const trigger = document.querySelector('[data-open-download-sources]');
+  const closeButton = overlay.querySelector('[data-close-download-sources]');
+  const firstSource = overlay.querySelector('.download-source-actions a');
+  let closeTimeout;
+
+  const closePicker = () => {
+    if (overlay.hidden) return;
+    document.removeEventListener('keydown', handleKeydown);
+    trigger?.setAttribute('aria-expanded', 'false');
+    if (document.documentElement.classList.contains('reduced-motion')
+      || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      overlay.classList.remove('show');
+      overlay.hidden = true;
+      trigger?.focus();
+      return;
+    }
+
+    overlay.classList.remove('show');
+    window.clearTimeout(closeTimeout);
+    closeTimeout = window.setTimeout(() => {
+      overlay.hidden = true;
+      trigger?.focus();
+    }, 200);
+  };
+  const handleKeydown = event => {
+    if (event.key === 'Escape') closePicker();
+  };
+
+  trigger?.addEventListener('click', () => {
+    window.clearTimeout(closeTimeout);
+    overlay.hidden = false;
+    trigger.setAttribute('aria-expanded', 'true');
+    document.addEventListener('keydown', handleKeydown);
+    void overlay.offsetWidth;
+    requestAnimationFrame(() => {
+      overlay.classList.add('show');
+      firstSource?.focus();
+    });
+  });
+  closeButton?.addEventListener('click', closePicker);
+  overlay.addEventListener('click', event => {
+    if (event.target === overlay) closePicker();
+  });
+  overlay.querySelectorAll('.download-source-actions a').forEach(link => {
+    link.addEventListener('click', closePicker);
+  });
+}
+
 function initializeBlurSettingsEditor() {
   document.getElementById('open-blur-settings-editor')?.addEventListener('click', openBlurSettingsEditor);
 }
@@ -2155,8 +2271,6 @@ function resetSettingsToDefaults() {
     'gradientCustomizeColors', 'gradientStopMotion', 'gradientColor1', 'gradientColor2', 'gradientColor3', 'gradientColor4'
   ];
   settingKeys.forEach(key => localStorage.removeItem(key));
-  localStorage.removeItem('easterEggEnabled');
-  sessionStorage.removeItem('easterEggClicks');
   saveHomeWidgetLayout(getDefaultHomeWidgetLayout());
   sessionStorage.removeItem('j7PrimePopupOpens');
   localStorage.setItem('experimentalBoldness', '700');
@@ -2359,6 +2473,29 @@ function initializeLocalTime() {
   window.setInterval(updateLocalTime, 30000);
 }
 
+let themeTransitionTimeout;
+
+function applyThemeWithTransition() {
+  const root = document.documentElement;
+  const reducedMotion = root.classList.contains('reduced-motion')
+    || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!reducedMotion && typeof document.startViewTransition === 'function') {
+    root.classList.add('theme-change-transition');
+    const transition = document.startViewTransition(() => applyAllSettings());
+    const clearTransitionClass = () => root.classList.remove('theme-change-transition');
+    transition.finished.then(clearTransitionClass, clearTransitionClass);
+    return;
+  }
+
+  root.classList.add('theme-transitioning');
+  void root.offsetWidth;
+  applyAllSettings();
+  window.clearTimeout(themeTransitionTimeout);
+  themeTransitionTimeout = window.setTimeout(() => {
+    root.classList.remove('theme-transitioning');
+  }, 500);
+}
+
 function initializeSelects() {
   document.querySelectorAll('.custom-select[data-setting-key]').forEach(select => {
     const key = select.dataset.settingKey;
@@ -2371,7 +2508,8 @@ function initializeSelects() {
 
     select.addEventListener('change', (event) => {
       localStorage.setItem(key, event.target.value);
-      applyAllSettings(key === 'topbarMinimized', key === 'wallpaper');
+      if (key === 'theme') applyThemeWithTransition();
+      else applyAllSettings(key === 'topbarMinimized', key === 'wallpaper');
       if (key === 'wallpaper') {
         toggleGradientSettings(event.target.value === 'gradient');
       }
@@ -2409,8 +2547,6 @@ function applyAllSettings(animateTopbar = false, animateWallpaper = false) {
   updateModeIndicator();
 }
 
-localStorage.removeItem('easterEggEnabled');
-sessionStorage.removeItem('easterEggClicks');
 
 applyBg();
 applyFont();
@@ -2426,6 +2562,7 @@ if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initializeCheckboxes);
   document.addEventListener('DOMContentLoaded', initializeHomeWidgetEditor);
   document.addEventListener('DOMContentLoaded', initializeBlurSettingsEditor);
+  document.addEventListener('DOMContentLoaded', initializeDownloadSourcePicker);
   document.addEventListener('DOMContentLoaded', initializeResetSettingsEditor);
   document.addEventListener('DOMContentLoaded', initializeColorPickers);
   document.addEventListener('DOMContentLoaded', initializeRangeInputs);
@@ -2439,6 +2576,7 @@ if (document.readyState === 'loading') {
   initializeCheckboxes();
   initializeHomeWidgetEditor();
   initializeBlurSettingsEditor();
+  initializeDownloadSourcePicker();
   initializeResetSettingsEditor();
   initializeColorPickers();
   initializeRangeInputs();

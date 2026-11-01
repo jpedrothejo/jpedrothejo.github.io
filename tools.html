@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
   <meta charset="UTF-8">
@@ -32,7 +32,7 @@
     <a href="/settings.html" data-full-label="Settings" data-minimized-label="⚙️">Settings</a>
     <a class="minimize-btn" id="minimizeBtn" title="Minimize">−</a>
   </div>
-  <center>
+  <div class="center-wrap">
     <div class="main settings-main">
       <h1>Tools</h1>
       <div class="settings" style="text-align: left;">
@@ -41,20 +41,19 @@
 
             <div class="setting-item">
               <span class="tool-name" title="adb and fastboot, straight from Google.">Android Platform Tools<span class="os-icons"><svg class="os-icon" role="img" aria-label="Windows"><title>Windows</title><use href="#os-windows"/></svg><svg class="os-icon" role="img" aria-label="macOS"><title>macOS</title><use href="#os-macos"/></svg><svg class="os-icon" role="img" aria-label="Linux"><title>Linux</title><use href="#os-linux"/></svg></span><span class="tool-desc">adb and fastboot, straight from Google.</span></span>
-              <a class="custom-file-button" href="https://developer.android.com/tools/releases/platform-tools" target="_blank" rel="noopener noreferrer">Download</a>
+              <a class="custom-file-button tool-action" href="https://developer.android.com/tools/releases/platform-tools" target="_blank" rel="noopener noreferrer">Download</a>
             </div>
             <div class="setting-item">
               <span class="tool-name" title="Display and control an Android phone from your computer over USB or Wi-Fi.">scrcpy<span class="os-icons"><svg class="os-icon" role="img" aria-label="Windows"><title>Windows</title><use href="#os-windows"/></svg><svg class="os-icon" role="img" aria-label="macOS"><title>macOS</title><use href="#os-macos"/></svg><svg class="os-icon" role="img" aria-label="Linux"><title>Linux</title><use href="#os-linux"/></svg></span><span class="tool-desc">Display and control an Android phone from your computer over USB or Wi-Fi.</span></span>
-              <a class="custom-file-button" href="https://github.com/Genymobile/scrcpy/releases" target="_blank" rel="noopener noreferrer">Download</a>
+              <a class="custom-file-button tool-action" href="https://github.com/Genymobile/scrcpy/releases" target="_blank" rel="noopener noreferrer">Download</a>
             </div>
             <div class="setting-item">
               <span class="tool-name" title="My Android app that shows device, root and Knox information.">Device Info (deprecated)<span class="os-icons"><svg class="os-icon" role="img" aria-label="Android"><title>Android</title><use href="#os-android"/></svg></span><span class="tool-desc">My Android app that shows device, root and Knox information.</span></span>
-              <a class="custom-file-button" href="https://drive.google.com/file/d/1KXkyhIv28tF__zyom8poOW0-3yP71Y9t/view?usp=sharing" target="_blank" rel="noopener noreferrer">Download</a>
+              <a class="custom-file-button tool-action" href="https://drive.google.com/file/d/1KXkyhIv28tF__zyom8poOW0-3yP71Y9t/view?usp=sharing" target="_blank" rel="noopener noreferrer">Download</a>
             </div>
             <div class="setting-item">
-              <span class="tool-name" title="My Android app that shows device, root and Knox information, alongside flashing tools and others.">jpedro's Toolkit (beta)<span class="os-icons"><svg class="os-icon" role="img" aria-label="Android"><title>Android</title><use href="#os-android"/></svg></span><span class="tool-desc">My Android app that shows device, root and Knox information, alongside flashing tools and others.</span></span>
-              <a class="custom-file-button" href="https://github.com/jpedrothejo/jpedrostoolkit/releases" target="_blank" rel="noopener noreferrer">Download (GitHub)</a>
-              <a class="custom-file-button" href="https://drive.google.com/drive/folders/1Q8KXeqGaiBgTe2AsPTksIeh8isdcdi_z?usp=sharing" target="_blank" rel="noopener noreferrer">Download (GDrive)</a>
+              <span class="tool-name" title="My Android app that shows device, root and Knox information, alongside flashing tools and others.">jpedro's Toolkit<span class="os-icons"><svg class="os-icon" role="img" aria-label="Android"><title>Android</title><use href="#os-android"/></svg></span><span class="tool-desc">My Android app that shows device, root and Knox information, alongside flashing tools and others.</span></span>
+              <button class="custom-file-button tool-action" type="button" data-open-download-sources aria-haspopup="dialog" aria-expanded="false" aria-controls="toolkit-download-dialog">Download</button>
             </div>
         </div>
         <div class="settings-section">
@@ -62,31 +61,42 @@
 
             <div class="setting-item">
               <span class="tool-name" title="Samsung's Windows flashing tool for Download Mode. All versions are available from SamFw.">Odin3<span class="os-icons"><svg class="os-icon" role="img" aria-label="Windows"><title>Windows</title><use href="#os-windows"/></svg></span><span class="tool-desc">Samsung's Windows flashing tool for Download Mode. All versions are available from SamFw.</span></span>
-              <a class="custom-file-button" href="https://samfw.com/blog/download-odin-all-version" target="_blank" rel="noopener noreferrer">Download</a>
+              <a class="custom-file-button tool-action" href="https://samfw.com/blog/download-odin-all-version" target="_blank" rel="noopener noreferrer">Download</a>
             </div>
             <div class="setting-item">
               <span class="tool-name" title="Samsung's own flashing tool for Download Mode. There is no official download site, so XDA's thread is the safest source.">Odin4<span class="os-icons"><svg class="os-icon" role="img" aria-label="Linux"><title>Linux</title><use href="#os-linux"/></svg></span><span class="tool-desc">Samsung's own flashing tool for Download Mode. There is no official download site, so XDA's thread is the safest source.</span></span>
-              <a class="custom-file-button" href="https://xdaforums.com/t/official-samsung-odin-v4-1-2-1-dc05e3ea-for-linux.4453423/" target="_blank" rel="noopener noreferrer">XDA thread</a>
+              <a class="custom-file-button tool-action" href="https://xdaforums.com/t/official-samsung-odin-v4-1-2-1-dc05e3ea-for-linux.4453423/" target="_blank" rel="noopener noreferrer">XDA thread</a>
             </div>
             <div class="setting-item">
               <span class="tool-name" title="Open-source Odin4 alternative that has to be built from source.">odin4 (open source)<span class="os-icons"><svg class="os-icon" role="img" aria-label="Linux"><title>Linux</title><use href="#os-linux"/></svg></span><span class="tool-desc">Open-source Odin4 alternative that has to be built from source.</span></span>
-              <a class="custom-file-button" href="https://github.com/Llucs/odin4" target="_blank" rel="noopener noreferrer">Source</a>
+              <a class="custom-file-button tool-action" href="https://github.com/Llucs/odin4" target="_blank" rel="noopener noreferrer">Source</a>
             </div>
             <div class="setting-item">
               <span class="tool-name" title="Open-source Odin replacement built on libusb.">Heimdall<span class="os-icons"><svg class="os-icon" role="img" aria-label="Windows"><title>Windows</title><use href="#os-windows"/></svg><svg class="os-icon" role="img" aria-label="macOS"><title>macOS</title><use href="#os-macos"/></svg><svg class="os-icon" role="img" aria-label="Linux"><title>Linux</title><use href="#os-linux"/></svg></span><span class="tool-desc">Open-source Odin replacement built on libusb.</span></span>
-              <a class="custom-file-button" href="https://github.com/Benjamin-Dobell/Heimdall" target="_blank" rel="noopener noreferrer">Source</a>
+              <a class="custom-file-button tool-action" href="https://github.com/Benjamin-Dobell/Heimdall" target="_blank" rel="noopener noreferrer">Source</a>
             </div>
             <div class="setting-item">
               <span class="tool-name" title="Driver Windows needs to detect Galaxy phones in Download Mode.">Samsung USB Driver<span class="os-icons"><svg class="os-icon" role="img" aria-label="Windows"><title>Windows</title><use href="#os-windows"/></svg></span><span class="tool-desc">Driver Windows needs to detect Galaxy phones in Download Mode.</span></span>
-              <a class="custom-file-button" href="https://developer.samsung.com/android-usb-driver" target="_blank" rel="noopener noreferrer">Download</a>
+              <a class="custom-file-button tool-action" href="https://developer.samsung.com/android-usb-driver" target="_blank" rel="noopener noreferrer">Download</a>
             </div>
             <div class="setting-item">
               <span class="tool-name" title="Windows utility for Samsung phones from SamFw.">SamFw Tool<span class="os-icons"><svg class="os-icon" role="img" aria-label="Windows"><title>Windows</title><use href="#os-windows"/></svg></span><span class="tool-desc">Windows utility for Samsung phones from SamFw.</span></span>
-              <a class="custom-file-button" href="https://samfw.com/blog/samfwtool" target="_blank" rel="noopener noreferrer">Download</a>
+              <a class="custom-file-button tool-action" href="https://samfw.com/blog/samfwtool" target="_blank" rel="noopener noreferrer">Download</a>
             </div>
         </div>
       </div>
     </div>
-  </center>
+  </div>
+  <div class="device-modal-overlay download-source-overlay" id="toolkit-download-dialog" hidden>
+    <section class="device-modal download-source-dialog" role="dialog" aria-modal="true" aria-labelledby="toolkit-download-title" aria-describedby="toolkit-download-description">
+      <button class="device-modal-close" type="button" data-close-download-sources aria-label="Close">×</button>
+      <h2 id="toolkit-download-title">Choose a download source</h2>
+      <p id="toolkit-download-description">Where would you like to download jpedro's Toolkit from?</p>
+      <div class="download-source-actions">
+        <a class="custom-file-button tool-action" href="https://github.com/jpedrothejo/jpedrostoolkit/releases" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a class="custom-file-button tool-action" href="https://drive.google.com/drive/folders/1Q8KXeqGaiBgTe2AsPTksIeh8isdcdi_z?usp=sharing" target="_blank" rel="noopener noreferrer">Google Drive</a>
+      </div>
+    </section>
+  </div>
 </body>
 </html>
