@@ -16,6 +16,7 @@
   <link rel="icon" href="../images/site%20icon.ico">
   <script src="../scripts/settings.js"></script>
   <script src="../scripts/status-badges.js" defer></script>
+  <script src="../scripts/social-widgets.js" defer></script>
   <script src="https://unpkg.com/typeit@8.7.1/dist/index.umd.js" defer></script>
 </head>
 
@@ -91,8 +92,8 @@
           <a href="#" class="social-item" data-social-links='[{"url":"https://www.tiktok.com/@jpedrothejo","label":"Conta principal"},{"url":"https://www.tiktok.com/@pa1qxxx","label":"Conta alternativa"}]'><img src="/icons/tiktok.webp" class="icon-img"><span class="social-label">TikTok</span></a>
           <a href="https://github.com/jpedrothejo" class="social-item"><img src="/icons/github.jpeg" class="icon-img"><span class="social-label">GitHub</span></a>
           <a href="https://x.com/jpedroooo_" class="social-item"><img src="/icons/twitter.png" class="icon-img"><span class="social-label">Twitter</span></a>
-          <a href="#" class="social-item" data-social-links='[{"url":"https://www.roblox.com/users/2725283118/profile","label":"Conta principal"},{"url":"https://www.roblox.com/users/7576236611/profile","label":"Alternativa 1"},{"url":"https://www.roblox.com/users/11304318429/profile","label":"Alternativa 2"}]'><img src="/icons/roblox.png" class="icon-img"><span class="social-label">Roblox</span></a>
-          <a href="#" class="social-item" data-social-links='[{"url":"https://discord.com/users/944684533108854854","label":"Principal"},{"url":"https://discord.com/users/1076145924474146959","label":"Alternativo"},{"url":"https://discord.gg/vK8PEz2gEk","label":"Servidor"}]'><img src="/icons/discord.png" class="icon-img"><span class="social-label">Discord</span></a>
+          <a href="#" class="social-item" data-social-links='[{"url":"https://www.roblox.com/users/2725283118/profile","label":"Conta principal","avatar":"https://tr.rbxcdn.com/30DAY-Avatar-FD76642C2BE5B3EF179D461F2DCE4A68-Png/150/150/Avatar/Png/noFilter"},{"url":"https://www.roblox.com/users/7576236611/profile","label":"Alternativa 1","avatar":"https://tr.rbxcdn.com/30DAY-Avatar-37889451413A3A2B3075FEF42E0B9484-Png/150/150/Avatar/Png/noFilter"},{"url":"https://www.roblox.com/users/11304318429/profile","label":"Alternativa 2","avatar":"https://tr.rbxcdn.com/30DAY-Avatar-B78113BCFD71885FFA1BC802F2D438AB-Png/150/150/Avatar/Png/noFilter"}]'><img src="/icons/roblox.png" class="icon-img"><span class="social-label">Roblox</span></a>
+          <a href="#" class="social-item" data-server-invite="https://discord.gg/vK8PEz2gEk" data-widget-api="https://discord.com/api/guilds/1398462154906013778/widget.json" data-server-icon="/images/discord-server-icon.png" data-server-description="" data-social-links='[{"url":"https://discord.com/users/944684533108854854","label":"Principal","avatar":"https://cdn.discordapp.com/avatars/944684533108854854/10d8da99d3daca92cfd5c73a18363f36.webp?size=1024"},{"url":"https://discord.com/users/1076145924474146959","label":"Alternativo","avatar":"https://cdn.discordapp.com/avatars/1076145924474146959/8357c11763b1f67cd716045681890d23.webp?size=1024"}]'><img src="/icons/discord.png" class="icon-img"><span class="social-label">Discord</span></a>
           <a href="https://bsky.app/profile/jpedrothejohn.bsky.social" class="social-item"><img src="/icons/bsky.png" class="icon-img bsky-icon"><span class="social-label">Bluesky</span></a>
         </div>
       </section>
@@ -126,67 +127,12 @@
   </div>
 
   <div class="device-modal-overlay" id="socialModalOverlay" hidden>
-    <div class="device-modal" role="dialog" aria-modal="true" aria-labelledby="socialModalTitle">
+    <div class="device-modal" id="socialModal" role="dialog" aria-modal="true" aria-labelledby="socialModalTitle">
       <button class="device-modal-close" id="socialModalClose" type="button" aria-label="Fechar">×</button>
       <h2 id="socialModalTitle">Rede social</h2>
-      <ul id="socialModalBody" class="device-modal-list"></ul>
+      <ul id="socialModalBody" class="device-modal-list social-widget-grid" aria-live="polite"></ul>
     </div>
   </div>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const overlay = document.getElementById('socialModalOverlay');
-      const title = document.getElementById('socialModalTitle');
-      const body = document.getElementById('socialModalBody');
-      const closeBtn = document.getElementById('socialModalClose');
-      let closeTimeout;
-
-      document.querySelectorAll('.home-social-links .social-item').forEach((item) => {
-        const href = item.getAttribute('href') || '';
-        const excluded = /(github\.com|x\.com|twitter\.com|bsky\.app)/i;
-        if (excluded.test(href)) return;
-
-        item.addEventListener('click', (event) => {
-          event.preventDefault();
-          title.textContent = item.querySelector('.social-label')?.textContent || 'Rede social';
-          body.innerHTML = '';
-          try {
-            const links = JSON.parse(item.dataset.socialLinks || '[]');
-            links.forEach((link) => {
-              const listItem = document.createElement('li');
-              listItem.innerHTML = `<a href="${link.url}" target="_blank" rel="noopener noreferrer">${link.label || link.url}</a>`;
-              body.appendChild(listItem);
-            });
-          } catch (error) {
-            return;
-          }
-          window.clearTimeout(closeTimeout);
-          overlay.hidden = false;
-          overlay.classList.remove('show');
-          void overlay.offsetWidth;
-          document.body.classList.add('device-modal-open');
-          requestAnimationFrame(() => overlay.classList.add('show'));
-        });
-      });
-
-      const closeModal = () => {
-        window.clearTimeout(closeTimeout);
-        overlay.classList.remove('show');
-        closeTimeout = window.setTimeout(() => {
-          if (overlay.classList.contains('show')) return;
-          overlay.hidden = true;
-          document.body.classList.remove('device-modal-open');
-        }, 260);
-      };
-
-      closeBtn.addEventListener('click', closeModal);
-      overlay.addEventListener('click', (event) => {
-        if (event.target === overlay) closeModal();
-      });
-      document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape' && overlay.classList.contains('show')) closeModal();
-      });
-    });
-  </script>
 </body>
 </html>
